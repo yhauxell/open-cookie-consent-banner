@@ -1,4 +1,5 @@
 import { CookieConsentDemo } from "@/components/cookie-consent-demo";
+import { GitHubStarsButton } from "@/components/github-stars-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Code, ExternalLink, Github } from "lucide-react";
+import { Code, ExternalLink } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -57,25 +58,7 @@ export default function RegistryPage() {
                 traceability support
               </p>
             </div>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="shrink-0 gap-2 hover:bg-accent hover:border-primary transition-all group"
-            >
-              <a
-                href={githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center"
-              >
-                <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
-                <span className="hidden sm:inline font-medium">
-                  ⭐ Star on GitHub
-                </span>
-                <span className="sm:hidden font-medium">GitHub</span>
-              </a>
-            </Button>
+            <GitHubStarsButton githubUrl={githubUrl} />
           </div>
         </header>
 
