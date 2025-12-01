@@ -72,7 +72,7 @@ function DemoContent() {
   const [consentEvents, setConsentEvents] = useState<ConsentChangeEvent[]>([]);
 
   const analyticsScript = useConsentScript("analytics", "demo-analytics", {
-    src: "https://example.com/analytics.js",
+    content: `console.log("[Demo] Analytics script loaded via useConsentScript hook");`,
     onRevoke: () => {
       console.log("[Demo] Analytics script revoked - cleaning up...");
     },

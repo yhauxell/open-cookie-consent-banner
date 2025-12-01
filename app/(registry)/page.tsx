@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Code, ExternalLink } from "lucide-react";
+import { Code, Cookie, ExternalLink } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -50,7 +50,8 @@ export default function RegistryPage() {
         <header className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
             <div className="flex-1">
-              <h1 className="text-4xl font-bold tracking-tight mb-2">
+              <h1 className="text-4xl font-bold tracking-tight mb-2 flex items-center">
+                <Cookie className="h-8 w-8 mr-2" />
                 Open Cookie Consent Banner
               </h1>
               <p className="text-lg text-muted-foreground">
