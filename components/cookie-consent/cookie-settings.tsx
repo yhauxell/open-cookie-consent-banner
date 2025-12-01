@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { useCookieConsent, defaultCategories } from "./cookie-provider"
 import type { ConsentCategories, ConsentCategory } from "./types"
+import { getDefaultCategories, getAllAcceptedCategories } from "./utils"
 import { cn } from "@/lib/utils"
 
 export interface CookieSettingsProps {
@@ -29,7 +30,7 @@ export function CookieSettings({ className }: CookieSettingsProps) {
 
   const [localCategories, setLocalCategories] = React.useState<ConsentCategories>(state.categories)
 
-  // Sync local state when modal opens
+  // Sync local state when modal opens or when state changes
   React.useEffect(() => {
     if (isSettingsOpen) {
       setLocalCategories(state.categories)
@@ -49,11 +50,17 @@ export function CookieSettings({ className }: CookieSettingsProps) {
   }
 
   const handleAcceptAll = async () => {
+    const allAccepted = getAllAcceptedCategories()
+    // Update local state immediately for UI feedback
+    setLocalCategories(allAccepted)
     await acceptAll()
     closeSettings()
   }
 
   const handleRejectAll = async () => {
+    const defaultCats = getDefaultCategories()
+    // Update local state immediately for UI feedback
+    setLocalCategories(defaultCats)
     await rejectAll()
     closeSettings()
   }
