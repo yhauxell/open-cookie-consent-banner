@@ -1,36 +1,42 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useCookieConsent } from "./cookie-provider"
-import type { ConsentCategory } from "./types"
-import { loadScript, registerCleanup, registerScript, unloadScript, unregisterScript } from "./script-manager"
+import * as React from "react";
+import { useCookieConsent } from "./cookie-provider";
+import {
+  loadScript,
+  registerCleanup,
+  registerScript,
+  unloadScript,
+  unregisterScript,
+} from "./script-manager";
+import type { ConsentCategory } from "./types";
 
 interface UseConsentScriptOptions {
   /** External script URL */
-  src?: string
+  src?: string;
   /** Inline script content */
-  content?: string
+  content?: string;
   /** Additional script attributes */
-  attributes?: Record<string, string>
+  attributes?: Record<string, string>;
   /** Script loading strategy */
-  strategy?: "afterInteractive" | "lazyOnload" | "beforeInteractive"
+  strategy?: "afterInteractive" | "lazyOnload" | "beforeInteractive";
   /** Cleanup function when consent is revoked */
-  onRevoke?: () => void
+  onRevoke?: () => void;
 }
 
 interface UseConsentScriptReturn {
   /** Whether the script is loaded */
-  isLoaded: boolean
+  isLoaded: boolean;
   /** Whether the script is currently loading */
-  isLoading: boolean
+  isLoading: boolean;
   /** Whether consent is granted for this category */
-  hasConsent: boolean
+  hasConsent: boolean;
   /** Any error that occurred */
-  error: Error | null
+  error: Error | null;
   /** Manually trigger script load (if consent is granted) */
-  load: () => Promise<void>
+  load: () => Promise<void>;
   /** Manually unload the script */
-  unload: () => void
+  unload: () => void;
 }
 
 /**
@@ -53,17 +59,30 @@ interface UseConsentScriptReturn {
 export function useConsentScript(
   category: ConsentCategory,
   id: string,
-  options: UseConsentScriptOptions = {},
+  options: UseConsentScriptOptions = {}
 ): UseConsentScriptReturn {
-  const { hasConsent: checkConsent, registerScript: ctxRegister } = useCookieConsent()
-  const consentGranted = checkConsent(category)
+  const { hasConsent: checkConsent, registerScript: ctxRegister } =
+    useCookieConsent();
+  const consentGranted = checkConsent(category);
 
-  const [isLoaded, setIsLoaded] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<Error | null>(null)
+  const [isLoaded, setIsLoaded] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<Error | null>(null);
 
-  // Register script
+  // Use refs to avoid re-registration on every render
+  const isRegisteredRef = React.useRef(false);
+  const onRevokeRef = React.useRef(options.onRevoke);
+
+  // Keep onRevoke ref up to date
+  React.useLayoutEffect(() => {
+    onRevokeRef.current = options.onRevoke;
+  }, [options.onRevoke]);
+
+  // Register script only once
   React.useEffect(() => {
+    if (isRegisteredRef.current) return;
+    isRegisteredRef.current = true;
+
     registerScript({
       id,
       src: options.src,
@@ -74,10 +93,10 @@ export function useConsentScript(
       onLoad: () => setIsLoaded(true),
       onError: setError,
       onRevoke: () => {
-        setIsLoaded(false)
-        options.onRevoke?.()
+        setIsLoaded(false);
+        onRevokeRef.current?.();
       },
-    })
+    });
 
     ctxRegister({
       id,
@@ -86,55 +105,60 @@ export function useConsentScript(
       category,
       strategy: options.strategy,
       attributes: options.attributes,
-    })
+    });
 
-    if (options.onRevoke) {
-      registerCleanup(id, options.onRevoke)
+    if (onRevokeRef.current) {
+      registerCleanup(id, () => onRevokeRef.current?.());
     }
 
     return () => {
-      unregisterScript(id)
-    }
-  }, [id, category, options.src, options.content, options.strategy, options.attributes, options.onRevoke, ctxRegister])
+      isRegisteredRef.current = false;
+      unregisterScript(id);
+    };
+    // Only re-register if id changes - other options are captured in initial registration
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   // Auto-load when consent is granted
   React.useEffect(() => {
     if (consentGranted && !isLoaded && !isLoading && !error) {
-      setIsLoading(true)
+      setIsLoading(true);
       loadScript(id)
         .then(() => {
-          setIsLoaded(true)
-          setIsLoading(false)
+          setIsLoaded(true);
+          setIsLoading(false);
         })
         .catch((err) => {
-          setError(err)
-          setIsLoading(false)
-        })
+          setError(err);
+          setIsLoading(false);
+        });
     }
-  }, [consentGranted, isLoaded, isLoading, error, id])
+  }, [consentGranted, isLoaded, isLoading, error, id]);
 
   const load = React.useCallback(async () => {
     if (!consentGranted) {
-      throw new Error(`Cannot load script "${id}": consent not granted for category "${category}"`)
+      throw new Error(
+        `Cannot load script "${id}": consent not granted for category "${category}"`
+      );
     }
-    if (isLoaded) return
+    if (isLoaded) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await loadScript(id)
-      setIsLoaded(true)
+      await loadScript(id);
+      setIsLoaded(true);
     } catch (err) {
-      setError(err as Error)
-      throw err
+      setError(err as Error);
+      throw err;
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [consentGranted, isLoaded, id, category])
+  }, [consentGranted, isLoaded, id, category]);
 
   const unload = React.useCallback(() => {
-    unloadScript(id)
-    setIsLoaded(false)
-  }, [id])
+    unloadScript(id);
+    setIsLoaded(false);
+  }, [id]);
 
   return {
     isLoaded,
@@ -143,5 +167,5 @@ export function useConsentScript(
     error,
     load,
     unload,
-  }
+  };
 }
