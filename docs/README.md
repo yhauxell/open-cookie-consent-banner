@@ -1,4 +1,4 @@
-# Cookie Consent Banner
+# Open Cookie Consent Banner
 
 A full-featured, GDPR-compliant cookie consent solution compatible with shadcn/ui registry.
 
@@ -15,30 +15,29 @@ A full-featured, GDPR-compliant cookie consent solution compatible with shadcn/u
 
 \`\`\`tsx
 import {
-  CookieConsentProvider,
-  CookieBanner,
-  CookieSettings,
-  CookieTrigger,
+CookieConsentProvider,
+CookieBanner,
+CookieSettings,
+CookieTrigger,
 } from "@/components/cookie-consent"
 
 export default function App({ children }) {
-  return (
-    <CookieConsentProvider
-      config={{
+return (
+<CookieConsentProvider
+config={{
         consentVersion: "1.0.0",
         privacyPolicyUrl: "/privacy",
         traceability: {
           enabled: true,
           endpoint: "/api/consent",
         },
-      }}
-    >
-      {children}
-      <CookieBanner />
-      <CookieSettings />
-      <CookieTrigger />
-    </CookieConsentProvider>
-  )
+      }} >
+{children}
+<CookieBanner />
+<CookieSettings />
+<CookieTrigger />
+</CookieConsentProvider>
+)
 }
 \`\`\`
 

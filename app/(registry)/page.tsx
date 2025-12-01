@@ -1,14 +1,21 @@
-import { Metadata } from "next"
-import { CookieConsentDemo } from "@/components/cookie-consent-demo"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { ExternalLink, Code } from "lucide-react"
-import Link from "next/link"
+import { CookieConsentDemo } from "@/components/cookie-consent-demo";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Code, ExternalLink, Github } from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Cookie Consent Banner - Component Registry",
-  description: "Install a full-featured, GDPR-compliant cookie consent solution for React and Next.js via shadcn/ui registry. Includes automatic script management, traceability, and granular consent control.",
+  title: "Open Cookie Consent Banner - Component Registry",
+  description:
+    "Install a full-featured, GDPR-compliant cookie consent solution for React and Next.js via shadcn/ui registry. Includes automatic script management, traceability, and granular consent control.",
   keywords: [
     "cookie consent",
     "GDPR compliance",
@@ -20,35 +27,65 @@ export const metadata: Metadata = {
     "cookie consent component",
   ],
   openGraph: {
-    title: "Cookie Consent Banner - Component Registry",
-    description: "Install a GDPR-compliant cookie consent solution via shadcn/ui registry",
+    title: "Open Cookie Consent Banner - Component Registry",
+    description:
+      "Install a GDPR-compliant cookie consent solution via shadcn/ui registry",
     type: "website",
   },
   alternates: {
     canonical: "/",
   },
-}
+};
 
 export default function RegistryPage() {
   // In production, this should be your actual domain
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-  const registryUrl = `${baseUrl}/r/cookie-consent.json`
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const registryUrl = `${baseUrl}/r/cookie-consent.json`;
+  const githubUrl = "https://github.com/yhauxell/open-cookie-consent-banner";
 
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto py-12 px-4">
         <header className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight mb-2">Cookie Consent Banner</h1>
-          <p className="text-lg text-muted-foreground">
-            A full-featured, GDPR-compliant cookie consent solution with traceability support
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+            <div className="flex-1">
+              <h1 className="text-4xl font-bold tracking-tight mb-2">
+                Open Cookie Consent Banner
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                A full-featured, GDPR-compliant cookie consent solution with
+                traceability support
+              </p>
+            </div>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="shrink-0 gap-2 hover:bg-accent hover:border-primary transition-all group"
+            >
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center"
+              >
+                <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <span className="hidden sm:inline font-medium">
+                  ⭐ Star on GitHub
+                </span>
+                <span className="sm:hidden font-medium">GitHub</span>
+              </a>
+            </Button>
+          </div>
         </header>
 
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card>
             <CardHeader>
               <CardTitle>Installation</CardTitle>
-              <CardDescription>Add this component to your project</CardDescription>
+              <CardDescription>
+                Add this component to your project
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -65,7 +102,11 @@ export default function RegistryPage() {
               </div>
               <div className="flex gap-2">
                 <Button asChild variant="outline" size="sm">
-                  <a href={registryUrl} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={registryUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     View Registry JSON
                   </a>
@@ -88,27 +129,39 @@ export default function RegistryPage() {
             <CardContent>
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="secondary" className="text-xs">GDPR</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    GDPR
+                  </Badge>
                   <span>GDPR & CCPA compliant</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="secondary" className="text-xs">Traceability</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Traceability
+                  </Badge>
                   <span>Full audit trail with API endpoint</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="secondary" className="text-xs">Scripts</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Scripts
+                  </Badge>
                   <span>Automatic script loading/unloading</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="secondary" className="text-xs">Categories</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Categories
+                  </Badge>
                   <span>Granular category control</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="secondary" className="text-xs">Storage</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Storage
+                  </Badge>
                   <span>Persistent localStorage</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Badge variant="secondary" className="text-xs">Scope</Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Scope
+                  </Badge>
                   <span>Device and global consent modes</span>
                 </div>
               </div>
@@ -119,7 +172,9 @@ export default function RegistryPage() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Component Preview</CardTitle>
-            <CardDescription>Interactive demo of the cookie consent banner</CardDescription>
+            <CardDescription>
+              Interactive demo of the cookie consent banner
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <CookieConsentDemo />
@@ -133,16 +188,17 @@ export default function RegistryPage() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-2">
-              {["button", "dialog", "switch", "card", "label", "accordion"].map((dep) => (
-                <Badge key={dep} variant="outline">
-                  {dep}
-                </Badge>
-              ))}
+              {["button", "dialog", "switch", "card", "label", "accordion"].map(
+                (dep) => (
+                  <Badge key={dep} variant="outline">
+                    {dep}
+                  </Badge>
+                )
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }
-

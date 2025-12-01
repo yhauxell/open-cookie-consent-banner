@@ -1,20 +1,34 @@
-"use client"
-import { Cookie, Database, RefreshCw, Shield, Zap, Code, AlertCircle } from "lucide-react"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+"use client";
 import {
-  CookieConsentProvider,
+  ConsentScript,
   CookieBanner,
+  CookieConsentProvider,
   CookieSettings,
   CookieTrigger,
-  useCookieConsent,
-  ConsentScript,
   useConsentScript,
-  type CookieConsentConfig,
+  useCookieConsent,
   type ConsentChangeEvent,
-} from "@/components/cookie-consent"
+  type CookieConsentConfig,
+} from "@/components/cookie-consent";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  AlertCircle,
+  Code,
+  Cookie,
+  Database,
+  RefreshCw,
+  Shield,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
 
 const config: CookieConsentConfig = {
   consentVersion: "1.0.0",
@@ -29,10 +43,10 @@ const config: CookieConsentConfig = {
     retryOnFailure: true,
     maxRetries: 3,
     onSuccess: (record) => {
-      console.log("[Demo] Consent tracked successfully:", record.consentId)
+      console.log("[Demo] Consent tracked successfully:", record.consentId);
     },
     onError: (error, record) => {
-      console.error("[Demo] Failed to track consent:", error, record)
+      console.error("[Demo] Failed to track consent:", error, record);
     },
   },
   onConsentChange: (event) => {
@@ -40,37 +54,38 @@ const config: CookieConsentConfig = {
       action: event.action,
       granted: event.grantedCategories,
       revoked: event.revokedCategories,
-    })
+    });
 
     // Example: React to specific category changes
     if (event.revokedCategories.includes("analytics")) {
-      console.log("[Demo] Analytics was revoked - scripts will be unloaded")
+      console.log("[Demo] Analytics was revoked - scripts will be unloaded");
     }
     if (event.grantedCategories.includes("analytics")) {
-      console.log("[Demo] Analytics was granted - scripts will be loaded")
+      console.log("[Demo] Analytics was granted - scripts will be loaded");
     }
   },
-}
+};
 
 function DemoContent() {
-  const { state, resetConsent, openSettings, getLoadedScripts } = useCookieConsent()
-  const [consentEvents, setConsentEvents] = useState<ConsentChangeEvent[]>([])
+  const { state, resetConsent, openSettings, getLoadedScripts } =
+    useCookieConsent();
+  const [consentEvents, setConsentEvents] = useState<ConsentChangeEvent[]>([]);
 
   const analyticsScript = useConsentScript("analytics", "demo-analytics", {
     src: "https://example.com/analytics.js",
     onRevoke: () => {
-      console.log("[Demo] Analytics script revoked - cleaning up...")
+      console.log("[Demo] Analytics script revoked - cleaning up...");
     },
-  })
+  });
 
   const categories = [
     { key: "necessary" as const, label: "Necessary", icon: Shield },
     { key: "analytics" as const, label: "Analytics", icon: Database },
     { key: "marketing" as const, label: "Marketing", icon: Zap },
     { key: "preferences" as const, label: "Preferences", icon: Cookie },
-  ]
+  ];
 
-  const loadedScripts = getLoadedScripts()
+  const loadedScripts = getLoadedScripts();
 
   return (
     <main className="min-h-screen bg-background">
@@ -99,10 +114,12 @@ function DemoContent() {
               <Cookie className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-3">Cookie Consent Banner</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-3">
+            Open Cookie Consent Banner
+          </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            A full-featured, GDPR-compliant cookie consent solution with traceability support. Compatible with shadcn/ui
-            registry.
+            A full-featured, GDPR-compliant cookie consent solution with
+            traceability support. Compatible with shadcn/ui registry.
           </p>
         </div>
 
@@ -110,22 +127,30 @@ function DemoContent() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Consent Status</CardTitle>
-              <CardDescription>Current consent state and preferences</CardDescription>
+              <CardDescription>
+                Current consent state and preferences
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Has Consented</span>
+                  <span className="text-sm text-muted-foreground">
+                    Has Consented
+                  </span>
                   <Badge variant={state.hasConsented ? "default" : "secondary"}>
                     {state.hasConsented ? "Yes" : "No"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Version</span>
-                  <code className="text-sm bg-muted px-2 py-0.5 rounded">{state.consentVersion}</code>
+                  <code className="text-sm bg-muted px-2 py-0.5 rounded">
+                    {state.consentVersion}
+                  </code>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Visitor ID</span>
+                  <span className="text-sm text-muted-foreground">
+                    Visitor ID
+                  </span>
                   <code className="text-xs bg-muted px-2 py-0.5 rounded truncate max-w-32">
                     {state.visitorId.slice(0, 8)}...
                   </code>
@@ -145,10 +170,18 @@ function DemoContent() {
                   <div
                     key={key}
                     className={`flex items-center gap-2 rounded-md border p-2 transition-colors ${
-                      state.categories[key] ? "border-primary/30 bg-primary/5" : "border-border bg-muted/30"
+                      state.categories[key]
+                        ? "border-primary/30 bg-primary/5"
+                        : "border-border bg-muted/30"
                     }`}
                   >
-                    <Icon className={`h-4 w-4 ${state.categories[key] ? "text-primary" : "text-muted-foreground"}`} />
+                    <Icon
+                      className={`h-4 w-4 ${
+                        state.categories[key]
+                          ? "text-primary"
+                          : "text-muted-foreground"
+                      }`}
+                    />
                     <span className="text-sm">{label}</span>
                   </div>
                 ))}
@@ -163,7 +196,9 @@ function DemoContent() {
               <Code className="h-5 w-5" />
               Script Management
             </CardTitle>
-            <CardDescription>Third-party scripts are loaded/unloaded based on consent</CardDescription>
+            <CardDescription>
+              Third-party scripts are loaded/unloaded based on consent
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -172,7 +207,11 @@ function DemoContent() {
                 {loadedScripts.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {loadedScripts.map((id) => (
-                      <Badge key={id} variant="outline" className="font-mono text-xs">
+                      <Badge
+                        key={id}
+                        variant="outline"
+                        className="font-mono text-xs"
+                      >
                         {id}
                       </Badge>
                     ))}
@@ -186,16 +225,36 @@ function DemoContent() {
               </div>
 
               <div className="border-t pt-4">
-                <p className="text-sm font-medium mb-2">Hook Example: useConsentScript</p>
+                <p className="text-sm font-medium mb-2">
+                  Hook Example: useConsentScript
+                </p>
                 <div className="bg-muted rounded-md p-3 text-sm font-mono">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">demo-analytics</span>
+                    <span className="text-muted-foreground">
+                      demo-analytics
+                    </span>
                     <div className="flex gap-2">
-                      <Badge variant={analyticsScript.hasConsent ? "default" : "secondary"} className="text-xs">
-                        {analyticsScript.hasConsent ? "Consent ✓" : "No Consent"}
+                      <Badge
+                        variant={
+                          analyticsScript.hasConsent ? "default" : "secondary"
+                        }
+                        className="text-xs"
+                      >
+                        {analyticsScript.hasConsent
+                          ? "Consent ✓"
+                          : "No Consent"}
                       </Badge>
-                      <Badge variant={analyticsScript.isLoaded ? "default" : "outline"} className="text-xs">
-                        {analyticsScript.isLoading ? "Loading..." : analyticsScript.isLoaded ? "Loaded" : "Not Loaded"}
+                      <Badge
+                        variant={
+                          analyticsScript.isLoaded ? "default" : "outline"
+                        }
+                        className="text-xs"
+                      >
+                        {analyticsScript.isLoading
+                          ? "Loading..."
+                          : analyticsScript.isLoaded
+                          ? "Loaded"
+                          : "Not Loaded"}
                       </Badge>
                     </div>
                   </div>
@@ -204,8 +263,9 @@ function DemoContent() {
 
               <div className="border-t pt-4">
                 <p className="text-sm text-muted-foreground">
-                  Open browser console to see script load/unload events. Try accepting then rejecting cookies to see
-                  scripts being cleaned up.
+                  Open browser console to see script load/unload events. Try
+                  accepting then rejecting cookies to see scripts being cleaned
+                  up.
                 </p>
               </div>
             </div>
@@ -215,15 +275,25 @@ function DemoContent() {
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="text-lg">Actions</CardTitle>
-            <CardDescription>Test the cookie consent functionality</CardDescription>
+            <CardDescription>
+              Test the cookie consent functionality
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline" onClick={resetConsent} className="gap-2 bg-transparent">
+              <Button
+                variant="outline"
+                onClick={resetConsent}
+                className="gap-2 bg-transparent"
+              >
                 <RefreshCw className="h-4 w-4" />
                 Reset Consent
               </Button>
-              <Button variant="outline" onClick={openSettings} className="gap-2 bg-transparent">
+              <Button
+                variant="outline"
+                onClick={openSettings}
+                className="gap-2 bg-transparent"
+              >
                 <Cookie className="h-4 w-4" />
                 Open Settings
               </Button>
@@ -279,14 +349,17 @@ function DemoContent() {
           <div className="flex items-center justify-center gap-4">
             <CookieTrigger variant="text" />
             <span>|</span>
-            <a href="/privacy" className="hover:text-foreground transition-colors">
+            <a
+              href="/privacy"
+              className="hover:text-foreground transition-colors"
+            >
               Privacy Policy
             </a>
           </div>
         </footer>
       </div>
     </main>
-  )
+  );
 }
 
 export function CookieConsentDemo() {
@@ -296,5 +369,5 @@ export function CookieConsentDemo() {
       <CookieBanner />
       <CookieSettings />
     </CookieConsentProvider>
-  )
+  );
 }

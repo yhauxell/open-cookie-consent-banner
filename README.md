@@ -1,4 +1,4 @@
-# 🍪 Cookie Consent Banner
+# 🍪 Open Cookie Consent Banner
 
 <div align="center">
 
@@ -60,7 +60,7 @@ import {
   CookieBanner,
   CookieSettings,
   CookieTrigger,
-} from "@/components/cookie-consent"
+} from "@/components/cookie-consent";
 
 export default function App({ children }) {
   return (
@@ -79,7 +79,7 @@ export default function App({ children }) {
       <CookieSettings />
       <CookieTrigger />
     </CookieConsentProvider>
-  )
+  );
 }
 ```
 
@@ -90,7 +90,10 @@ export default function App({ children }) {
 Wrap your app with `CookieConsentProvider` and add the banner:
 
 ```tsx
-import { CookieConsentProvider, CookieBanner } from "@/components/cookie-consent"
+import {
+  CookieConsentProvider,
+  CookieBanner,
+} from "@/components/cookie-consent";
 
 function App() {
   return (
@@ -103,7 +106,7 @@ function App() {
       <YourApp />
       <CookieBanner />
     </CookieConsentProvider>
-  )
+  );
 }
 ```
 
@@ -112,7 +115,7 @@ function App() {
 Load third-party scripts conditionally based on consent:
 
 ```tsx
-import { ConsentScript } from "@/components/cookie-consent"
+import { ConsentScript } from "@/components/cookie-consent";
 
 function Analytics() {
   return (
@@ -122,10 +125,10 @@ function Analytics() {
       category="analytics"
       onRevoke={() => {
         // Cleanup GA cookies and global
-        window.gtag = undefined
+        window.gtag = undefined;
       }}
     />
-  )
+  );
 }
 ```
 
@@ -134,11 +137,11 @@ function Analytics() {
 Check consent status programmatically:
 
 ```tsx
-import { useCookieConsent, useConsentValue } from "@/components/cookie-consent"
+import { useCookieConsent, useConsentValue } from "@/components/cookie-consent";
 
 function MyComponent() {
-  const { hasConsent, state } = useCookieConsent()
-  const hasAnalytics = useConsentValue("analytics")
+  const { hasConsent, state } = useCookieConsent();
+  const hasAnalytics = useConsentValue("analytics");
 
   if (hasAnalytics) {
     // Load analytics
@@ -159,6 +162,7 @@ function MyComponent() {
 ## 🛠️ Development & Registry Setup
 
 This repository serves as both:
+
 1. **The source code** for the cookie consent component
 2. **The registry server** that distributes the component via shadcn/ui
 
@@ -185,6 +189,7 @@ pnpm dev
 ```
 
 The registry will be available at:
+
 - `http://localhost:3000/registry` - Registry UI page
 - `http://localhost:3000/r/cookie-consent.json` - Registry JSON endpoint
 - `http://localhost:3000/demo` - Component demo
@@ -228,6 +233,7 @@ cookie-consent-banner/
 ## 🤝 Contributing
 
 This project is open source to enable:
+
 - **Transparency** - Users can inspect the code they're installing
 - **Community contributions** - Improvements and bug fixes from the community
 - **Customization** - Fork and adapt for specific needs
@@ -238,6 +244,7 @@ Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.m
 ### Why Open Source?
 
 Even though the registry is the primary distribution method, open source provides:
+
 - ✅ **Trust** - Users can verify what code they're installing
 - ✅ **Security** - Community can audit and report vulnerabilities
 - ✅ **Improvements** - Community contributions make it better for everyone
@@ -301,4 +308,3 @@ Made with ❤️ by the community
 [Report Bug](https://github.com/yourusername/cookie-consent-banner/issues) • [Request Feature](https://github.com/yourusername/cookie-consent-banner/issues) • [Contribute](./CONTRIBUTING.md)
 
 </div>
-

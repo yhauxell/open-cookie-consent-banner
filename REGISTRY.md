@@ -1,4 +1,4 @@
-# Cookie Consent Banner Registry
+# Open Cookie Consent Banner Registry
 
 This project is set up as a component registry to distribute the cookie-consent component via the shadcn/ui registry system.
 
@@ -29,6 +29,7 @@ npm run registry:build
 ```
 
 This will:
+
 1. Read `registry.json`
 2. Generate registry item JSON files in `public/r/`
 3. Copy `registry.json` to `public/` for MCP support
@@ -50,6 +51,7 @@ To protect your registry, you can add authentication middleware. See the registr
 ## Deployment
 
 When deploying, ensure:
+
 1. The `public/r/` directory is included
 2. The `public/registry.json` file is included
 3. Environment variables are set (if using authentication)
@@ -57,9 +59,9 @@ When deploying, ensure:
 ## Registry Item Structure
 
 Each registry item includes:
+
 - Component files with their content
 - Dependencies (shadcn/ui components)
 - Metadata (description, category, etc.)
 
 The registry item is generated from the files listed in `registry.json`.
-

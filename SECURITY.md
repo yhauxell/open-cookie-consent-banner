@@ -10,7 +10,7 @@ We actively support the following versions with security updates:
 
 ## Reporting a Vulnerability
 
-We take the security of Cookie Consent Banner seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of Open Cookie Consent Banner seriously. If you believe you have found a security vulnerability, please report it to us as described below.
 
 ### Please do NOT:
 
@@ -21,6 +21,7 @@ We take the security of Cookie Consent Banner seriously. If you believe you have
 ### Please DO:
 
 1. **Email us directly** at: your.email@example.com
+
    - Include "SECURITY" in the subject line
    - Provide a detailed description of the vulnerability
    - Include steps to reproduce the issue
@@ -40,7 +41,7 @@ We take the security of Cookie Consent Banner seriously. If you believe you have
 
 ### Security Best Practices
 
-When using Cookie Consent Banner:
+When using Open Cookie Consent Banner:
 
 1. **Keep dependencies updated** - Regularly update all dependencies
 2. **Use HTTPS** - Always serve your application over HTTPS
@@ -74,5 +75,4 @@ When we receive a security bug report, we will:
 
 We follow responsible disclosure practices and will coordinate with reporters on disclosure timing.
 
-Thank you for helping keep Cookie Consent Banner and its users safe!
-
+Thank you for helping keep Open Cookie Consent Banner and its users safe!
