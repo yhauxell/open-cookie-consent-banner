@@ -8,7 +8,25 @@ import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Cookie Consent Banner - Component Registry",
-  description: "A full-featured, GDPR-compliant cookie consent solution",
+  description: "Install a full-featured, GDPR-compliant cookie consent solution for React and Next.js via shadcn/ui registry. Includes automatic script management, traceability, and granular consent control.",
+  keywords: [
+    "cookie consent",
+    "GDPR compliance",
+    "cookie banner",
+    "shadcn ui registry",
+    "React cookie consent",
+    "Next.js cookie consent",
+    "install cookie consent",
+    "cookie consent component",
+  ],
+  openGraph: {
+    title: "Cookie Consent Banner - Component Registry",
+    description: "Install a GDPR-compliant cookie consent solution via shadcn/ui registry",
+    type: "website",
+  },
+  alternates: {
+    canonical: "/",
+  },
 }
 
 export default function RegistryPage() {
@@ -19,12 +37,12 @@ export default function RegistryPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-6xl mx-auto py-12 px-4">
-        <div className="mb-8">
+        <header className="mb-8">
           <h1 className="text-4xl font-bold tracking-tight mb-2">Cookie Consent Banner</h1>
           <p className="text-lg text-muted-foreground">
             A full-featured, GDPR-compliant cookie consent solution with traceability support
           </p>
-        </div>
+        </header>
 
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card>

@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+
+Sitemap: https://cookie-consent-banner-sandy.vercel.app/sitemap.xml
+
