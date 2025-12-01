@@ -1,6 +1,6 @@
-# Contributing to Cookie Consent Banner
+# Contributing to Open Cookie Consent Banner
 
-Thank you for your interest in contributing to Cookie Consent Banner! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Open Cookie Consent Banner! This document provides guidelines and instructions for contributing.
 
 ## Code of Conduct
 
@@ -155,5 +155,4 @@ If you have questions about contributing, please:
 - Check existing [Issues](https://github.com/yourusername/cookie-consent-banner/issues)
 - Read the [Documentation](./docs/README.md)
 
-Thank you for contributing to Cookie Consent Banner! 🙏
-
+Thank you for contributing to Open Cookie Consent Banner! 🙏

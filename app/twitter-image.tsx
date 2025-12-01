@@ -1,12 +1,12 @@
-import { ImageResponse } from '@vercel/og'
+import { ImageResponse } from "@vercel/og";
 
-export const alt = 'Cookie Consent Banner - GDPR Compliant Cookie Consent'
+export const alt = "Open Cookie Consent Banner - GDPR Compliant Cookie Consent";
 export const size = {
   width: 1200,
   height: 630,
-}
+};
 
-export const contentType = 'image/png'
+export const contentType = "image/png";
 
 export default async function TwitterImage() {
   return new ImageResponse(
@@ -14,38 +14,38 @@ export default async function TwitterImage() {
       <div
         style={{
           fontSize: 60,
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
+          background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          fontFamily: "system-ui, -apple-system, sans-serif",
         }}
       >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '80px',
-            textAlign: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "80px",
+            textAlign: "center",
           }}
         >
           <div
             style={{
               fontSize: 80,
-              fontWeight: 'bold',
+              fontWeight: "bold",
               marginBottom: 20,
-              display: 'flex',
-              alignItems: 'center',
+              display: "flex",
+              alignItems: "center",
               gap: 20,
             }}
           >
-            🍪 Cookie Consent Banner
+            🍪 Open Cookie Consent Banner
           </div>
           <div
             style={{
@@ -63,9 +63,9 @@ export default async function TwitterImage() {
               fontSize: 28,
               marginTop: 40,
               opacity: 0.8,
-              display: 'flex',
+              display: "flex",
               gap: 30,
-              alignItems: 'center',
+              alignItems: "center",
             }}
           >
             <span>React</span>
@@ -80,6 +80,5 @@ export default async function TwitterImage() {
     {
       ...size,
     }
-  )
+  );
 }
-
