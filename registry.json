@@ -1,0 +1,113 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind.config.ts",
+    "css": "app/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "iconLibrary": "lucide",
+  "registry": [
+    {
+      "name": "cookie-consent",
+      "type": "components:block",
+      "registryDependencies": [
+        "button",
+        "dialog",
+        "switch",
+        "card",
+        "label",
+        "accordion"
+      ],
+      "files": [
+        {
+          "path": "components/cookie-consent/cookie-provider.tsx",
+          "type": "components:component",
+          "target": "components/cookie-consent/cookie-provider.tsx",
+          "content": "components/cookie-consent/cookie-provider.tsx"
+        },
+        {
+          "path": "components/cookie-consent/cookie-banner.tsx",
+          "type": "components:component",
+          "target": "components/cookie-consent/cookie-banner.tsx",
+          "content": "components/cookie-consent/cookie-banner.tsx"
+        },
+        {
+          "path": "components/cookie-consent/cookie-settings.tsx",
+          "type": "components:component",
+          "target": "components/cookie-consent/cookie-settings.tsx",
+          "content": "components/cookie-consent/cookie-settings.tsx"
+        },
+        {
+          "path": "components/cookie-consent/cookie-trigger.tsx",
+          "type": "components:component",
+          "target": "components/cookie-consent/cookie-trigger.tsx",
+          "content": "components/cookie-consent/cookie-trigger.tsx"
+        },
+        {
+          "path": "components/cookie-consent/consent-script.tsx",
+          "type": "components:component",
+          "target": "components/cookie-consent/consent-script.tsx",
+          "content": "components/cookie-consent/consent-script.tsx"
+        },
+        {
+          "path": "components/cookie-consent/index.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/index.ts",
+          "content": "components/cookie-consent/index.ts"
+        },
+        {
+          "path": "components/cookie-consent/types.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/types.ts",
+          "content": "components/cookie-consent/types.ts"
+        },
+        {
+          "path": "components/cookie-consent/utils.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/utils.ts",
+          "content": "components/cookie-consent/utils.ts"
+        },
+        {
+          "path": "components/cookie-consent/use-cookie-consent.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/use-cookie-consent.ts",
+          "content": "components/cookie-consent/use-cookie-consent.ts"
+        },
+        {
+          "path": "components/cookie-consent/use-consent-script.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/use-consent-script.ts",
+          "content": "components/cookie-consent/use-consent-script.ts"
+        },
+        {
+          "path": "components/cookie-consent/script-manager.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/script-manager.ts",
+          "content": "components/cookie-consent/script-manager.ts"
+        },
+        {
+          "path": "components/cookie-consent/tracker.ts",
+          "type": "components:component",
+          "target": "components/cookie-consent/tracker.ts",
+          "content": "components/cookie-consent/tracker.ts"
+        }
+      ],
+      "description": "A full-featured, GDPR-compliant cookie consent solution with traceability support, script management, and granular category control.",
+      "category": "forms",
+      "subcategory": "consent"
+    }
+  ]
+}
+
