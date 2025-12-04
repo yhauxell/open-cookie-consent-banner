@@ -201,6 +201,7 @@ export const metadata: Metadata = {
     description:
       "Complete documentation for the GDPR-compliant cookie consent solution",
     type: "website",
+    url: "/docs",
     images: [
       {
         url: "/opengraph-image",
