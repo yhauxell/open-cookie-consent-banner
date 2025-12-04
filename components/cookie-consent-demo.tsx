@@ -69,7 +69,9 @@ const config: CookieConsentConfig = {
 function DemoContent() {
   const { state, resetConsent, openSettings, getLoadedScripts } =
     useCookieConsent();
-  const [consentEvents, setConsentEvents] = useState<ConsentChangeEvent[]>([]);
+  const [_consentEvents, _setConsentEvents] = useState<ConsentChangeEvent[]>(
+    []
+  );
 
   const analyticsScript = useConsentScript("analytics", "demo-analytics", {
     content: `console.log("[Demo] Analytics script loaded via useConsentScript hook");`,

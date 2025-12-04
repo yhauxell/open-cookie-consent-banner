@@ -151,7 +151,7 @@ export function CookieConsentProvider({ children, config }: CookieConsentProvide
           expiresAt,
           config: config.traceability,
           userId: userId ?? undefined,
-          scope: config.consentScope?.mode ?? "device",
+          scope: config.consentScope?.mode === "global" ? "global" : "device",
         })
       }
     },

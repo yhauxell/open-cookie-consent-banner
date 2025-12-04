@@ -249,9 +249,9 @@ export const scriptCleanupHelpers = {
     });
     // Clear GA global
     if (typeof window !== "undefined") {
-      (window as Record<string, unknown>).ga = undefined;
-      (window as Record<string, unknown>).gtag = undefined;
-      (window as Record<string, unknown>).dataLayer = undefined;
+      (window as unknown as Record<string, unknown>).ga = undefined;
+      (window as unknown as Record<string, unknown>).gtag = undefined;
+      (window as unknown as Record<string, unknown>).dataLayer = undefined;
     }
   },
 
@@ -266,7 +266,7 @@ export const scriptCleanupHelpers = {
       }
     });
     if (typeof window !== "undefined") {
-      (window as Record<string, unknown>).fbq = undefined;
+      (window as unknown as Record<string, unknown>).fbq = undefined;
     }
   },
 
