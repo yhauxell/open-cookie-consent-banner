@@ -13,33 +13,34 @@ A full-featured, GDPR-compliant cookie consent solution compatible with shadcn/u
 
 ## Quick Start
 
-\`\`\`tsx
+```tsx
 import {
-CookieConsentProvider,
-CookieBanner,
-CookieSettings,
-CookieTrigger,
+  CookieConsentProvider,
+  CookieBanner,
+  CookieSettings,
+  CookieTrigger,
 } from "@/components/cookie-consent"
 
 export default function App({ children }) {
-return (
-<CookieConsentProvider
-config={{
+  return (
+    <CookieConsentProvider
+      config={{
         consentVersion: "1.0.0",
         privacyPolicyUrl: "/privacy",
         traceability: {
           enabled: true,
           endpoint: "/api/consent",
         },
-      }} >
-{children}
-<CookieBanner />
-<CookieSettings />
-<CookieTrigger />
-</CookieConsentProvider>
-)
+      }}
+    >
+      {children}
+      <CookieBanner />
+      <CookieSettings />
+      <CookieTrigger />
+    </CookieConsentProvider>
+  )
 }
-\`\`\`
+```
 
 ## Documentation
 
@@ -54,9 +55,9 @@ config={{
 
 ### Using shadcn CLI (Recommended)
 
-\`\`\`bash
+```bash
 npx shadcn@latest add https://your-registry/cookie-consent
-\`\`\`
+```
 
 ### Manual Installation
 
