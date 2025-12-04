@@ -77,7 +77,6 @@ export function CodeBlock({
       { pattern: /([{}[\]])/g, className: "text-zinc-400" },
     ];
 
-    let result = line;
     const tokens: Array<{
       start: number;
       end: number;
