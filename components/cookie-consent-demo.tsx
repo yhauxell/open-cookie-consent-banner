@@ -88,7 +88,7 @@ function DemoContent() {
   const loadedScripts = getLoadedScripts();
 
   return (
-    <main className="min-h-screen bg-background">
+    <div className="bg-background">
       <ConsentScript
         id="google-analytics"
         category="analytics"
@@ -107,7 +107,7 @@ function DemoContent() {
         {`console.log("[Demo Script] Marketing pixel initialized");`}
       </ConsentScript>
 
-      <div className="container max-w-4xl mx-auto py-16 px-4">
+      <div className="container max-w-4xl mx-auto py-12 px-4">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
@@ -345,20 +345,12 @@ function DemoContent() {
           </CardContent>
         </Card>
 
-        <footer className="mt-12 pt-6 border-t text-center text-sm text-muted-foreground">
-          <div className="flex items-center justify-center gap-4">
-            <CookieTrigger variant="text" />
-            <span>|</span>
-            <a
-              href="/privacy"
-              className="hover:text-foreground transition-colors"
-            >
-              Privacy Policy
-            </a>
-          </div>
-        </footer>
+        {/* Cookie settings link */}
+        <div className="mt-8 text-center text-sm text-muted-foreground">
+          <CookieTrigger variant="text" />
+        </div>
       </div>
-    </main>
+    </div>
   );
 }
 
