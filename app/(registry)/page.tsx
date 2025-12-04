@@ -39,6 +39,7 @@ export const metadata: Metadata = {
     description:
       "Install a GDPR-compliant cookie consent solution via shadcn/ui registry",
     type: "website",
+    url: "/",
     images: [
       {
         url: "/opengraph-image",

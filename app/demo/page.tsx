@@ -16,6 +16,7 @@ export const metadata: Metadata = {
     title: "Open Cookie Consent Banner - Interactive Demo",
     description: "Try the cookie consent banner component with live examples",
     type: "website",
+    url: "/demo",
     images: [
       {
         url: "/opengraph-image",
