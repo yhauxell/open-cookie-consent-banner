@@ -12,7 +12,7 @@ export const contentType = "image/png";
 export default async function Image() {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://cookie-consent-banner.vercel.app";
+    "https://open-cookie-consent-banner.vercel.app";
 
   return new ImageResponse(
     (

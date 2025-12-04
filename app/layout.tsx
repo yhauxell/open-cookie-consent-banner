@@ -11,7 +11,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 const baseUrl =
   process.env.NEXT_PUBLIC_BASE_URL ||
-  "https://cookie-consent-banner-sandy.vercel.app";
+  "https://open-cookie-consent-banner.vercel.app";
 const siteName = "Open Cookie Consent Banner";
 const description =
   "A full-featured, GDPR-compliant cookie consent solution for React and Next.js. Install via shadcn/ui registry with automatic script management, traceability, and granular consent control.";
@@ -108,7 +108,7 @@ export default function RootLayout({
 }>) {
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
-    "https://cookie-consent-banner-sandy.vercel.app";
+    "https://open-cookie-consent-banner.vercel.app";
 
   const structuredData = {
     "@context": "https://schema.org",
