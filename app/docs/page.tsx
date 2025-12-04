@@ -201,6 +201,21 @@ export const metadata: Metadata = {
     description:
       "Complete documentation for the GDPR-compliant cookie consent solution",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Open Cookie Consent Banner Documentation",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Documentation - Open Cookie Consent Banner",
+    description:
+      "Complete documentation for the GDPR-compliant cookie consent solution",
+    images: ["/twitter-image"],
   },
   alternates: {
     canonical: "/docs",

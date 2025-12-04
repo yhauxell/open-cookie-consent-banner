@@ -16,6 +16,20 @@ export const metadata: Metadata = {
     title: "Open Cookie Consent Banner - Interactive Demo",
     description: "Try the cookie consent banner component with live examples",
     type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Open Cookie Consent Banner Demo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Open Cookie Consent Banner - Interactive Demo",
+    description: "Try the cookie consent banner component with live examples",
+    images: ["/twitter-image"],
   },
   alternates: {
     canonical: "/demo",
