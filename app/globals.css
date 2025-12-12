@@ -123,3 +123,68 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes border-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 40px rgba(236, 72, 153, 0.2);
+    opacity: 0.6;
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.5), 0 0 60px rgba(168, 85, 247, 0.3);
+    opacity: 0.9;
+  }
+}
+
+@keyframes rotate-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@layer utilities {
+  .animate-gradient-shift {
+    background-size: 200% auto;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  .glow-border {
+    position: relative;
+    border-radius: 0.5rem;
+    padding: 1px;
+    background: linear-gradient(90deg, #fbbf24, #ec4899, #a855f7, #fbbf24);
+    background-size: 200% 100%;
+    animation: rotate-gradient 3s linear infinite;
+  }
+
+  .glow-border::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 0.5rem;
+    background: linear-gradient(90deg, #fbbf24, #ec4899, #a855f7, #fbbf24);
+    background-size: 200% 100%;
+    animation: rotate-gradient 3s linear infinite, border-glow 3s ease-in-out infinite;
+    filter: blur(12px);
+    opacity: 0.5;
+    z-index: -1;
+  }
+
+  .glow-border-inner {
+    position: relative;
+    background: #18181b;
+    border-radius: calc(0.5rem - 1px);
+    z-index: 1;
+  }
+}
