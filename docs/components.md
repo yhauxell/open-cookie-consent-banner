@@ -47,6 +47,59 @@ import { CookieBanner } from "@/components/cookie-consent"
 
 ---
 
+## CookieBannerBackdrop
+
+Optional backdrop overlay that appears behind the cookie banner.
+
+\`\`\`tsx
+import { CookieBanner, CookieBannerBackdrop } from "@/components/cookie-consent"
+
+// Place backdrop as sibling before the banner
+<CookieBannerBackdrop />
+<CookieBanner />
+\`\`\`
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `string` | - | Additional CSS classes |
+| `closeOnClick` | `boolean` | `false` | Click backdrop to reject all & close |
+| `blur` | `string` | `"4px"` | Backdrop blur amount |
+| `opacity` | `number` | `0.5` | Backdrop opacity (0-1) |
+
+### Features
+
+- Smooth fade in/out animation
+- Configurable blur and opacity
+- Optional click-to-dismiss behavior
+- z-index layered behind banner (z-40 vs z-50)
+
+### Examples
+
+\`\`\`tsx
+// Basic usage
+<CookieBannerBackdrop />
+<CookieBanner />
+
+// With stronger blur and click to close
+<CookieBannerBackdrop 
+  blur="8px" 
+  opacity={0.6} 
+  closeOnClick 
+/>
+<CookieBanner />
+
+// Minimal subtle backdrop
+<CookieBannerBackdrop 
+  blur="2px" 
+  opacity={0.3} 
+/>
+<CookieBanner />
+\`\`\`
+
+---
+
 ## CookieSettings
 
 Modal dialog for granular consent preferences.

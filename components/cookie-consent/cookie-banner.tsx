@@ -1,25 +1,26 @@
-"use client"
-import { motion, AnimatePresence } from "framer-motion"
-import { Cookie, Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useCookieConsent } from "./cookie-provider"
-import { cn } from "@/lib/utils"
+"use client";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
+import { Cookie, Settings } from "lucide-react";
+import { useCookieConsent } from "./cookie-provider";
 
 export interface CookieBannerProps {
-  className?: string
+  className?: string;
 }
 
 export function CookieBanner({ className }: CookieBannerProps) {
-  const { isBannerVisible, acceptAll, rejectAll, openSettings, config } = useCookieConsent()
+  const { isBannerVisible, acceptAll, rejectAll, openSettings, config } =
+    useCookieConsent();
 
   const positionClasses = {
     bottom: "inset-x-0 bottom-0",
     top: "inset-x-0 top-0",
     "bottom-left": "bottom-4 left-4 max-w-md",
     "bottom-right": "bottom-4 right-4 max-w-md",
-  }
+  };
 
-  const position = config.position ?? "bottom"
+  const position = config.position ?? "bottom";
 
   return (
     <AnimatePresence>
@@ -34,7 +35,9 @@ export function CookieBanner({ className }: CookieBannerProps) {
           <div
             className={cn(
               "bg-card border border-border rounded-lg shadow-lg",
-              position === "bottom" || position === "top" ? "mx-auto max-w-5xl" : "",
+              position === "bottom" || position === "top"
+                ? "mx-auto max-w-5xl"
+                : ""
             )}
           >
             <div className="p-6">
@@ -44,10 +47,12 @@ export function CookieBanner({ className }: CookieBannerProps) {
                     <Cookie className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div className="space-y-1">
-                    <h3 className="text-sm font-semibold text-foreground">Cookie Preferences</h3>
+                    <h3 className="text-sm font-semibold text-foreground">
+                      Cookie Preferences
+                    </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
-                      We use cookies to enhance your experience. By continuing to visit this site you agree to our use
-                      of cookies.{" "}
+                      We use cookies to enhance your experience. By continuing
+                      to visit this site you agree to our use of cookies.{" "}
                       {config.privacyPolicyUrl && (
                         <a
                           href={config.privacyPolicyUrl}
@@ -63,11 +68,16 @@ export function CookieBanner({ className }: CookieBannerProps) {
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <Button variant="outline" size="sm" onClick={openSettings} className="gap-2 bg-transparent">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={openSettings}
+                    className="gap-2 bg-transparent"
+                  >
                     <Settings className="h-4 w-4" />
                     Customize
                   </Button>
-                  <Button variant="outline" size="sm" onClick={rejectAll}>
+                  <Button size="sm" onClick={rejectAll}>
                     Reject All
                   </Button>
                   <Button size="sm" onClick={acceptAll}>
@@ -80,5 +90,5 @@ export function CookieBanner({ className }: CookieBannerProps) {
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

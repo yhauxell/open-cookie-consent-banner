@@ -1,6 +1,7 @@
 // Main exports for cookie consent components
 export { CookieConsentProvider, useCookieConsent, defaultCategories } from "./cookie-provider"
 export { CookieBanner } from "./cookie-banner"
+export { CookieBannerBackdrop } from "./cookie-banner-backdrop"
 export { CookieSettings } from "./cookie-settings"
 export { CookieTrigger } from "./cookie-trigger"
 export { useConsentValue, useConsentGate } from "./use-cookie-consent"

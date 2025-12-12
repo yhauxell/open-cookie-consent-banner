@@ -2,6 +2,7 @@
 import {
   ConsentScript,
   CookieBanner,
+  CookieBannerBackdrop,
   CookieConsentProvider,
   CookieSettings,
   CookieTrigger,
@@ -19,6 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import {
   AlertCircle,
   Code,
@@ -240,7 +242,12 @@ function DemoContent() {
                         variant={
                           analyticsScript.hasConsent ? "default" : "secondary"
                         }
-                        className="text-xs"
+                        className={cn(
+                          "text-xs",
+                          analyticsScript.hasConsent
+                            ? "bg-green-500/10 text-green-500"
+                            : "bg-red-500/10 text-red-500"
+                        )}
                       >
                         {analyticsScript.hasConsent
                           ? "Consent ✓"
@@ -250,7 +257,14 @@ function DemoContent() {
                         variant={
                           analyticsScript.isLoaded ? "default" : "outline"
                         }
-                        className="text-xs"
+                        className={cn(
+                          "text-xs",
+                          analyticsScript.isLoading
+                            ? "bg-yellow-500/10 text-yellow-500"
+                            : analyticsScript.isLoaded
+                            ? "bg-green-500/10 text-green-500"
+                            : "bg-red-500/10 text-red-500"
+                        )}
                       >
                         {analyticsScript.isLoading
                           ? "Loading..."
@@ -360,6 +374,7 @@ export function CookieConsentDemo() {
   return (
     <CookieConsentProvider config={config}>
       <DemoContent />
+      <CookieBannerBackdrop />
       <CookieBanner />
       <CookieSettings />
     </CookieConsentProvider>
