@@ -52,7 +52,7 @@ export function GitHubStarsButton({
         className="flex items-center"
       >
         <Github className="h-5 w-5 group-hover:scale-110 transition-transform" />
-        <span className="hidden sm:inline font-medium flex items-center gap-1.5">
+        <span className="hidden sm:flex items-center gap-1.5 font-medium">
           {isLoading ? (
             "Loading..."
           ) : stars !== null && stars > 0 ? (
