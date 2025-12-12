@@ -24,9 +24,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-xl items-center justify-between px-4 mx-auto">
-        <Link href="/" className="flex items-center space-x-2">
-          <Logo className="h-6 w-6" />
-          <span className="font-bold text-lg">Open Cookie Consent</span>
+        <Link href="/" className="flex items-center space-x-2 flex-row">
+          <span className="font-bold text-lg">
+            Open <Logo className="h-6 w-6 inline-block" /> Consent
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
