@@ -13,7 +13,9 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <Logo className="h-5 w-5" />
-            <span className="font-medium">Open Cookie Consent</span>
+            <span className="font-medium">
+              Open <span className="text-muted-foreground font-normal">Cookie</span> Consent
+            </span>
           </div>
           <nav className="flex items-center space-x-6 text-sm text-muted-foreground">
             <Link

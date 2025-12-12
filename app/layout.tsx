@@ -113,7 +113,7 @@ export default function RootLayout({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "Open Cookie Consent Banner",
+    name: "Open Cookie Consent",
     applicationCategory: "WebApplication",
     operatingSystem: "Web",
     description,
@@ -132,7 +132,7 @@ export default function RootLayout({
       ratingValue: "5",
       ratingCount: "1",
     },
-    keywords: "cookie consent, GDPR, CCPA, privacy, React, Next.js, shadcn ui",
+    keywords: "cookie consent, GDPR, CCPA, privacy, React, Next.js, shadcn/ui",
     softwareVersion: "0.1.0",
     license: "https://opensource.org/licenses/MIT",
   };
