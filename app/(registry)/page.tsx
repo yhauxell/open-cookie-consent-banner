@@ -139,7 +139,7 @@ export default function HomePage() {
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
               Cookie Consent
               <br />
-              <span className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-gradient-shift">
                 Done Right
               </span>
             </h1>
@@ -166,9 +166,8 @@ export default function HomePage() {
 
             {/* Install Command */}
             <div className="w-full max-w-2xl mt-8">
-              <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-zinc-600 to-zinc-400 rounded-lg blur opacity-20 group-hover:opacity-30 transition" />
-                <div className="relative bg-zinc-950 text-zinc-50 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4">
+              <div className="glow-border">
+                <div className="glow-border-inner bg-zinc-950 text-zinc-50 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 overflow-x-auto">
                     <Terminal className="h-4 w-4 text-zinc-500 shrink-0" />
                     <code className="whitespace-nowrap">
@@ -307,41 +306,32 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="border-t">
+      <section className="border-t bg-muted/30">
         <div className="container max-w-screen-xl mx-auto px-4 py-24">
-          <div className="relative overflow-hidden rounded-2xl bg-zinc-950 text-zinc-50 p-8 md:p-12 lg:p-16">
+          <div className="relative overflow-hidden rounded-2xl border bg-background p-8 md:p-12 lg:p-16">
+            <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
             <div className="absolute inset-0 pointer-events-none">
-              {/* vibrant blurred gradient blob */}
-              <div className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-gradient-to-br from-[#fbff00] via-[#00ffe7] to-[#057aff] opacity-30 blur-3xl" />
-              {/* subtle grid overlay */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#fff1_1px,transparent_1px),linear-gradient(to_bottom,#fff1_1px,transparent_1px)] bg-[size:28px_50px]" />
+              {/* subtle gradient accent */}
+              <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-br from-yellow-400/10 via-pink-500/10 to-purple-600/10 blur-3xl" />
+              <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-purple-600/10 via-pink-500/10 to-yellow-400/10 blur-3xl" />
             </div>
             <div className="relative flex flex-col items-center text-center space-y-6">
-              <Logo className="h-12 w-12 text-zinc-400" />
+              <Logo className="h-12 w-12 text-muted-foreground" />
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl max-w-2xl">
                 Ready to add cookie consent to your app?
               </h2>
-              <p className="text-zinc-400 max-w-xl">
+              <p className="text-muted-foreground max-w-xl">
                 Get started in seconds with the shadcn CLI. Full documentation
                 available.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-white text-zinc-950 hover:bg-zinc-200"
-                >
+                <Button asChild size="lg" className="gap-2">
                   <Link href="/docs">
-                    <BookOpen className="h-4 w-4 mr-2" />
+                    <BookOpen className="h-4 w-4" />
                     Read the Docs
                   </Link>
                 </Button>
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="bg-background text-foreground hover:bg-foreground/80"
-                >
+                <Button asChild variant="outline" size="lg" className="gap-2">
                   <a href={githubUrl} target="_blank" rel="noopener noreferrer">
                     <svg
                       role="img"
