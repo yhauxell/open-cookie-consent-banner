@@ -218,6 +218,36 @@ export function getRegisteredScripts(): Map<string, ManagedScript> {
 }
 
 /**
+ * Check if any registered scripts are Google scripts
+ */
+export function hasGoogleScripts(): boolean {
+  for (const script of scriptRegistry.values()) {
+    if (
+      (script.src && (
+        script.src.includes("googletagmanager.com") ||
+        script.src.includes("google-analytics.com") ||
+        script.src.includes("googleadservices.com") ||
+        script.src.includes("google.com/analytics") ||
+        script.src.includes("google.com/ads") ||
+        script.src.includes("doubleclick.net") ||
+        script.src.includes("googleapis.com/gtag")
+      )) ||
+      (script.content && (
+        script.content.includes("googletagmanager.com") ||
+        script.content.includes("google-analytics.com") ||
+        script.content.includes("gtag(") ||
+        script.content.includes("dataLayer") ||
+        script.content.includes("ga(") ||
+        script.content.includes("google-analytics")
+      ))
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Clear all scripts (useful for testing)
  */
 export function clearAllScripts(): void {

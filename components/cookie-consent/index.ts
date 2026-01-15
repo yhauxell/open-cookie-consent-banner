@@ -35,6 +35,7 @@ export type {
 // Utilities
 export {
   getLoadedScripts,
+  hasGoogleScripts,
   loadScript,
   registerCleanup,
   registerScript,
@@ -43,7 +44,7 @@ export {
   unregisterScript,
 } from "./script-manager";
 export { retryFailedRecords, trackConsent } from "./tracker";
-export { generateUUID, getVisitorId } from "./utils";
+export { generateUUID, getVisitorId, isGoogleScript } from "./utils";
 
 // Note: Test utilities are not exported from the main index to avoid
 // bundling test dependencies in production builds. Import them directly
