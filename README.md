@@ -1,4 +1,4 @@
-# 🍪 Open Cookie Consent Banner
+# OpenConsent
 
 <div align="center">
 
@@ -8,7 +8,11 @@
 ![Next.js](https://img.shields.io/badge/Next.js-16.0-black)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-compatible-green)
 
-A full-featured, GDPR-compliant cookie consent solution with traceability support, distributed via [shadcn/ui](https://ui.shadcn.com) registry.
+**Consent management, open and simple.**
+
+A full-featured, GDPR-compliant cookie consent solution with Google Consent Mode v2 built-in, distributed via [shadcn/ui](https://ui.shadcn.com) registry.
+
+**[openconsent.dev](https://openconsent.dev)** • [Documentation](./docs/README.md) • [Demo](./app/demo) • [Install](#-installation)
 
 **📦 Install via Registry** • [Features](#-features) • [Usage](#-usage) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
@@ -19,23 +23,29 @@ A full-featured, GDPR-compliant cookie consent solution with traceability suppor
 ## ✨ Features
 
 - 🛡️ **GDPR & CCPA Compliant** - Granular consent categories, easy withdrawal, consent versioning
-- 📊 **Traceability** - Full audit trail with configurable API endpoint
+<<<<<<< Current (Your changes)
+- ⚡ **Google Consent Mode v2** - Built-in support for Google's required consent framework (EU/EEA/UK)
+=======
+- ⚡ **Google Consent Mode v2** - Built-in support for Google's required consent framework (EU/EEA/UK) - *Only initializes if Google services are detected*
+>>>>>>> Incoming (Background Agent changes)
 - 🔧 **Script Management** - Automatic loading/unloading of third-party scripts based on consent
-- 🎨 **shadcn/ui Compatible** - Uses existing primitives (Button, Dialog, Switch, Card)
-- 📝 **TypeScript** - Fully typed with exported types
+- 🎨 **shadcn/ui Native** - Uses existing primitives (Button, Dialog, Switch, Card)
+- 📝 **TypeScript First** - Fully typed with exported types for great DX
+- 📊 **Full Traceability** - Complete audit trail with configurable API endpoint
 - 🌐 **Hybrid Consent Scope** - Device-level for anonymous users, global sync for authenticated users
 - 🎯 **Zero Dependencies** - Only uses shadcn/ui components you already have
+- 🧪 **Test Utilities** - Comprehensive testing helpers for consent-dependent code
 - ♿ **Accessible** - Built with accessibility in mind
-- 🎭 **Customizable** - Fully customizable styling and behavior
+- 🎭 **Fully Customizable** - Own your code, customize everything
 
 ## 📦 Installation
 
 ### Via Registry (Recommended)
 
-The easiest way to use this component is through the shadcn/ui registry. Once the registry is deployed, install it with:
+The easiest way to use OpenConsent is through the shadcn/ui registry:
 
 ```bash
-npx shadcn@latest add https://your-domain.com/r/cookie-consent.json
+npx shadcn@latest add https://openconsent.dev/r/cookie-consent.json
 ```
 
 The registry automatically includes all necessary files and dependencies.
@@ -151,13 +161,22 @@ function MyComponent() {
 
 ## 📚 Documentation
 
+- [Quick Start Guide](./docs/README.md) - Get started in 5 minutes
+- [Google Consent Mode v2](./docs/google-consent-mode.md) - **Required for EU/EEA/UK traffic**
+  <<<<<<< Current (Your changes)
+  <<<<<<< Current (Your changes)
+  =======
+- [Testing Guide](./docs/testing.md) - Test utilities and examples
+  > > > > > > > # Incoming (Background Agent changes)
+- [Testing Guide](./docs/testing.md) - Test utilities for consent-dependent code
+  > > > > > > > Incoming (Background Agent changes)
+- [Roadmap](./ROADMAP.md) - Feature roadmap and vision
 - [Configuration Guide](./docs/configuration.md) - Full configuration options
 - [Component API](./docs/components.md) - Component API reference
 - [Hooks API](./docs/hooks.md) - React hooks documentation
 - [Script Management](./docs/script-management.md) - Managing third-party scripts
 - [Traceability](./docs/traceability.md) - Consent audit trail setup
 - [Database Schema](./docs/database.md) - Supabase/PostgreSQL schema
-- [Registry Setup](./REGISTRY.md) - Setting up as a component registry
 
 ## 🛠️ Development & Registry Setup
 
