@@ -10,6 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import {
   BookOpen,
+  Check,
   Code,
   Database,
   ExternalLink,
@@ -139,6 +140,35 @@ const facebookPixelCode = `<ConsentScript
   }}
 />`;
 
+const googleConsentModeCode = `import { GoogleConsentMode } from "@/components/cookie-consent"
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <head>
+        {/* MUST be before gtag.js */}
+        <GoogleConsentMode />
+        
+        {/* Your GA4 script */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXX"
+        />
+      </head>
+      <body>{children}</body>
+    </html>
+  )
+}`;
+
+const googleConsentModeConfigCode = `<CookieConsentProvider
+  config={{
+    consentVersion: "1.0.0",
+    googleConsentMode: {
+      enabled: true,
+    },
+  }}
+>`;
+
 const traceabilityCode = `<CookieConsentProvider
   config={{
     consentVersion: "1.0.0",
@@ -230,6 +260,7 @@ const sections = [
   { id: "components", label: "Components", icon: Layout },
   { id: "hooks", label: "Hooks", icon: Code },
   { id: "script-management", label: "Script Management", icon: FileCode },
+  { id: "google-consent-mode", label: "Google Consent Mode v2", icon: Zap },
   { id: "traceability", label: "Traceability", icon: Shield },
   { id: "database", label: "Database Schema", icon: Database },
   { id: "file-structure", label: "File Structure", icon: GitBranch },
@@ -779,6 +810,145 @@ export default function DocsPage() {
                     for non-critical scripts
                   </li>
                 </ul>
+              </section>
+
+              {/* Google Consent Mode v2 */}
+              <section id="google-consent-mode" className="mb-16 scroll-mt-20">
+                <div className="flex items-center gap-2 mb-4">
+                  <Hash className="h-5 w-5 text-muted-foreground" />
+                  <h2 className="text-2xl font-bold tracking-tight">
+                    Google Consent Mode v2
+                  </h2>
+                </div>
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-yellow-600 dark:text-yellow-500">
+                    <strong>⚠️ Important:</strong> Google Consent Mode v2 is{" "}
+                    <strong>required</strong> for all sites using Google
+                    Analytics, Google Ads, or other Google marketing products in
+                    the EU/EEA/UK as of March 2024.
+                  </p>
+                </div>
+                <p className="text-muted-foreground mb-6">
+                  Open Consent includes built-in support for Google Consent Mode
+                  v2, which enables cookieless pings and conversion modeling for
+                  non-consenting users.
+                </p>
+
+                <h3 className="text-xl font-semibold mt-8 mb-4">
+                  When Do You Need This?
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">You need it if:</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-600" />
+                          You use Google Analytics (GA4)
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-600" />
+                          You use Google Ads
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-600" />
+                          You use Google Tag Manager
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-green-600" />
+                          You use any Google marketing products
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">
+                        You don't need it if:
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        <li className="flex items-center gap-2">
+                          <span className="h-4 w-4 text-red-600">✗</span>
+                          You don't use any Google services
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="h-4 w-4 text-red-600">✗</span>
+                          You only use non-Google analytics
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <span className="h-4 w-4 text-red-600">✗</span>
+                          You don't have any tracking scripts
+                        </li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <h3 className="text-xl font-semibold mt-8 mb-4">Quick Start</h3>
+                <p className="text-muted-foreground mb-4">
+                  Add{" "}
+                  <code className="bg-muted px-1.5 py-0.5 rounded text-foreground text-sm">
+                    GoogleConsentMode
+                  </code>{" "}
+                  to your layout <strong>before</strong> your gtag.js script:
+                </p>
+                <CodeBlock
+                  code={googleConsentModeCode}
+                  language="tsx"
+                  filename="app/layout.tsx"
+                  showLineNumbers
+                />
+
+                <h3 className="text-xl font-semibold mt-8 mb-4">
+                  Enable in Provider Config
+                </h3>
+                <CodeBlock
+                  code={googleConsentModeConfigCode}
+                  language="tsx"
+                  filename="app/layout.tsx"
+                  showLineNumbers
+                />
+
+                <h3 className="text-xl font-semibold mt-8 mb-4">Benefits</h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <p className="font-medium">Without Consent Mode v2:</p>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>Google Ads loses remarketing data</li>
+                      <li>GA4 can't model conversions</li>
+                      <li>Account suspension risk</li>
+                      <li>Non-compliant with Google's requirements</li>
+                    </ul>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="font-medium">With Open Consent's v2:</p>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>Automatic consent state updates</li>
+                      <li>Cookieless pings for non-consenting users</li>
+                      <li>Full conversion modeling</li>
+                      <li>GDPR compliant by default</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="mt-6 bg-muted/50 border rounded-lg p-4">
+                  <p className="text-sm text-muted-foreground">
+                    <strong>Note:</strong> For complete documentation, see{" "}
+                    <a
+                      href="https://github.com/yhauxell/open-cookie-consent-banner/blob/main/docs/google-consent-mode.md"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-foreground underline underline-offset-4"
+                    >
+                      Google Consent Mode v2 Guide
+                    </a>
+                    .
+                  </p>
+                </div>
               </section>
 
               {/* Traceability */}

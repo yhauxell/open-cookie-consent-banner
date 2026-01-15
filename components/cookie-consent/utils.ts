@@ -101,3 +101,38 @@ export function calculateExpirationDate(days: number): string {
 export function isConsentExpired(expiresAt: string): boolean {
   return new Date(expiresAt) < new Date()
 }
+
+/**
+ * Check if a script is a Google service script
+ * Detects Google Analytics, Google Tag Manager, Google Ads, etc.
+ */
+export function isGoogleScript(script: { src?: string; content?: string }): boolean {
+  // Check if src URL contains Google domains
+  if (script.src) {
+    const googleDomains = [
+      "googletagmanager.com",
+      "google-analytics.com",
+      "googleadservices.com",
+      "google.com/analytics",
+      "google.com/ads",
+      "doubleclick.net",
+      "googleapis.com/gtag",
+    ]
+    return googleDomains.some((domain) => script.src?.includes(domain))
+  }
+
+  // Check if inline content contains Google-specific code
+  if (script.content) {
+    const googlePatterns = [
+      "googletagmanager.com",
+      "google-analytics.com",
+      "gtag(",
+      "dataLayer",
+      "ga(",
+      "google-analytics",
+    ]
+    return googlePatterns.some((pattern) => script.content?.includes(pattern))
+  }
+
+  return false
+}
