@@ -74,6 +74,42 @@ export function CookieConsentProvider({ children, config }: CookieConsentProvide
 
   const previousCategoriesRef = React.useRef<ConsentCategories>(getDefaultCategories())
 
+  // Update Google Consent Mode v2 when consent changes
+  // Only updates if Google Consent Mode is enabled AND gtag exists (user is using Google services)
+  const updateGoogleConsentMode = React.useCallback(
+    (categories: ConsentCategories) => {
+      if (!config.googleConsentMode?.enabled) return
+      if (typeof window === "undefined" || !window.gtag) return
+      // Additional check: only update if dataLayer exists (Google services are actually loaded)
+      if (!window.dataLayer) return
+
+      const mapping = config.googleConsentMode.mapping || {
+        analytics_storage: "analytics",
+        ad_storage: "marketing",
+        ad_user_data: "marketing",
+        ad_personalization: "marketing",
+        functionality_storage: "preferences",
+        personalization_storage: "preferences",
+        security_storage: "necessary",
+      }
+
+      const consentUpdate: Record<string, "granted" | "denied"> = {}
+
+      // Map consent categories to Google consent types
+      Object.entries(mapping).forEach(([googleType, category]) => {
+        if (category && categories[category]) {
+          consentUpdate[googleType] = "granted"
+        } else {
+          consentUpdate[googleType] = "denied"
+        }
+      })
+
+      // Update Google Consent Mode
+      window.gtag("consent", "update", consentUpdate)
+    },
+    [config.googleConsentMode],
+  )
+
   // Initialize state from localStorage
   React.useEffect(() => {
     const visitorId = getVisitorId()
@@ -120,6 +156,9 @@ export function CookieConsentProvider({ children, config }: CookieConsentProvide
       const revokedCategories = unloadRevokedScripts(previousCategories, categories)
       loadConsentedScripts(categories)
 
+      // Update Google Consent Mode v2
+      updateGoogleConsentMode(categories)
+
       const grantedCategories: ConsentCategory[] = []
       ;(Object.keys(categories) as ConsentCategory[]).forEach((category) => {
         if (!previousCategories[category] && categories[category]) {
@@ -155,7 +194,7 @@ export function CookieConsentProvider({ children, config }: CookieConsentProvide
         })
       }
     },
-    [config],
+    [config, updateGoogleConsentMode],
   )
 
   const acceptAll = React.useCallback(async () => {

@@ -120,6 +120,23 @@ export interface ConsentChangeEvent {
   grantedCategories: ConsentCategory[]
 }
 
+export interface GoogleConsentModeConfig {
+  /** Enable Google Consent Mode v2 integration */
+  enabled: boolean
+  /** Custom mapping of consent categories to Google consent types */
+  mapping?: {
+    analytics_storage?: ConsentCategory
+    ad_storage?: ConsentCategory
+    ad_user_data?: ConsentCategory
+    ad_personalization?: ConsentCategory
+    functionality_storage?: ConsentCategory
+    personalization_storage?: ConsentCategory
+    security_storage?: ConsentCategory
+  }
+  /** Regions to apply consent mode to (empty = all regions) */
+  regions?: string[]
+}
+
 export interface CookieConsentConfig {
   consentVersion: string
   expirationDays?: number
@@ -128,6 +145,7 @@ export interface CookieConsentConfig {
   categories?: CategoryConfig[]
   traceability?: TraceabilityConfig
   consentScope?: ConsentScopeConfig
+  googleConsentMode?: GoogleConsentModeConfig
   onConsentChange?: (event: ConsentChangeEvent) => void
 }
 

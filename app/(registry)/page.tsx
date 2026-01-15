@@ -69,10 +69,10 @@ const features = [
       "Granular consent categories with easy withdrawal and consent versioning.",
   },
   {
-    icon: Database,
-    title: "Full Traceability",
+    icon: Zap,
+    title: "Google Consent Mode v2",
     description:
-      "Complete audit trail with configurable API endpoint for compliance records.",
+      "Built-in Google Consent Mode v2 support. Required for EU/EEA/UK traffic as of March 2024.",
   },
   {
     icon: FileCode,
@@ -82,7 +82,7 @@ const features = [
   },
   {
     icon: Sparkles,
-    title: "shadcn/ui Compatible",
+    title: "shadcn/ui Native",
     description:
       "Built with shadcn/ui primitives - Button, Dialog, Switch, Card, and more.",
   },
@@ -93,10 +93,10 @@ const features = [
       "Fully typed with exported types for a great developer experience.",
   },
   {
-    icon: Globe,
-    title: "Hybrid Consent Scope",
+    icon: Database,
+    title: "Full Traceability",
     description:
-      "Device-level for anonymous users, global sync for authenticated users.",
+      "Complete audit trail with configurable API endpoint for compliance records.",
   },
 ];
 
@@ -120,7 +120,7 @@ export default function App({ children }) {
 }`;
 
 export default function HomePage() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://openconsent.dev";
   const registryUrl = `${baseUrl}/r/cookie-consent.json`;
   const githubUrl = "https://github.com/yhauxell/open-cookie-consent-banner";
 
@@ -137,16 +137,16 @@ export default function HomePage() {
             </Badge>
 
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
-              Cookie Consent
+              OpenConsent
               <br />
               <span className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-gradient-shift">
-                Done Right
+                openconsent.dev
               </span>
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
-              A full-featured, GDPR-compliant cookie consent solution for React
-              and Next.js. Install via shadcn/ui registry in seconds.
+              Consent management, open and simple. GDPR-compliant cookie consent
+              with Google Consent Mode v2 built-in. Install via shadcn/ui in seconds.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
