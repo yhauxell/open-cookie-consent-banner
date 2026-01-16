@@ -107,8 +107,9 @@ export function isConsentExpired(expiresAt: string): boolean {
  * Detects Google Analytics, Google Tag Manager, Google Ads, etc.
  */
 export function isGoogleScript(script: { src?: string; content?: string }): boolean {
-  // Check if src URL contains Google domains
+  // Check if src URL contains Google domains (case-insensitive)
   if (script.src) {
+    const srcLower = script.src.toLowerCase()
     const googleDomains = [
       "googletagmanager.com",
       "google-analytics.com",
@@ -118,20 +119,44 @@ export function isGoogleScript(script: { src?: string; content?: string }): bool
       "doubleclick.net",
       "googleapis.com/gtag",
     ]
-    return googleDomains.some((domain) => script.src?.includes(domain))
+    
+    // Check if any Google domain is present in the URL
+    // Use better matching to avoid false positives (e.g., "fakegoogletagmanager.com")
+    const isGoogleDomain = googleDomains.some((domain) => {
+      const domainLower = domain.toLowerCase()
+      // For full domains, check for domain boundaries (preceded by . or // or start of string)
+      if (domainLower.includes("/")) {
+        // For paths like "google.com/analytics", just check if it's included
+        return srcLower.includes(domainLower)
+      } else {
+        // For domains, check for proper domain boundaries
+        // Match: .googletagmanager.com or //googletagmanager.com or googletagmanager.com/
+        const domainPattern = new RegExp(
+          `(^|//|\\.)${domainLower.replace(/\./g, "\\.")}(/|:|$|\\?)`,
+          "i"
+        )
+        return domainPattern.test(srcLower)
+      }
+    })
+    
+    if (isGoogleDomain) {
+      return true
+    }
   }
 
-  // Check if inline content contains Google-specific code
+  // Check if inline content contains Google-specific code (case-insensitive)
+  // This is checked as a fallback if src doesn't match, or if no src is provided
   if (script.content) {
+    const contentLower = script.content.toLowerCase()
     const googlePatterns = [
       "googletagmanager.com",
       "google-analytics.com",
       "gtag(",
-      "dataLayer",
+      "datalayer",
       "ga(",
       "google-analytics",
     ]
-    return googlePatterns.some((pattern) => script.content?.includes(pattern))
+    return googlePatterns.some((pattern) => contentLower.includes(pattern.toLowerCase()))
   }
 
   return false

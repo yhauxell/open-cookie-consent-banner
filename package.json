@@ -46,7 +46,11 @@
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "registry:build": "tsx scripts/build-registry.ts",
-    "prepare": "pnpm run registry:build"
+    "prepare": "pnpm run registry:build",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -107,16 +111,23 @@
     "@eslint/js": "^9.39.1",
     "@next/eslint-plugin-next": "^16.0.7",
     "@tailwindcss/postcss": "^4.1.9",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/ui": "^2.1.8",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "jsdom": "^25.0.1",
     "postcss": "^8.5",
     "tailwindcss": "^4.1.9",
     "tsx": "^4.19.2",
     "tw-animate-css": "1.3.3",
     "typescript": "^5",
-    "typescript-eslint": "^8.48.1"
+    "typescript-eslint": "^8.48.1",
+    "vitest": "^2.1.8"
   }
 }
