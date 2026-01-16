@@ -8,6 +8,13 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./vitest.setup.ts"],
+    // CI-specific settings
+    ...(process.env.CI && {
+      reporters: ["verbose"],
+      // Increase timeout for CI environments
+      testTimeout: 10000,
+      hookTimeout: 10000,
+    }),
   },
   resolve: {
     alias: {
