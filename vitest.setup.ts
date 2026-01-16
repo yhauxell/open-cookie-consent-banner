@@ -13,7 +13,9 @@ expect.extend(matchers)
 afterEach(() => {
   cleanup()
   // Clear localStorage
-  localStorage.clear()
+  if (typeof window !== "undefined") {
+    localStorage.clear()
+  }
   // Clear all mocks
   vi.clearAllMocks()
 })
