@@ -305,14 +305,6 @@ function DemoContent() {
                 <RefreshCw className="h-4 w-4" />
                 Reset Consent
               </Button>
-              <Button
-                variant="outline"
-                onClick={openSettings}
-                className="gap-2 bg-transparent"
-              >
-                <Cookie className="h-4 w-4" />
-                Open Settings
-              </Button>
               <CookieTrigger variant="full" />
             </div>
           </CardContent>
