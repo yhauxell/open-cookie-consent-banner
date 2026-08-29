@@ -8,3 +8,6 @@ coverage
 # Build artifacts
 *.tsbuildinfo
 
+# Internal maintainer docs (kept in Notion)
+STRATEGY.md
+docs/internal/
