@@ -102,6 +102,18 @@
           "type": "registry:file",
           "target": "components/cookie-consent/tracker.ts",
           "content": "components/cookie-consent/tracker.ts"
+        },
+        {
+          "path": "components/cookie-consent/google-consent-mode.tsx",
+          "type": "registry:file",
+          "target": "components/cookie-consent/google-consent-mode.tsx",
+          "content": "components/cookie-consent/google-consent-mode.tsx"
+        },
+        {
+          "path": "components/cookie-consent/cookie-banner-backdrop.tsx",
+          "type": "registry:file",
+          "target": "components/cookie-consent/cookie-banner-backdrop.tsx",
+          "content": "components/cookie-consent/cookie-banner-backdrop.tsx"
         }
       ],
       "description": "A full-featured, GDPR-compliant cookie consent solution with traceability support, script management, and granular category control.",
