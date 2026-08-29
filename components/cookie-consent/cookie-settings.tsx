@@ -50,7 +50,7 @@ export function CookieSettings({ className }: CookieSettingsProps) {
   }
 
   const handleAcceptAll = async () => {
-    const allAccepted = getAllAcceptedCategories()
+    const allAccepted = getAllAcceptedCategories(categories)
     // Update local state immediately for UI feedback
     setLocalCategories(allAccepted)
     await acceptAll()
@@ -58,7 +58,7 @@ export function CookieSettings({ className }: CookieSettingsProps) {
   }
 
   const handleRejectAll = async () => {
-    const defaultCats = getDefaultCategories()
+    const defaultCats = getDefaultCategories(categories)
     // Update local state immediately for UI feedback
     setLocalCategories(defaultCats)
     await rejectAll()
