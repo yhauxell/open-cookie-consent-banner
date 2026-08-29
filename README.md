@@ -23,11 +23,7 @@ A full-featured, GDPR-compliant cookie consent solution with Google Consent Mode
 ## ✨ Features
 
 - 🛡️ **GDPR & CCPA Compliant** - Granular consent categories, easy withdrawal, consent versioning
-<<<<<<< Current (Your changes)
-- ⚡ **Google Consent Mode v2** - Built-in support for Google's required consent framework (EU/EEA/UK)
-=======
 - ⚡ **Google Consent Mode v2** - Built-in support for Google's required consent framework (EU/EEA/UK) - *Only initializes if Google services are detected*
->>>>>>> Incoming (Background Agent changes)
 - 🔧 **Script Management** - Automatic loading/unloading of third-party scripts based on consent
 - 🎨 **shadcn/ui Native** - Uses existing primitives (Button, Dialog, Switch, Card)
 - 📝 **TypeScript First** - Fully typed with exported types for great DX
@@ -163,13 +159,7 @@ function MyComponent() {
 
 - [Quick Start Guide](./docs/README.md) - Get started in 5 minutes
 - [Google Consent Mode v2](./docs/google-consent-mode.md) - **Required for EU/EEA/UK traffic**
-  <<<<<<< Current (Your changes)
-  <<<<<<< Current (Your changes)
-  =======
-- [Testing Guide](./docs/testing.md) - Test utilities and examples
-  > > > > > > > # Incoming (Background Agent changes)
 - [Testing Guide](./docs/testing.md) - Test utilities for consent-dependent code
-  > > > > > > > Incoming (Background Agent changes)
 - [Roadmap](./ROADMAP.md) - Feature roadmap and vision
 - [Configuration Guide](./docs/configuration.md) - Full configuration options
 - [Component API](./docs/components.md) - Component API reference
