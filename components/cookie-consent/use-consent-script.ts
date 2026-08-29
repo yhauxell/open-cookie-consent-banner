@@ -122,16 +122,24 @@ export function useConsentScript(
   // Auto-load when consent is granted
   React.useEffect(() => {
     if (consentGranted && !isLoaded && !isLoading && !error) {
+      let cancelled = false;
       setIsLoading(true);
       loadScript(id)
         .then(() => {
-          setIsLoaded(true);
-          setIsLoading(false);
+          if (!cancelled) {
+            setIsLoaded(true);
+            setIsLoading(false);
+          }
         })
         .catch((err) => {
-          setError(err);
-          setIsLoading(false);
+          if (!cancelled) {
+            setError(err);
+            setIsLoading(false);
+          }
         });
+      return () => {
+        cancelled = true;
+      };
     }
   }, [consentGranted, isLoaded, isLoading, error, id]);
 

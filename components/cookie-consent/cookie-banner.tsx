@@ -77,7 +77,12 @@ export function CookieBanner({ className }: CookieBannerProps) {
                     <Settings className="h-4 w-4" />
                     Customize
                   </Button>
-                  <Button size="sm" onClick={rejectAll}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={rejectAll}
+                    className="bg-transparent"
+                  >
                     Reject All
                   </Button>
                   <Button size="sm" onClick={acceptAll}>

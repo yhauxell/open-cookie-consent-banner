@@ -267,14 +267,18 @@ export const scriptCleanupHelpers = {
     // Remove GA cookies
     const cookies = document.cookie.split(";");
     cookies.forEach((cookie) => {
-      const name = cookie.split("=")[0].trim();
-      if (
-        name.startsWith("_ga") ||
-        name.startsWith("_gid") ||
-        name.startsWith("_gat")
-      ) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+      const parts = cookie.split("=");
+      const firstPart = parts[0];
+      if (firstPart !== undefined) {
+        const name = firstPart.trim();
+        if (
+          name.startsWith("_ga") ||
+          name.startsWith("_gid") ||
+          name.startsWith("_gat")
+        ) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+        }
       }
     });
     // Clear GA global
@@ -289,10 +293,14 @@ export const scriptCleanupHelpers = {
   facebookPixel: () => {
     const cookies = document.cookie.split(";");
     cookies.forEach((cookie) => {
-      const name = cookie.split("=")[0].trim();
-      if (name.startsWith("_fbp") || name.startsWith("_fbc")) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+      const parts = cookie.split("=");
+      const firstPart = parts[0];
+      if (firstPart !== undefined) {
+        const name = firstPart.trim();
+        if (name.startsWith("_fbp") || name.startsWith("_fbc")) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+        }
       }
     });
     if (typeof window !== "undefined") {
@@ -304,10 +312,14 @@ export const scriptCleanupHelpers = {
   clearCookiesByPrefix: (prefix: string) => {
     const cookies = document.cookie.split(";");
     cookies.forEach((cookie) => {
-      const name = cookie.split("=")[0].trim();
-      if (name.startsWith(prefix)) {
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
-        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+      const parts = cookie.split("=");
+      const firstPart = parts[0];
+      if (firstPart !== undefined) {
+        const name = firstPart.trim();
+        if (name.startsWith(prefix)) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=${window.location.hostname}`;
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.${window.location.hostname}`;
+        }
       }
     });
   },

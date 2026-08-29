@@ -7,13 +7,22 @@ import { cn } from "@/lib/utils"
 export interface CookieTriggerProps {
   className?: string
   variant?: "icon" | "text" | "full"
+  children?: React.ReactNode
 }
 
 /**
  * A trigger button to reopen cookie settings after initial consent
  */
-export function CookieTrigger({ className, variant = "text" }: CookieTriggerProps) {
+export function CookieTrigger({ className, variant = "text", children }: CookieTriggerProps) {
   const { openSettings, state } = useCookieConsent()
+
+  if (children) {
+    return (
+      <Button onClick={openSettings} className={className}>
+        {children}
+      </Button>
+    )
+  }
 
   if (!state.hasConsented) {
     return null
