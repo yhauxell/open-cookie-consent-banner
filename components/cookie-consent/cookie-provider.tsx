@@ -27,7 +27,9 @@ import {
   clearConsentState,
   getAllAcceptedCategories,
   getDefaultCategories,
+  getExistingVisitorId,
   getVisitorId,
+  isConsentExpired,
   isGoogleScript,
   loadConsentState,
   saveConsentState,
@@ -73,7 +75,7 @@ export function CookieConsentProvider({
 }: CookieConsentProviderProps) {
   const [state, setState] = React.useState<ConsentState>(() => ({
     hasConsented: false,
-    categories: getDefaultCategories(),
+    categories: getDefaultCategories(config.categories),
     lastUpdated: null,
     consentVersion: config.consentVersion,
     visitorId: "",
@@ -84,7 +86,7 @@ export function CookieConsentProvider({
   const [hasGoogleScripts, setHasGoogleScripts] = React.useState(false);
 
   const previousCategoriesRef = React.useRef<ConsentCategories>(
-    getDefaultCategories()
+    getDefaultCategories(config.categories)
   );
 
   // Auto-enable Google Consent Mode if Google scripts are detected
@@ -151,17 +153,29 @@ export function CookieConsentProvider({
 
   // Initialize state from localStorage
   React.useEffect(() => {
-    const visitorId = getVisitorId();
+    const visitorId = getExistingVisitorId();
     const stored = loadConsentState();
 
-    if (stored && stored.consentVersion === config.consentVersion) {
-      setState({ ...stored, visitorId });
+    const isExpired = stored?.expiresAt
+      ? isConsentExpired(stored.expiresAt)
+      : stored?.lastUpdated
+        ? new Date(stored.lastUpdated).getTime() +
+            (config.expirationDays ?? 365) * 86400000 <
+          Date.now()
+        : false;
+
+    if (
+      stored &&
+      stored.consentVersion === config.consentVersion &&
+      !isExpired
+    ) {
+      setState({ ...stored, visitorId: stored.visitorId || visitorId || "" });
       setIsBannerVisible(false);
       previousCategoriesRef.current = stored.categories;
 
       loadConsentedScripts(stored.categories);
     } else {
-      setState((prev) => ({ ...prev, visitorId }));
+      setState((prev) => ({ ...prev, visitorId: visitorId || "" }));
       setIsBannerVisible(true);
     }
 
@@ -170,7 +184,7 @@ export function CookieConsentProvider({
     if (config.traceability?.enabled) {
       retryFailedRecords(config.traceability);
     }
-  }, [config.consentVersion, config.traceability]);
+  }, [config.consentVersion, config.expirationDays, config.traceability]);
 
   // Check for existing Google scripts on mount
   React.useEffect(() => {
@@ -197,6 +211,7 @@ export function CookieConsentProvider({
         lastUpdated: new Date().toISOString(),
         consentVersion: config.consentVersion,
         visitorId,
+        expiresAt,
       };
 
       setState(newState);
@@ -251,12 +266,18 @@ export function CookieConsentProvider({
   );
 
   const acceptAll = React.useCallback(async () => {
-    await saveAndTrack(getAllAcceptedCategories(), "accept_all");
-  }, [saveAndTrack]);
+    await saveAndTrack(
+      getAllAcceptedCategories(config.categories ?? defaultCategories),
+      "accept_all"
+    );
+  }, [config.categories, saveAndTrack]);
 
   const rejectAll = React.useCallback(async () => {
-    await saveAndTrack(getDefaultCategories(), "reject_all");
-  }, [saveAndTrack]);
+    await saveAndTrack(
+      getDefaultCategories(config.categories),
+      "reject_all"
+    );
+  }, [config.categories, saveAndTrack]);
 
   const updateConsent = React.useCallback(
     async (categories: Partial<ConsentCategories>) => {
@@ -284,7 +305,7 @@ export function CookieConsentProvider({
   }, []);
 
   const resetConsent = React.useCallback(() => {
-    const defaultCats = getDefaultCategories();
+    const defaultCats = getDefaultCategories(config.categories);
     unloadRevokedScripts(state.categories, defaultCats);
 
     clearConsentState();
@@ -293,11 +314,11 @@ export function CookieConsentProvider({
       categories: defaultCats,
       lastUpdated: null,
       consentVersion: config.consentVersion,
-      visitorId: getVisitorId(),
+      visitorId: "",
     });
     previousCategoriesRef.current = defaultCats;
     setIsBannerVisible(true);
-  }, [config.consentVersion, state.categories]);
+  }, [config.categories, config.consentVersion, state.categories]);
 
   const hasConsent = React.useCallback(
     (category: "necessary" | "analytics" | "marketing" | "preferences") => {
