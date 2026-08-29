@@ -1,6 +1,6 @@
 {
   "name": "open-cookie-consent-banner",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open Cookie Consent Banner - A full-featured, GDPR-compliant cookie consent solution with traceability support, compatible with shadcn/ui registry",
   "keywords": [
     "cookie-consent",
