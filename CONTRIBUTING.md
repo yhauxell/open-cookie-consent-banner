@@ -140,6 +140,18 @@ This fix ensures proper display on all screen sizes.
 Fixes #456
 ```
 
+## Releases & Changelog
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) and automated releases powered by **Release Please** and `conventional-changelog`.
+
+- Every merge to `main` with semantic commits (`feat:`, `fix:`, etc.) triggers the automated release workflow.
+- Release Please creates and updates a Release PR that increments versions according to SemVer and maintains `CHANGELOG.md`.
+- Merging the Release PR automatically creates the GitHub release and git tag.
+- You can also preview or regenerate `CHANGELOG.md` locally at any time:
+  ```bash
+  pnpm changelog
+  ```
+
 ## Review Process
 
 1. All PRs require at least one review
