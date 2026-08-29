@@ -160,6 +160,8 @@ export interface ConsentState {
   consentVersion: string
   /** Visitor ID */
   visitorId: string
+  /** When consent expires */
+  expiresAt?: string
 }
 
 export interface CookieConsentContextValue {

@@ -1,4 +1,4 @@
-import type { ConsentCategories, ConsentState } from "./types"
+import type { CategoryConfig, ConsentCategories, ConsentState } from "./types"
 
 const STORAGE_KEY = "cookie-consent"
 const VISITOR_ID_KEY = "cookie-consent-visitor-id"
@@ -12,6 +12,14 @@ export function generateUUID(): string {
     const v = c === "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
+}
+
+/**
+ * Get existing visitor ID from localStorage without creating or persisting one
+ */
+export function getExistingVisitorId(): string | null {
+  if (typeof window === "undefined") return null
+  return localStorage.getItem(VISITOR_ID_KEY)
 }
 
 /**
@@ -31,27 +39,52 @@ export function getVisitorId(): string {
 }
 
 /**
- * Get default consent categories (all false except necessary)
+ * Get default consent categories (all false except necessary, or required categories from config)
  */
-export function getDefaultCategories(): ConsentCategories {
-  return {
+export function getDefaultCategories(categories?: CategoryConfig[]): ConsentCategories {
+  const result: ConsentCategories = {
     necessary: true,
     analytics: false,
     marketing: false,
     preferences: false,
   }
+
+  if (categories) {
+    for (const category of categories) {
+      if (category.required) {
+        result[category.key] = true
+      }
+    }
+  }
+
+  return result
 }
 
 /**
- * Get all categories accepted
+ * Get all configured categories accepted (defaults to all categories if no config provided)
  */
-export function getAllAcceptedCategories(): ConsentCategories {
-  return {
-    necessary: true,
-    analytics: true,
-    marketing: true,
-    preferences: true,
+export function getAllAcceptedCategories(categories?: CategoryConfig[]): ConsentCategories {
+  if (!categories || categories.length === 0) {
+    return {
+      necessary: true,
+      analytics: true,
+      marketing: true,
+      preferences: true,
+    }
   }
+
+  const result: ConsentCategories = {
+    necessary: true,
+    analytics: false,
+    marketing: false,
+    preferences: false,
+  }
+
+  for (const category of categories) {
+    result[category.key] = true
+  }
+
+  return result
 }
 
 /**
