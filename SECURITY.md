@@ -20,7 +20,7 @@ We take the security of Open Cookie Consent Banner seriously. If you believe you
 
 ### Please DO:
 
-1. **Email us directly** at: your.email@example.com
+1. **Email us directly** at: yhauxell@gmail.com
 
    - Include "SECURITY" in the subject line
    - Provide a detailed description of the vulnerability
