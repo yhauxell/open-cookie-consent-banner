@@ -48,6 +48,8 @@ export default function App({ children }) {
 - [Components](./components.md) - Component API reference
 - [Hooks](./hooks.md) - React hooks API
 - [Script Management](./script-management.md) - Managing third-party scripts
+- [Google Consent Mode v2](./google-consent-mode.md) - Integration guide for Google services
+- [PostHog Integration](./posthog-integration.md) - Dual-mode cookieless & persistent PostHog integration
 - [Traceability](./traceability.md) - Consent audit trail setup
 - [Database Schema](./database.md) - Supabase/PostgreSQL schema
 
