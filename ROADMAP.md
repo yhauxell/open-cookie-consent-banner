@@ -20,6 +20,7 @@ This roadmap outlines our vision and planned features for OpenConsent. We believ
 - ✅ PostHog hybrid cookieless & persistent telemetry integration
 - ✅ Next.js App Router reference implementation & demo
 - ✅ Automated releases & changelog generation (Release Please)
+- ✅ Production deployment to [openconsent.dev](https://openconsent.dev) (DNS & production domain)
 
 ## 🚧 In Progress
 
@@ -30,9 +31,8 @@ This roadmap outlines our vision and planned features for OpenConsent. We believ
 
 ### Short-term (Next 4 weeks)
 
-- [ ] Deploy to openconsent.dev (DNS & production domain)
 - [ ] Browser DevTools extension (consent state inspection & script simulation)
-- [ ] Interactive playground
+- [ ] Interactive playground & visual theme configurator
 
 ### Medium-term (Months 2-3)
 
