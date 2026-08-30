@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { Cookie, Settings } from "lucide-react";
 import { useCookieConsent } from "./cookie-provider";
+import type { BannerPosition } from "./types";
 
 export interface CookieBannerProps {
   className?: string;
+  position?: BannerPosition;
 }
 
-export function CookieBanner({ className }: CookieBannerProps) {
+export function CookieBanner({ className, position: propPosition }: CookieBannerProps) {
   const { isBannerVisible, acceptAll, rejectAll, openSettings, config } =
     useCookieConsent();
 
@@ -20,7 +22,7 @@ export function CookieBanner({ className }: CookieBannerProps) {
     "bottom-right": "bottom-4 right-4 max-w-md",
   };
 
-  const position = config.position ?? "bottom";
+  const position = propPosition ?? config.position ?? "bottom";
 
   return (
     <AnimatePresence>
@@ -30,14 +32,15 @@ export function CookieBanner({ className }: CookieBannerProps) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: position.includes("top") ? -100 : 100, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className={cn("fixed z-50 p-4", positionClasses[position], className)}
+          className={cn("fixed z-50 p-4", positionClasses[position])}
         >
           <div
             className={cn(
               "bg-card border border-border rounded-lg shadow-lg",
               position === "bottom" || position === "top"
                 ? "mx-auto max-w-5xl"
-                : ""
+                : "",
+              className
             )}
           >
             <div className="p-6">

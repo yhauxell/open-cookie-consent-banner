@@ -13,7 +13,7 @@ const githubUrl = "https://github.com/yhauxell/open-cookie-consent-banner";
 
 const navLinks = [
   { href: "/docs", label: "Docs" },
-  { href: "/demo", label: "Demo" },
+  { href: "/demo", label: "Playground" },
   { href: githubUrl, label: "GitHub", external: true },
 ];
 

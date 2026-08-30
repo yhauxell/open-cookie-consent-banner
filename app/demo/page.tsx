@@ -2,15 +2,15 @@ import { CookieConsentDemo } from "@/components/cookie-consent-demo";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Open Cookie Consent Banner - Interactive Demo",
+  title: "Interactive Playground & Showcase - OpenConsent",
   description:
-    "Try the cookie consent banner component with live examples. See how it handles consent management, script loading, and user preferences in real-time.",
+    "Customize cookie consent banner layout, styling, and behavior in real-time. Test script blocking, Google Consent Mode v2 signals, and copy the shadcn CLI install command.",
   keywords: [
-    "cookie consent demo",
-    "cookie banner demo",
-    "GDPR consent example",
-    "cookie consent preview",
-    "try cookie consent",
+    "cookie consent playground",
+    "cookie banner configurator",
+    "shadcn cookie consent",
+    "GDPR consent demo",
+    "Google Consent Mode v2 preview",
   ],
   openGraph: {
     title: "Open Cookie Consent Banner - Interactive Demo",

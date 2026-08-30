@@ -1,4 +1,6 @@
 "use client";
+
+import React, { useState } from "react";
 import {
   ConsentScript,
   CookieBanner,
@@ -8,6 +10,7 @@ import {
   CookieTrigger,
   useConsentScript,
   useCookieConsent,
+  type BannerPosition,
   type ConsentChangeEvent,
   type CookieConsentConfig,
 } from "@/components/cookie-consent";
@@ -20,60 +23,69 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
   Code,
   Cookie,
   Database,
+  Eye,
+  Layout,
+  Palette,
   RefreshCw,
+  Settings,
   Shield,
+  Sliders,
+  Sparkles,
+  Terminal,
   Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { MockBrowserCanvas } from "@/components/playground/mock-browser-canvas";
+import { CodeExportCard } from "@/components/playground/code-export-card";
 
-const config: CookieConsentConfig = {
-  consentVersion: "1.0.0",
-  expirationDays: 365,
-  privacyPolicyUrl: "/privacy",
-  position: "bottom",
-  traceability: {
-    enabled: true,
-    endpoint: "/api/consent",
-    includeUserAgent: true,
-    includeUrl: true,
-    retryOnFailure: true,
-    maxRetries: 3,
-    onSuccess: (record) => {
-      console.log("[Demo] Consent tracked successfully:", record.consentId);
-    },
-    onError: (error, record) => {
-      console.error("[Demo] Failed to track consent:", error, record);
-    },
-  },
-  onConsentChange: (event) => {
-    console.log("[Demo] Consent changed:", {
-      action: event.action,
-      granted: event.grantedCategories,
-      revoked: event.revokedCategories,
-    });
+interface PlaygroundOptions {
+  position: BannerPosition;
+  radiusClass: string;
+  hasBackdrop: boolean;
+  theme: "default" | "violet" | "emerald" | "blue" | "rose";
+}
 
-    // Example: React to specific category changes
-    if (event.revokedCategories.includes("analytics")) {
-      console.log("[Demo] Analytics was revoked - scripts will be unloaded");
-    }
-    if (event.grantedCategories.includes("analytics")) {
-      console.log("[Demo] Analytics was granted - scripts will be loaded");
-    }
-  },
-};
+const RADIUS_OPTIONS = [
+  { label: "Sharp (0px)", value: "rounded-none" },
+  { label: "Subtle (6px)", value: "rounded-md" },
+  { label: "Default (8px)", value: "rounded-lg" },
+  { label: "Modern (16px)", value: "rounded-2xl" },
+  { label: "Pill (Full)", value: "rounded-full" },
+];
 
-function DemoContent() {
-  const { state, resetConsent, openSettings, getLoadedScripts } =
+const POSITION_OPTIONS: { label: string; value: BannerPosition }[] = [
+  { label: "Bottom Bar", value: "bottom" },
+  { label: "Top Bar", value: "top" },
+  { label: "Bottom Right", value: "bottom-right" },
+  { label: "Bottom Left", value: "bottom-left" },
+];
+
+const THEME_OPTIONS: { label: string; value: PlaygroundOptions["theme"]; colorClass: string }[] = [
+  { label: "Default", value: "default", colorClass: "bg-zinc-900 border-zinc-700" },
+  { label: "Violet", value: "violet", colorClass: "bg-violet-600 border-violet-500" },
+  { label: "Emerald", value: "emerald", colorClass: "bg-emerald-600 border-emerald-500" },
+  { label: "Blue", value: "blue", colorClass: "bg-blue-600 border-blue-500" },
+  { label: "Rose", value: "rose", colorClass: "bg-rose-600 border-rose-500" },
+];
+
+function DemoContent({
+  options,
+  setOptions,
+  events,
+}: {
+  options: PlaygroundOptions;
+  setOptions: React.Dispatch<React.SetStateAction<PlaygroundOptions>>;
+  events: ConsentChangeEvent[];
+}) {
+  const { state, resetConsent, openSettings, acceptAll, rejectAll, getLoadedScripts } =
     useCookieConsent();
-  const [_consentEvents, _setConsentEvents] = useState<ConsentChangeEvent[]>(
-    []
-  );
 
   const analyticsScript = useConsentScript("analytics", "demo-analytics", {
     content: `console.log("[Demo] Analytics script loaded via useConsentScript hook");`,
@@ -83,278 +95,424 @@ function DemoContent() {
   });
 
   const categories = [
-    { key: "necessary" as const, label: "Necessary", icon: Shield },
-    { key: "analytics" as const, label: "Analytics", icon: Database },
-    { key: "marketing" as const, label: "Marketing", icon: Zap },
-    { key: "preferences" as const, label: "Preferences", icon: Cookie },
+    { key: "necessary" as const, label: "Necessary", icon: Shield, description: "Core site functions" },
+    { key: "analytics" as const, label: "Analytics", icon: Database, description: "GA4, PostHog, telemetry" },
+    { key: "marketing" as const, label: "Marketing", icon: Zap, description: "Meta Pixel, ads, conversion" },
+    { key: "preferences" as const, label: "Preferences", icon: Cookie, description: "Saved themes and state" },
   ];
 
   const loadedScripts = getLoadedScripts();
 
+  // Computed Google Consent Mode v2 live state
+  const gcmSignals = {
+    analytics_storage: state.categories.analytics ? "granted" : "denied",
+    ad_storage: state.categories.marketing ? "granted" : "denied",
+    ad_user_data: state.categories.marketing ? "granted" : "denied",
+    ad_personalization: state.categories.marketing ? "granted" : "denied",
+  };
+
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen">
+      {/* Interactive Scripts for Capabilities Demo */}
       <ConsentScript
         id="google-analytics"
         category="analytics"
-        onLoad={() => console.log("[Demo] GA loaded")}
-        onRevoke={() => console.log("[Demo] GA revoked and cleaned up")}
+        onLoad={() => console.log("[Demo Script] Google Analytics initialized")}
+        onRevoke={() => console.log("[Demo Script] Google Analytics revoked and cleaned up")}
       >
-        {`console.log("[Demo Script] Analytics initialized");`}
+        {`console.log("[Demo Script] GA active");`}
       </ConsentScript>
 
       <ConsentScript
         id="marketing-pixel"
         category="marketing"
-        onLoad={() => console.log("[Demo] Marketing pixel loaded")}
-        onRevoke={() => console.log("[Demo] Marketing pixel revoked")}
+        onLoad={() => console.log("[Demo Script] Marketing pixel initialized")}
+        onRevoke={() => console.log("[Demo Script] Marketing pixel revoked and cleaned up")}
       >
-        {`console.log("[Demo Script] Marketing pixel initialized");`}
+        {`console.log("[Demo Script] Meta Pixel active");`}
       </ConsentScript>
 
-      <div className="container max-w-4xl mx-auto py-12 px-4">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Cookie className="h-6 w-6 text-primary" />
-            </div>
+      <div className="container max-w-6xl mx-auto py-10 px-4 space-y-10">
+        {/* Header section */}
+        <div className="text-center space-y-3">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Badge variant="outline" className="text-xs px-3 py-1 gap-1.5 border-primary/30 text-primary">
+              <Sparkles className="h-3.5 w-3.5" />
+              Interactive Playground & Capabilities Showcase
+            </Badge>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-3">
-            Open Cookie Consent Banner
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground">
+            Customize & Test in Real-Time
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            A full-featured, GDPR-compliant cookie consent solution with
-            traceability support. Compatible with shadcn/ui registry.
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+            Tweak banner positions, corner radii, and backdrops. Test real-time script blocking and Google Consent Mode v2 signals, then copy the shadcn CLI install command.
           </p>
+
+          {/* Quick Action Bar */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={resetConsent}
+              className="gap-2 shadow-sm"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Reset Consent & Re-show Banner
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openSettings}
+              className="gap-2"
+            >
+              <Sliders className="h-4 w-4" />
+              Open Cookie Settings Modal
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={acceptAll}
+              className="gap-2"
+            >
+              Accept All
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={rejectAll}
+              className="gap-2 text-muted-foreground"
+            >
+              Reject Optional
+            </Button>
+          </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Consent Status</CardTitle>
-              <CardDescription>
-                Current consent state and preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Has Consented
-                  </span>
+        {/* 🎛️ Playground Controls Grid */}
+        <Card className="border-border shadow-sm">
+          <CardHeader className="pb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Layout className="h-5 w-5 text-primary" />
+                  Live Theme & Layout Controls
+                </CardTitle>
+                <CardDescription>
+                  Modify properties below to see immediate updates in the preview viewport
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-3">
+              {/* Control 1: Position */}
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Banner Position
+                </Label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {POSITION_OPTIONS.map((pos) => (
+                    <Button
+                      key={pos.value}
+                      size="sm"
+                      variant={options.position === pos.value ? "default" : "outline"}
+                      onClick={() => setOptions((prev) => ({ ...prev, position: pos.value }))}
+                      className="text-xs h-8 px-2.5 font-normal justify-center"
+                    >
+                      {pos.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Control 2: Border Radius */}
+              <div className="space-y-2.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Corner Radius
+                </Label>
+                <div className="grid grid-cols-3 gap-1.5">
+                  {RADIUS_OPTIONS.map((rad) => (
+                    <Button
+                      key={rad.value}
+                      size="sm"
+                      variant={options.radiusClass === rad.value ? "default" : "outline"}
+                      onClick={() => setOptions((prev) => ({ ...prev, radiusClass: rad.value }))}
+                      className={cn("text-xs h-8 px-2 font-normal justify-center", rad.value)}
+                    >
+                      {rad.label.split(" ")[0]}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Control 3: Backdrop & Options */}
+              <div className="space-y-3.5">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Behavior & Overlay
+                </Label>
+                <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-muted/30">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="backdrop-toggle" className="text-xs font-medium cursor-pointer">
+                      Backdrop Blocker
+                    </Label>
+                    <p className="text-[11px] text-muted-foreground">Dims background until decision</p>
+                  </div>
+                  <Switch
+                    id="backdrop-toggle"
+                    checked={options.hasBackdrop}
+                    onCheckedChange={(checked) =>
+                      setOptions((prev) => ({ ...prev, hasBackdrop: checked }))
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 🖥️ Mock Viewport Canvas */}
+        <MockBrowserCanvas>
+          {/* Note: The CookieBanner will appear over this page via the CookieConsentProvider */}
+        </MockBrowserCanvas>
+
+        {/* 📦 Installation & Code Export Card */}
+        <CodeExportCard
+          position={options.position}
+          radiusClass={options.radiusClass}
+          hasBackdrop={options.hasBackdrop}
+        />
+
+        {/* 📊 Capabilities & Telemetry Showcase Section */}
+        <div className="space-y-4 pt-4">
+          <div className="border-t border-border pt-6">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <Shield className="h-6 w-6 text-primary" />
+              Consent Engine & Telemetry Showcase
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Live audit inspection of consent states, category permissions, script unload triggers, and Google Consent Mode v2 signals.
+            </p>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Live Consent Status */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Cookie className="h-4 w-4 text-primary" />
+                  Consent State & Identity
+                </CardTitle>
+                <CardDescription>Device-level consent session attributes</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between py-1 border-b border-border/50">
+                  <span className="text-sm text-muted-foreground">Consent Given</span>
                   <Badge variant={state.hasConsented ? "default" : "secondary"}>
-                    {state.hasConsented ? "Yes" : "No"}
+                    {state.hasConsented ? "Consented ✓" : "Pending Decision"}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Version</span>
-                  <code className="text-sm bg-muted px-2 py-0.5 rounded">
-                    {state.consentVersion}
+                <div className="flex items-center justify-between py-1 border-b border-border/50">
+                  <span className="text-sm text-muted-foreground">Consent Version</span>
+                  <code className="text-xs bg-muted px-2 py-0.5 rounded font-mono">
+                    v{state.consentVersion}
                   </code>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Visitor ID
+                <div className="flex items-center justify-between py-1 border-b border-border/50">
+                  <span className="text-sm text-muted-foreground">Visitor Device ID</span>
+                  <code className="text-xs bg-muted px-2 py-0.5 rounded font-mono truncate max-w-[180px]">
+                    {state.visitorId}
+                  </code>
+                </div>
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-sm text-muted-foreground">Last Recorded</span>
+                  <span className="text-xs text-muted-foreground font-mono">
+                    {state.lastUpdated ? new Date(state.lastUpdated).toLocaleTimeString() : "None"}
                   </span>
-                  <code className="text-xs bg-muted px-2 py-0.5 rounded truncate max-w-32">
-                    {state.visitorId.slice(0, 8)}...
-                  </code>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Categories</CardTitle>
-              <CardDescription>Active cookie categories</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                {categories.map(({ key, label, icon: Icon }) => (
-                  <div
-                    key={key}
-                    className={`flex items-center gap-2 rounded-md border p-2 transition-colors ${
-                      state.categories[key]
-                        ? "border-primary/30 bg-primary/5"
-                        : "border-border bg-muted/30"
-                    }`}
-                  >
-                    <Icon
-                      className={`h-4 w-4 ${
+            {/* Categories Status */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Sliders className="h-4 w-4 text-primary" />
+                  Granular Category Permissions
+                </CardTitle>
+                <CardDescription>Current permissions per data processing category</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2.5">
+                  {categories.map(({ key, label, icon: Icon, description }) => (
+                    <div
+                      key={key}
+                      className={cn(
+                        "rounded-lg border p-2.5 transition-all flex flex-col justify-between",
                         state.categories[key]
-                          ? "text-primary"
-                          : "text-muted-foreground"
-                      }`}
-                    />
-                    <span className="text-sm">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                          ? "border-primary/40 bg-primary/5"
+                          : "border-border/60 bg-muted/20 opacity-75"
+                      )}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-1.5">
+                          <Icon
+                            className={cn(
+                              "h-3.5 w-3.5",
+                              state.categories[key] ? "text-primary" : "text-muted-foreground"
+                            )}
+                          />
+                          <span className="text-xs font-semibold">{label}</span>
+                        </div>
+                        <Badge
+                          variant={state.categories[key] ? "default" : "secondary"}
+                          className="text-[10px] h-4 px-1.5 font-normal"
+                        >
+                          {state.categories[key] ? "Granted" : "Denied"}
+                        </Badge>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">{description}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Code className="h-5 w-5" />
-              Script Management
-            </CardTitle>
-            <CardDescription>
-              Third-party scripts are loaded/unloaded based on consent
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium mb-2">Loaded Scripts</p>
-                {loadedScripts.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {loadedScripts.map((id) => (
-                      <Badge
-                        key={id}
-                        variant="outline"
-                        className="font-mono text-xs"
-                      >
-                        {id}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    No scripts loaded - grant consent to load scripts
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Script Management Telemetry */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Code className="h-4 w-4 text-primary" />
+                  Script Manager Live Telemetry
+                </CardTitle>
+                <CardDescription>
+                  Scripts load when consent is granted and automatically unload when revoked
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+                    Tracked Scripts Status
                   </p>
-                )}
-              </div>
-
-              <div className="border-t pt-4">
-                <p className="text-sm font-medium mb-2">
-                  Hook Example: useConsentScript
-                </p>
-                <div className="bg-muted rounded-md p-3 text-sm font-mono">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      demo-analytics
-                    </span>
-                    <div className="flex gap-2">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 rounded-md bg-muted/40 border border-border/60 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Database className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="font-mono">google-analytics</span>
+                        <span className="text-muted-foreground">(analytics)</span>
+                      </div>
                       <Badge
-                        variant={
-                          analyticsScript.hasConsent ? "default" : "secondary"
-                        }
+                        variant={loadedScripts.includes("google-analytics") ? "default" : "outline"}
                         className={cn(
-                          "text-xs",
-                          analyticsScript.hasConsent
-                            ? "bg-green-500/10 text-green-500"
-                            : "bg-red-500/10 text-red-500"
+                          "text-[10px] h-5",
+                          loadedScripts.includes("google-analytics")
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                            : "text-muted-foreground"
                         )}
                       >
-                        {analyticsScript.hasConsent
-                          ? "Consent ✓"
-                          : "No Consent"}
+                        {loadedScripts.includes("google-analytics") ? "Loaded ✓" : "Blocked ✕"}
                       </Badge>
+                    </div>
+
+                    <div className="flex items-center justify-between p-2 rounded-md bg-muted/40 border border-border/60 text-xs">
+                      <div className="flex items-center gap-2">
+                        <Zap className="h-3.5 w-3.5 text-muted-foreground" />
+                        <span className="font-mono">marketing-pixel</span>
+                        <span className="text-muted-foreground">(marketing)</span>
+                      </div>
                       <Badge
-                        variant={
-                          analyticsScript.isLoaded ? "default" : "outline"
-                        }
+                        variant={loadedScripts.includes("marketing-pixel") ? "default" : "outline"}
                         className={cn(
-                          "text-xs",
-                          analyticsScript.isLoading
-                            ? "bg-yellow-500/10 text-yellow-500"
-                            : analyticsScript.isLoaded
-                            ? "bg-green-500/10 text-green-500"
-                            : "bg-red-500/10 text-red-500"
+                          "text-[10px] h-5",
+                          loadedScripts.includes("marketing-pixel")
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                            : "text-muted-foreground"
                         )}
                       >
-                        {analyticsScript.isLoading
-                          ? "Loading..."
-                          : analyticsScript.isLoaded
-                          ? "Loaded"
-                          : "Not Loaded"}
+                        {loadedScripts.includes("marketing-pixel") ? "Loaded ✓" : "Blocked ✕"}
                       </Badge>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="border-t pt-4">
-                <p className="text-sm text-muted-foreground">
-                  Open browser console to see script load/unload events. Try
-                  accepting then rejecting cookies to see scripts being cleaned
-                  up.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                <div className="border-t border-border/60 pt-3">
+                  <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
+                    Hook Demo: useConsentScript("analytics")
+                  </p>
+                  <div className="flex items-center justify-between p-2 rounded-md bg-muted/40 border border-border/60 text-xs">
+                    <span className="font-mono text-muted-foreground">demo-analytics hook</span>
+                    <Badge
+                      variant={analyticsScript.hasConsent ? "default" : "secondary"}
+                      className="text-[10px] h-5"
+                    >
+                      {analyticsScript.hasConsent ? "Active ✓" : "Halted ✕"}
+                    </Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg">Actions</CardTitle>
-            <CardDescription>
-              Test the cookie consent functionality
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant="outline"
-                onClick={resetConsent}
-                className="gap-2 bg-transparent"
-              >
-                <RefreshCw className="h-4 w-4" />
-                Reset Consent
-              </Button>
-              <CookieTrigger variant="full" />
-            </div>
-          </CardContent>
-        </Card>
+            {/* Google Consent Mode v2 Signals */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" />
+                  Google Consent Mode v2 Signals
+                </CardTitle>
+                <CardDescription>
+                  Live values dispatched to window.dataLayer / gtag("consent", "update")
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+                  {Object.entries(gcmSignals).map(([signal, value]) => (
+                    <div
+                      key={signal}
+                      className="p-2.5 rounded-lg border border-border/60 bg-muted/20 flex flex-col justify-between gap-1"
+                    >
+                      <span className="text-muted-foreground text-[11px] truncate">{signal}</span>
+                      <Badge
+                        variant={value === "granted" ? "default" : "secondary"}
+                        className={cn(
+                          "text-[10px] w-fit",
+                          value === "granted"
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                            : "bg-muted text-muted-foreground"
+                        )}
+                      >
+                        "{value}"
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Features</CardTitle>
-            <CardDescription>What this component provides</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                GDPR compliant consent management
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Granular category control
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Traceability with API endpoint
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Device and global consent modes
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Persistent localStorage storage
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Retry logic for failed API calls
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Consent-aware script loading
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Automatic script cleanup on revoke
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
+                {/* Consent event stream snippet */}
+                <div className="border-t border-border/60 pt-3 mt-4">
+                  <p className="text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wider">
+                    Recent Consent Events ({events.length})
+                  </p>
+                  {events.length > 0 ? (
+                    <div className="space-y-1 max-h-24 overflow-y-auto font-mono text-[11px] text-muted-foreground">
+                      {events.slice(-3).map((evt, idx) => (
+                        <div key={idx} className="flex justify-between py-0.5 border-b border-border/30">
+                          <span>action: {evt.action}</span>
+                          <span>granted: {evt.grantedCategories.join(",") || "none"}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic">
+                      Interact with the banner buttons above to stream events.
+                    </p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
-        {/* Cookie settings link */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
+        {/* Footer trigger demo */}
+        <div className="text-center pt-4">
           <CookieTrigger variant="text" />
         </div>
       </div>
@@ -363,11 +521,41 @@ function DemoContent() {
 }
 
 export function CookieConsentDemo() {
+  const [options, setOptions] = useState<PlaygroundOptions>({
+    position: "bottom",
+    radiusClass: "rounded-lg",
+    hasBackdrop: false,
+    theme: "default",
+  });
+  const [events, setEvents] = useState<ConsentChangeEvent[]>([]);
+
+  const config: CookieConsentConfig = {
+    consentVersion: "1.0.0",
+    expirationDays: 365,
+    privacyPolicyUrl: "/privacy",
+    position: options.position,
+    traceability: {
+      enabled: true,
+      endpoint: "/api/consent",
+      includeUserAgent: true,
+      includeUrl: true,
+      retryOnFailure: true,
+      maxRetries: 3,
+    },
+    onConsentChange: (event) => {
+      setEvents((prev) => [...prev, event]);
+      console.log("[Demo] onConsentChange:", event);
+    },
+  };
+
   return (
     <CookieConsentProvider config={config}>
-      <DemoContent />
-      <CookieBannerBackdrop />
-      <CookieBanner />
+      <DemoContent options={options} setOptions={setOptions} events={events} />
+      {options.hasBackdrop && <CookieBannerBackdrop />}
+      <CookieBanner
+        position={options.position}
+        className={cn(options.radiusClass, "shadow-2xl")}
+      />
       <CookieSettings />
     </CookieConsentProvider>
   );
