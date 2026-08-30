@@ -11,40 +11,40 @@ This roadmap outlines our vision and planned features for OpenConsent. We believ
 - ✅ Google Consent Mode v2 integration
 - ✅ shadcn/ui registry distribution
 - ✅ TypeScript-first with full type safety
-- ✅ Automatic script management
-- ✅ Full traceability support
-- ✅ Comprehensive documentation
-- ✅ Testing utilities for consent-dependent code
+- ✅ Automatic script management (`ConsentScript` & `useConsentScript`)
+- ✅ Full traceability and consent audit log support
+- ✅ Comprehensive documentation & integration guides
+- ✅ Testing utilities for consent-dependent code (`renderWithConsent`, mock helpers)
+- ✅ GA4 & Google Analytics integration recipe
+- ✅ Meta Pixel (Facebook) integration recipe
+- ✅ PostHog hybrid cookieless & persistent telemetry integration
+- ✅ Next.js App Router reference implementation & demo
+- ✅ Automated releases & changelog generation (Release Please)
 
 ## 🚧 In Progress
 
 - 🔄 Framework adapters (Remix, Astro, Vite)
-- 🔄 Interactive playground
+- 🔄 Interactive playground & theme customizer
 
 ## 📋 Planned
 
 ### Short-term (Next 4 weeks)
 
-- [ ] Deploy to openconsent.dev
-- [ ] GA4 integration recipe
-- [ ] Meta Pixel integration recipe
-- [ ] Next.js App Router examples
-- [ ] Browser DevTools extension
+- [ ] Deploy to openconsent.dev (DNS & production domain)
+- [ ] Browser DevTools extension (consent state inspection & script simulation)
+- [ ] Interactive playground
 
 ### Medium-term (Months 2-3)
 
 - [ ] Framework adapters (Remix, Astro, Vite)
-- [ ] Testing utilities (`@openconsent/test-utils`)
-- [ ] i18n support (10+ languages)
+- [ ] Standalone testing utilities package (`@openconsent/test-utils`)
+- [ ] i18n support (10+ languages with auto-locale detection)
 - [ ] Analytics dashboard template
-- [ ] Interactive playground
 
 ### Long-term (Months 4-6)
 
-- [ ] VS Code extension
+- [ ] VS Code extension (snippets and consent validation)
 - [ ] AI-powered privacy policy generator
-- [ ] Enterprise features (SSO, team management)
-- [ ] Premium support tier (optional)
 
 ## 🤝 Contributing
 
@@ -75,8 +75,4 @@ We're particularly interested in contributions for:
 
 ## 🔄 Updates
 
-This roadmap is updated monthly. Last updated: January 2025.
-
----
-
-**Note**: This is a high-level roadmap. For detailed product strategy and competitive analysis, see our internal documentation (available to maintainers).
+This roadmap is regularly updated as features are shipped. Last updated: August 2026.
