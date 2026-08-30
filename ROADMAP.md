@@ -24,27 +24,50 @@ This roadmap outlines our vision and planned features for OpenConsent. We believ
 
 ## 🚧 In Progress
 
-- 🔄 Framework adapters (Remix, Astro, Vite)
 - 🔄 Interactive playground & theme customizer
+- 🔄 Framework adapters (Remix, Astro, Vite)
 
-## 📋 Planned
+## 📋 Prioritized Backlog
 
-### Short-term (Next 4 weeks)
+Features are prioritized by product impact across **Reach** (target audience size), **Impact** (adoption & compliance lift), and **Confidence** (certainty of solution and user demand), paired with clear strategic rationale.
 
-- [ ] Browser DevTools extension (consent state inspection & script simulation)
-- [ ] Interactive playground & visual theme configurator
+### 🥇 Tier 1: Core Drivers & Compliance Table Stakes (Immediate Priority)
 
-### Medium-term (Months 2-3)
+- **Interactive Playground & Visual Theme Configurator**
+  - **Weights**: Reach: 9/10 • Impact: Massive (3.0) • Confidence: 90%
+  - **Rationale**: Primary conversion driver for developers and designers evaluating OpenConsent. Provides real-time preview of layout variants, dark/light modes, radius/styling, and instant copy-paste code without requiring a local sandbox.
 
-- [ ] Framework adapters (Remix, Astro, Vite)
-- [ ] Standalone testing utilities package (`@openconsent/test-utils`)
-- [ ] i18n support (10+ languages with auto-locale detection)
-- [ ] Analytics dashboard template
+- **i18n Multi-Language Support (10+ Languages & Auto-Detection)**
+  - **Weights**: Reach: 8/10 • Impact: Massive (3.0) • Confidence: 95%
+  - **Rationale**: Essential legal compliance requirement under EU GDPR and ePrivacy directives for non-English and multi-lingual web applications. Unlocks the primary European market without requiring developers to maintain custom dictionary forks.
 
-### Long-term (Months 4-6)
+### 🥈 Tier 2: Ecosystem & Developer Experience (High Value)
 
-- [ ] VS Code extension (snippets and consent validation)
-- [ ] AI-powered privacy policy generator
+- **Standalone `@openconsent/test-utils` Package**
+  - **Weights**: Reach: 5/10 • Impact: Medium–High (1.5) • Confidence: 90%
+  - **Rationale**: Signals enterprise reliability and enables automated CI testing of consent-gated components without requiring teams to copy-paste test helper files into their local codebases.
+
+- **Framework Adapters (Astro, Remix, Vite)**
+  - **Weights**: Reach: 6/10 • Impact: High (2.0) • Confidence: 80%
+  - **Rationale**: Expands adoption beyond Next.js by providing official zero-config wrappers and SSR-hydration patterns for the broader modern web stack.
+
+- **Analytics Dashboard Template**
+  - **Weights**: Reach: 4/10 • Impact: High (2.0) • Confidence: 80%
+  - **Rationale**: Provides marketing and privacy teams with a visual UI to inspect opt-in rates and category conversion trends powered by the built-in traceability audit backend.
+
+### 🥉 Tier 3: Tooling & Exploratory (Future Enhancements)
+
+- **Browser DevTools Extension**
+  - **Weights**: Reach: 5/10 • Impact: High (2.0) • Confidence: 65%
+  - **Rationale**: Accelerates developer testing by allowing one-click consent toggling and script-blocking simulation directly from the browser inspection panel without manually clearing cookies.
+
+- **AI-Powered Privacy Policy Generator (`npx openconsent generate-policy`)**
+  - **Weights**: Reach: 6/10 • Impact: Medium (1.5) • Confidence: 50%
+  - **Rationale**: Developer CLI utility to scan loaded third-party scripts and output a starter privacy policy draft, though requires manual legal review.
+
+- **VS Code Extension (Snippets & Validation)**
+  - **Weights**: Reach: 4/10 • Impact: Low (0.5) • Confidence: 70%
+  - **Rationale**: Provides editor snippets and schema validation (lower priority as TypeScript types and JSDocs already provide extensive in-editor guidance).
 
 ## 🤝 Contributing
 
