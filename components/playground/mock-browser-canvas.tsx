@@ -111,7 +111,7 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
         </div>
 
         {/* Mock Site Body */}
-        <div key={reloadKey} className={cn("relative min-h-[460px] max-h-[560px] overflow-y-auto bg-background p-5", themeClass)}>
+        <div key={reloadKey} className={cn("relative min-h-[500px] max-h-[620px] overflow-y-auto bg-background p-6", themeClass)}>
           {/* Re-open Banner overlay pill if dismissed */}
           {!isBannerVisible && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-card/95 backdrop-blur border border-primary/40 shadow-md px-3 py-1.5 rounded-full flex items-center gap-2 text-xs animate-in fade-in zoom-in-95">

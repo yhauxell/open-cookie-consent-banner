@@ -89,7 +89,7 @@ function WorkbenchContent({
         {`console.log("[Demo Script] Meta Pixel active");`}
       </ConsentScript>
 
-      <div className="container relative z-10 max-w-7xl mx-auto py-8 px-4 space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Studio Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/40">
           <div>
@@ -108,8 +108,8 @@ function WorkbenchContent({
           </div>
         </div>
 
-        {/* 2-Column v0-Style Workspace Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[330px_1fr] gap-6 items-start">
+        {/* 2-Column Full-Width Studio Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr] gap-6 items-start">
           {/* LEFT COLUMN: Customization Sidebar */}
           <aside className="w-full lg:sticky lg:top-20">
             <CustomizationSidebar
