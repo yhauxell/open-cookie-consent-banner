@@ -41,7 +41,6 @@ import { MockBrowserCanvas } from "@/components/playground/mock-browser-canvas";
 import { CodeExportCard } from "@/components/playground/code-export-card";
 import { TelemetryInspector } from "@/components/playground/telemetry-inspector";
 import { QuickstartGuide } from "@/components/playground/quickstart-guide";
-import { SpotlightBackground } from "@/components/spotlight-background";
 
 interface PlaygroundOptions {
   position: BannerPosition;
@@ -95,8 +94,6 @@ function WorkbenchContent({
 
   return (
     <div className="bg-background min-h-screen relative isolate overflow-hidden">
-      {/* Dynamic GPU-accelerated mouse follow spotlight */}
-      <SpotlightBackground size={750} showGrid={true} />
       {/* Subtle background grid pattern with top radial mask */}
       <div className="absolute inset-0 -z-10 h-full w-full bg-grid-pattern mask-radial-top opacity-50 pointer-events-none" />
       {/* Top ambient spotlight glow */}
