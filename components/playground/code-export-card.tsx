@@ -7,16 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeBlock } from "@/components/code-block";
-import type { BannerPosition, BannerSize } from "@/components/cookie-consent/types";
+import type { PlaygroundOptions } from "./customization-sidebar";
 
 interface CodeExportCardProps {
-  position: BannerPosition;
-  size: BannerSize;
-  radiusClass: string;
-  hasBackdrop: boolean;
+  options: PlaygroundOptions;
 }
 
-export function CodeExportCard({ position, size, radiusClass, hasBackdrop }: CodeExportCardProps) {
+export function CodeExportCard({ options }: CodeExportCardProps) {
   const [copiedCli, setCopiedCli] = useState(false);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
   const cliCommand = "npx shadcn@latest add https://openconsent.dev/r/cookie-consent.json";
@@ -27,17 +24,32 @@ export function CodeExportCard({ position, size, radiusClass, hasBackdrop }: Cod
     setTimeout(() => setCopiedCli(false), 2000);
   };
 
-  // Generate dynamic banner props string
+  // Generate dynamic banner props
   const bannerPropsList: string[] = [];
-  if (position !== "bottom") bannerPropsList.push(`position="${position}"`);
-  if (size !== "default") bannerPropsList.push(`size="${size}"`);
-  if (radiusClass !== "rounded-lg") bannerPropsList.push(`className="${radiusClass}"`);
+  if (options.position !== "bottom") bannerPropsList.push(`position="${options.position}"`);
+  if (options.size !== "default") bannerPropsList.push(`size="${options.size}"`);
+  if (options.radiusClass !== "rounded-lg") bannerPropsList.push(`className="${options.radiusClass}"`);
 
   const bannerPropsStr = bannerPropsList.length > 0 ? ` ${bannerPropsList.join(" ")}` : "";
 
+  // Dynamic config lines
+  const configEntries: string[] = [
+    `consentVersion: "1.0.0"`,
+    `privacyPolicyUrl: "${options.privacyPolicyUrl}"`,
+    options.position !== "bottom" ? `position: "${options.position}"` : "",
+    options.size !== "default" ? `size: "${options.size}"` : "",
+    options.expirationDays !== 365 ? `expirationDays: ${options.expirationDays}` : "",
+    options.enableGcm ? `googleConsentMode: {\n              enabled: true,\n              autoDetect: true,\n            }` : "",
+    options.enableTraceability
+      ? `traceability: {\n              enabled: true,\n              endpoint: "${options.traceabilityEndpoint}",\n            }`
+      : "",
+  ].filter(Boolean);
+
+  const configFormatted = configEntries.map((line) => `            ${line},`).join("\n");
+
   const generatedLayoutSnippet = `import {
   CookieConsentProvider,
-  CookieBanner,${hasBackdrop ? "\n  CookieBannerBackdrop," : ""}
+  CookieBanner,${options.hasBackdrop ? "\n  CookieBannerBackdrop," : ""}
   CookieSettings,
   CookieTrigger,
 } from "@/components/cookie-consent"
@@ -52,19 +64,12 @@ export default function RootLayout({
       <body>
         <CookieConsentProvider
           config={{
-            consentVersion: "1.0.0",
-            privacyPolicyUrl: "/privacy",
-            position: "${position}",
-            size: "${size}",
-            traceability: {
-              enabled: true,
-              endpoint: "/api/consent",
-            },
+${configFormatted}
           }}
         >
           {children}
-          ${hasBackdrop ? "<CookieBannerBackdrop />\n          " : ""}<CookieBanner${bannerPropsStr} />
-          <CookieSettings className="${radiusClass}" />
+          ${options.hasBackdrop ? "<CookieBannerBackdrop />\n          " : ""}<CookieBanner${bannerPropsStr} />
+          <CookieSettings className="${options.radiusClass}" />
         </CookieConsentProvider>
       </body>
     </html>
@@ -73,18 +78,15 @@ export default function RootLayout({
 
   const generatedComponentSnippet = `<CookieConsentProvider
   config={{
-    consentVersion: "1.0.0",
-    privacyPolicyUrl: "/privacy",
-    position: "${position}",
-    size: "${size}",
+${configFormatted}
   }}
 >
   {/* Your Application Content */}
   {children}
 
-  {/* Cookie Banner & Settings portaled components */}${hasBackdrop ? "\n  <CookieBannerBackdrop />" : ""}
+  {/* Cookie Banner & Settings portaled components */}${options.hasBackdrop ? "\n  <CookieBannerBackdrop />" : ""}
   <CookieBanner${bannerPropsStr} />
-  <CookieSettings className="${radiusClass}" />
+  <CookieSettings className="${options.radiusClass}" />
   <CookieTrigger variant="text" />
 </CookieConsentProvider>`;
 
@@ -132,7 +134,7 @@ export default function RootLayout({
               Tailored Code Integration
             </CardTitle>
             <CardDescription className="text-xs">
-              Live snippet generated from your custom position ({position}), size ({size}), and radius ({radiusClass.replace("rounded-", "")})
+              Dynamically generated config reflecting your styling ({options.position}, {options.size}) and telemetry choices
             </CardDescription>
           </div>
           <Button
@@ -195,19 +197,29 @@ export default function RootLayout({
 
           {/* Active Configuration Summary Chips */}
           <div className="pt-3 border-t border-border/40 flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-muted-foreground text-[11px] font-medium uppercase tracking-wider">Active Props:</span>
+            <span className="text-muted-foreground text-[11px] font-medium uppercase tracking-wider">Active Config:</span>
             <Badge variant="secondary" className="font-mono text-[11px]">
-              position="{position}"
+              position="{options.position}"
             </Badge>
             <Badge variant="secondary" className="font-mono text-[11px]">
-              size="{size}"
+              size="{options.size}"
             </Badge>
             <Badge variant="secondary" className="font-mono text-[11px]">
-              radius="{radiusClass}"
+              radius="{options.radiusClass}"
             </Badge>
-            {hasBackdrop && (
+            {options.hasBackdrop && (
               <Badge variant="secondary" className="font-mono text-[11px] text-amber-600 dark:text-amber-400">
                 backdrop=true
+              </Badge>
+            )}
+            {options.enableGcm && (
+              <Badge variant="secondary" className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400">
+                GCM v2=active
+              </Badge>
+            )}
+            {options.enableTraceability && (
+              <Badge variant="secondary" className="font-mono text-[11px] text-blue-600 dark:text-blue-400">
+                auditEndpoint="{options.traceabilityEndpoint}"
               </Badge>
             )}
           </div>

@@ -22,7 +22,7 @@ import {
   Code2,
   Activity,
   Sparkles,
-  Layers,
+  Terminal,
 } from "lucide-react";
 import { MockBrowserCanvas } from "@/components/playground/mock-browser-canvas";
 import { CodeExportCard } from "@/components/playground/code-export-card";
@@ -38,6 +38,11 @@ const DEFAULT_OPTIONS: PlaygroundOptions = {
   radiusClass: "rounded-lg",
   hasBackdrop: false,
   forceVisible: true,
+  enableTraceability: true,
+  traceabilityEndpoint: "/api/consent",
+  enableGcm: true,
+  expirationDays: 365,
+  privacyPolicyUrl: "/privacy",
 };
 
 function WorkbenchContent({
@@ -53,7 +58,7 @@ function WorkbenchContent({
   setEvents: React.Dispatch<React.SetStateAction<ConsentChangeEvent[]>>;
   onReset: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"design" | "code" | "telemetry">("design");
+  const [activeTab, setActiveTab] = useState<"design" | "code" | "events">("design");
 
   // Sample third-party script hooks for real-time telemetry testing
   useConsentScript("analytics", "demo-analytics", {
@@ -103,14 +108,14 @@ function WorkbenchContent({
               Interactive Component Workbench
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Customize banner styles in real-time, preview live across responsive viewports, and export tailored code.
+              Tune styling & telemetry on the left, preview live in Design, inspect real-time Code, and track Events.
             </p>
           </div>
         </div>
 
         {/* 2-Column Full-Width Studio Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr] gap-6 items-start">
-          {/* LEFT COLUMN: Customization Sidebar */}
+          {/* LEFT COLUMN: Customization Sidebar (Styling + Telemetry Tabs) */}
           <aside className="w-full lg:sticky lg:top-20">
             <CustomizationSidebar
               options={options}
@@ -119,11 +124,11 @@ function WorkbenchContent({
             />
           </aside>
 
-          {/* RIGHT COLUMN: Stage (Design / Code / Telemetry) */}
+          {/* RIGHT COLUMN: Stage (Design / Code / Events) */}
           <main className="min-w-0 space-y-4">
             <Tabs
               value={activeTab}
-              onValueChange={(val) => setActiveTab(val as "design" | "code" | "telemetry")}
+              onValueChange={(val) => setActiveTab(val as "design" | "code" | "events")}
               className="w-full"
             >
               <div className="flex items-center justify-between pb-3">
@@ -143,13 +148,13 @@ function WorkbenchContent({
                     <span>Code</span>
                   </TabsTrigger>
                   <TabsTrigger
-                    value="telemetry"
+                    value="events"
                     className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
                   >
-                    <Activity className="h-3.5 w-3.5 text-primary" />
-                    <span>Telemetry</span>
+                    <Terminal className="h-3.5 w-3.5 text-primary" />
+                    <span>Events</span>
                     {events.length > 0 && (
-                      <Badge variant="secondary" className="h-4 px-1 text-[10px] ml-0.5">
+                      <Badge variant="secondary" className="h-4 px-1.5 text-[10px] ml-0.5">
                         {events.length}
                       </Badge>
                     )}
@@ -175,16 +180,11 @@ function WorkbenchContent({
 
               {/* TAB 2: CODE (Dynamic Live Generated Snippet & CLI) */}
               <TabsContent value="code" className="mt-0 focus-visible:outline-none">
-                <CodeExportCard
-                  position={options.position}
-                  size={options.size}
-                  radiusClass={options.radiusClass}
-                  hasBackdrop={options.hasBackdrop}
-                />
+                <CodeExportCard options={options} />
               </TabsContent>
 
-              {/* TAB 3: TELEMETRY (Compliance Matrix & Event Console) */}
-              <TabsContent value="telemetry" className="mt-0 focus-visible:outline-none">
+              {/* TAB 3: EVENTS (Compliance Matrix & Live Event Stream Console) */}
+              <TabsContent value="events" className="mt-0 focus-visible:outline-none">
                 <TelemetryInspector
                   events={events}
                   onClearEvents={() => setEvents([])}
@@ -213,13 +213,14 @@ export function CookieConsentDemo() {
 
   const config: CookieConsentConfig = {
     consentVersion: "1.0.0",
-    expirationDays: 365,
-    privacyPolicyUrl: "/privacy",
+    expirationDays: options.expirationDays,
+    privacyPolicyUrl: options.privacyPolicyUrl,
     position: options.position,
     size: options.size,
+    googleConsentMode: { enabled: options.enableGcm },
     traceability: {
-      enabled: true,
-      endpoint: "/api/consent",
+      enabled: options.enableTraceability,
+      endpoint: options.traceabilityEndpoint,
       includeUserAgent: true,
       includeUrl: true,
       retryOnFailure: true,
