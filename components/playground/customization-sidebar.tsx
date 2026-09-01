@@ -83,7 +83,12 @@ export function CustomizationSidebar({
   onReset,
 }: CustomizationSidebarProps) {
   const [sidebarTab, setSidebarTab] = useState<"styling" | "telemetry">("styling");
-  const { state, resetConsent, acceptAll, rejectAll, openSettings } = useCookieConsent();
+  const { state, acceptAll, rejectAll, openSettings } = useCookieConsent();
+
+  const handleResetAll = () => {
+    setSidebarTab("styling");
+    onReset();
+  };
 
   return (
     <Card className="border-border/80 shadow-md bg-card/90 backdrop-blur-xs">
@@ -115,12 +120,12 @@ export function CustomizationSidebar({
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={onReset}
+                onClick={handleResetAll}
                 className="h-7 px-2 text-xs gap-1 text-muted-foreground hover:text-foreground"
-                title="Reset options to default"
+                title="Reset all customizations, modal, telemetry, and view back to design"
               >
                 <RotateCcw className="h-3 w-3" />
-                Reset
+                Reset All
               </Button>
             </div>
           </Tabs>
@@ -343,11 +348,11 @@ export function CustomizationSidebar({
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={resetConsent}
+                  onClick={handleResetAll}
                   className="h-8 text-xs gap-1 border border-border/80"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
-                  Reset
+                  Reset All
                 </Button>
               </div>
             </div>

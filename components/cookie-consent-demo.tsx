@@ -9,6 +9,7 @@ import {
   CookieSettings,
   CookieTrigger,
   useConsentScript,
+  useCookieConsent,
   type BannerPosition,
   type BannerSize,
   type ConsentChangeEvent,
@@ -50,15 +51,27 @@ function WorkbenchContent({
   setOptions,
   events,
   setEvents,
-  onReset,
 }: {
   options: PlaygroundOptions;
   setOptions: React.Dispatch<React.SetStateAction<PlaygroundOptions>>;
   events: ConsentChangeEvent[];
   setEvents: React.Dispatch<React.SetStateAction<ConsentChangeEvent[]>>;
-  onReset: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<"design" | "code" | "events">("design");
+  const { resetConsent, closeSettings } = useCookieConsent();
+
+  const handleFullReset = () => {
+    // 1. Reset all customization & telemetry options to defaults
+    setOptions(DEFAULT_OPTIONS);
+    // 2. Clear all telemetry events from stream
+    setEvents([]);
+    // 3. Switch main stage tab back to "design"
+    setActiveTab("design");
+    // 4. Close settings modal if open
+    closeSettings();
+    // 5. Reset consent state & storage
+    resetConsent();
+  };
 
   // Sample third-party script hooks for real-time telemetry testing
   useConsentScript("analytics", "demo-analytics", {
@@ -120,7 +133,7 @@ function WorkbenchContent({
             <CustomizationSidebar
               options={options}
               setOptions={setOptions}
-              onReset={onReset}
+              onReset={handleFullReset}
             />
           </aside>
 
@@ -207,10 +220,6 @@ export function CookieConsentDemo() {
   const [options, setOptions] = useState<PlaygroundOptions>(DEFAULT_OPTIONS);
   const [events, setEvents] = useState<ConsentChangeEvent[]>([]);
 
-  const handleReset = () => {
-    setOptions(DEFAULT_OPTIONS);
-  };
-
   const config: CookieConsentConfig = {
     consentVersion: "1.0.0",
     expirationDays: options.expirationDays,
@@ -239,7 +248,6 @@ export function CookieConsentDemo() {
         setOptions={setOptions}
         events={events}
         setEvents={setEvents}
-        onReset={handleReset}
       />
       <CookieSettings className={options.radiusClass} />
     </CookieConsentProvider>
