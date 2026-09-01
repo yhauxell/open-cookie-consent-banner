@@ -15,76 +15,47 @@ import {
   type CookieConsentConfig,
 } from "@/components/cookie-consent";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
-  Layout,
-  Palette,
-  Sparkles,
-  Sliders,
-  ShieldCheck,
-  Terminal,
+  Eye,
+  Code2,
   Activity,
-  Maximize2,
+  Sparkles,
+  Layers,
 } from "lucide-react";
 import { MockBrowserCanvas } from "@/components/playground/mock-browser-canvas";
 import { CodeExportCard } from "@/components/playground/code-export-card";
 import { TelemetryInspector } from "@/components/playground/telemetry-inspector";
-import { QuickstartGuide } from "@/components/playground/quickstart-guide";
+import {
+  CustomizationSidebar,
+  type PlaygroundOptions,
+} from "@/components/playground/customization-sidebar";
 
-interface PlaygroundOptions {
-  position: BannerPosition;
-  size: BannerSize;
-  radiusClass: string;
-  hasBackdrop: boolean;
-  forceVisible: boolean;
-}
-
-const SIZE_OPTIONS: { label: string; value: BannerSize }[] = [
-  { label: "Compact (sm)", value: "sm" },
-  { label: "Default (md)", value: "default" },
-  { label: "Spacious (lg)", value: "lg" },
-];
-
-const RADIUS_OPTIONS = [
-  { label: "Sharp (0px)", value: "rounded-none" },
-  { label: "Subtle (6px)", value: "rounded-md" },
-  { label: "Default (8px)", value: "rounded-lg" },
-  { label: "Modern (16px)", value: "rounded-2xl" },
-  { label: "Pill (Full)", value: "rounded-full" },
-];
-
-const POSITION_OPTIONS: { label: string; value: BannerPosition }[] = [
-  { label: "Bottom Bar", value: "bottom" },
-  { label: "Top Bar", value: "top" },
-  { label: "Bottom Right", value: "bottom-right" },
-  { label: "Bottom Left", value: "bottom-left" },
-];
+const DEFAULT_OPTIONS: PlaygroundOptions = {
+  position: "bottom",
+  size: "default",
+  radiusClass: "rounded-lg",
+  hasBackdrop: false,
+  forceVisible: true,
+};
 
 function WorkbenchContent({
   options,
   setOptions,
   events,
   setEvents,
+  onReset,
 }: {
   options: PlaygroundOptions;
   setOptions: React.Dispatch<React.SetStateAction<PlaygroundOptions>>;
   events: ConsentChangeEvent[];
   setEvents: React.Dispatch<React.SetStateAction<ConsentChangeEvent[]>>;
+  onReset: () => void;
 }) {
-  const [activeTab, setActiveTab] = useState<"visual" | "telemetry" | "quickstart">("visual");
+  const [activeTab, setActiveTab] = useState<"design" | "code" | "telemetry">("design");
 
-  // Sample third-party script hooks for real-time engine telemetry
+  // Sample third-party script hooks for real-time telemetry testing
   useConsentScript("analytics", "demo-analytics", {
     content: `console.log("[Demo] Analytics script active");`,
     onRevoke: () => {
@@ -118,207 +89,110 @@ function WorkbenchContent({
         {`console.log("[Demo Script] Meta Pixel active");`}
       </ConsentScript>
 
-      <div className="container relative z-10 max-w-6xl mx-auto py-10 px-4 space-y-8">
+      <div className="container relative z-10 max-w-7xl mx-auto py-8 px-4 space-y-6">
         {/* Studio Header */}
-        <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <Badge variant="outline" className="text-xs px-3 py-1 gap-1.5 border-primary/30 text-primary">
-              <Sparkles className="h-3.5 w-3.5" />
-              OpenConsent Developer Studio
-            </Badge>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/40">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Badge variant="outline" className="text-xs px-2.5 py-0.5 gap-1.5 border-primary/30 text-primary">
+                <Sparkles className="h-3.5 w-3.5" />
+                OpenConsent Studio
+              </Badge>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Interactive Component Workbench
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Customize banner styles in real-time, preview live across responsive viewports, and export tailored code.
+            </p>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-foreground">
-            Interactive Playground & Workbench
-          </h1>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            Design banner positions, densities, and corner radii in real-time, inspect Google Consent Mode v2 signals, or copy the production-ready code.
-          </p>
         </div>
 
-        {/* Primary Workbench Tab Navigation */}
-        <Tabs
-          value={activeTab}
-          onValueChange={(val) => setActiveTab(val as "visual" | "telemetry" | "quickstart")}
-          className="space-y-6"
-        >
-          <div className="flex justify-center">
-            <TabsList className="h-11 p-1 bg-muted/80 border border-border/70 rounded-xl gap-1">
-              <TabsTrigger
-                value="visual"
-                className="gap-2 px-4 py-2 text-xs sm:text-sm font-medium rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
-              >
-                <Layout className="h-4 w-4 text-primary" />
-                <span>Visual Studio</span>
-              </TabsTrigger>
-              <TabsTrigger
-                value="telemetry"
-                className="gap-2 px-4 py-2 text-xs sm:text-sm font-medium rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
-              >
-                <Activity className="h-4 w-4 text-primary" />
-                <span>Compliance & Telemetry</span>
-                {events.length > 0 && (
-                  <Badge variant="secondary" className="h-4 px-1.5 text-[10px] ml-0.5">
-                    {events.length}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger
-                value="quickstart"
-                className="gap-2 px-4 py-2 text-xs sm:text-sm font-medium rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
-              >
-                <Terminal className="h-4 w-4 text-primary" />
-                <span>Quickstart Guide</span>
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          {/* TAB 1: Visual Studio & Viewport Preview */}
-          <TabsContent value="visual" className="space-y-8 focus-visible:outline-none">
-            {/* Live Theme & Layout Controls */}
-            <Card className="border-border shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-                  <Sliders className="h-5 w-5 text-primary" />
-                  Live Theme & Layout Controls
-                </CardTitle>
-                <CardDescription>
-                  Tune position, corner curvature, and typography density to preview immediate layout reflow
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  {/* Control 1: Position */}
-                  <div className="space-y-2.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Banner Position
-                    </Label>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {POSITION_OPTIONS.map((pos) => (
-                        <Button
-                          key={pos.value}
-                          size="sm"
-                          variant={options.position === pos.value ? "default" : "outline"}
-                          onClick={() => setOptions((prev) => ({ ...prev, position: pos.value }))}
-                          className="text-xs h-8 px-2 font-normal justify-center"
-                        >
-                          {pos.label}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Control 2: Size & Density */}
-                  <div className="space-y-2.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Size & Density
-                    </Label>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {SIZE_OPTIONS.map((sz) => (
-                        <Button
-                          key={sz.value}
-                          size="sm"
-                          variant={options.size === sz.value ? "default" : "outline"}
-                          onClick={() => setOptions((prev) => ({ ...prev, size: sz.value }))}
-                          className="text-xs h-8 px-1.5 font-normal justify-center"
-                        >
-                          {sz.label.split(" ")[0]}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Control 3: Border Radius */}
-                  <div className="space-y-2.5">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Corner Radius
-                    </Label>
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {RADIUS_OPTIONS.map((rad) => (
-                        <Button
-                          key={rad.value}
-                          size="sm"
-                          variant={options.radiusClass === rad.value ? "default" : "outline"}
-                          onClick={() => setOptions((prev) => ({ ...prev, radiusClass: rad.value }))}
-                          className={cn("text-xs h-8 px-1.5 font-normal justify-center", rad.value)}
-                        >
-                          {rad.label.split(" ")[0]}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Control 4: Backdrop & Preview Controls */}
-                  <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Behavior & Overlay
-                    </Label>
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between p-2 rounded-lg border border-border bg-muted/30">
-                        <Label htmlFor="backdrop-toggle" className="text-xs font-medium cursor-pointer">
-                          Backdrop Blocker
-                        </Label>
-                        <Switch
-                          id="backdrop-toggle"
-                          checked={options.hasBackdrop}
-                          onCheckedChange={(checked) =>
-                            setOptions((prev) => ({ ...prev, hasBackdrop: checked }))
-                          }
-                        />
-                      </div>
-                      <div className="flex items-center justify-between p-2 rounded-lg border border-border bg-muted/30">
-                        <Label htmlFor="force-visible-toggle" className="text-xs font-medium cursor-pointer">
-                          Always Preview Banner
-                        </Label>
-                        <Switch
-                          id="force-visible-toggle"
-                          checked={options.forceVisible}
-                          onCheckedChange={(checked) =>
-                            setOptions((prev) => ({ ...prev, forceVisible: checked }))
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* 🖥️ Mock Viewport Canvas with Embedded Banner */}
-            <MockBrowserCanvas>
-              {options.hasBackdrop && (
-                <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
-              )}
-              <CookieBanner
-                isEmbedded
-                forceVisible={options.forceVisible}
-                position={options.position}
-                size={options.size}
-                className={cn(options.radiusClass, "shadow-2xl")}
-              />
-            </MockBrowserCanvas>
-
-            {/* 📦 Installation & Code Export Card */}
-            <CodeExportCard
-              position={options.position}
-              size={options.size}
-              radiusClass={options.radiusClass}
-              hasBackdrop={options.hasBackdrop}
+        {/* 2-Column v0-Style Workspace Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[330px_1fr] gap-6 items-start">
+          {/* LEFT COLUMN: Customization Sidebar */}
+          <aside className="w-full lg:sticky lg:top-20">
+            <CustomizationSidebar
+              options={options}
+              setOptions={setOptions}
+              onReset={onReset}
             />
-          </TabsContent>
+          </aside>
 
-          {/* TAB 2: Compliance & Telemetry Inspector */}
-          <TabsContent value="telemetry" className="focus-visible:outline-none">
-            <TelemetryInspector
-              events={events}
-              onClearEvents={() => setEvents([])}
-            />
-          </TabsContent>
+          {/* RIGHT COLUMN: Stage (Design / Code / Telemetry) */}
+          <main className="min-w-0 space-y-4">
+            <Tabs
+              value={activeTab}
+              onValueChange={(val) => setActiveTab(val as "design" | "code" | "telemetry")}
+              className="w-full"
+            >
+              <div className="flex items-center justify-between pb-3">
+                <TabsList className="h-9 p-0.5 bg-muted/80 border border-border/70 rounded-lg gap-0.5">
+                  <TabsTrigger
+                    value="design"
+                    className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                  >
+                    <Eye className="h-3.5 w-3.5 text-primary" />
+                    <span>Design</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="code"
+                    className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                  >
+                    <Code2 className="h-3.5 w-3.5 text-primary" />
+                    <span>Code</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="telemetry"
+                    className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                  >
+                    <Activity className="h-3.5 w-3.5 text-primary" />
+                    <span>Telemetry</span>
+                    {events.length > 0 && (
+                      <Badge variant="secondary" className="h-4 px-1 text-[10px] ml-0.5">
+                        {events.length}
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
-          {/* TAB 3: Quickstart Guide */}
-          <TabsContent value="quickstart" className="focus-visible:outline-none">
-            <QuickstartGuide />
-          </TabsContent>
-        </Tabs>
+              {/* TAB 1: DESIGN (Mock Viewport Canvas with embedded banner) */}
+              <TabsContent value="design" className="mt-0 focus-visible:outline-none space-y-4">
+                <MockBrowserCanvas>
+                  {options.hasBackdrop && (
+                    <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                  )}
+                  <CookieBanner
+                    isEmbedded
+                    forceVisible={options.forceVisible}
+                    position={options.position}
+                    size={options.size}
+                    className={cn(options.radiusClass, "shadow-2xl")}
+                  />
+                </MockBrowserCanvas>
+              </TabsContent>
+
+              {/* TAB 2: CODE (Dynamic Live Generated Snippet & CLI) */}
+              <TabsContent value="code" className="mt-0 focus-visible:outline-none">
+                <CodeExportCard
+                  position={options.position}
+                  size={options.size}
+                  radiusClass={options.radiusClass}
+                  hasBackdrop={options.hasBackdrop}
+                />
+              </TabsContent>
+
+              {/* TAB 3: TELEMETRY (Compliance Matrix & Event Console) */}
+              <TabsContent value="telemetry" className="mt-0 focus-visible:outline-none">
+                <TelemetryInspector
+                  events={events}
+                  onClearEvents={() => setEvents([])}
+                />
+              </TabsContent>
+            </Tabs>
+          </main>
+        </div>
 
         {/* Footer trigger demo */}
         <div className="text-center pt-6 border-t border-border/40">
@@ -330,14 +204,12 @@ function WorkbenchContent({
 }
 
 export function CookieConsentDemo() {
-  const [options, setOptions] = useState<PlaygroundOptions>({
-    position: "bottom",
-    size: "default",
-    radiusClass: "rounded-lg",
-    hasBackdrop: false,
-    forceVisible: true,
-  });
+  const [options, setOptions] = useState<PlaygroundOptions>(DEFAULT_OPTIONS);
   const [events, setEvents] = useState<ConsentChangeEvent[]>([]);
+
+  const handleReset = () => {
+    setOptions(DEFAULT_OPTIONS);
+  };
 
   const config: CookieConsentConfig = {
     consentVersion: "1.0.0",
@@ -366,6 +238,7 @@ export function CookieConsentDemo() {
         setOptions={setOptions}
         events={events}
         setEvents={setEvents}
+        onReset={handleReset}
       />
       <CookieSettings className={options.radiusClass} />
     </CookieConsentProvider>
