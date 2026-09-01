@@ -6,15 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeBlock } from "@/components/code-block";
-import type { BannerPosition } from "@/components/cookie-consent/types";
+import type { BannerPosition, BannerSize } from "@/components/cookie-consent/types";
 
 interface CodeExportCardProps {
   position: BannerPosition;
+  size: BannerSize;
   radiusClass: string;
   hasBackdrop: boolean;
 }
 
-export function CodeExportCard({ position, radiusClass, hasBackdrop }: CodeExportCardProps) {
+export function CodeExportCard({ position, size, radiusClass, hasBackdrop }: CodeExportCardProps) {
   const [copiedCli, setCopiedCli] = useState(false);
   const cliCommand = "npx shadcn@latest add https://openconsent.dev/r/cookie-consent.json";
 
@@ -23,6 +24,11 @@ export function CodeExportCard({ position, radiusClass, hasBackdrop }: CodeExpor
     setCopiedCli(true);
     setTimeout(() => setCopiedCli(false), 2000);
   };
+
+  const bannerProps = [
+    size !== "default" ? `size="${size}"` : "",
+    radiusClass !== "rounded-lg" ? `className="${radiusClass}"` : "",
+  ].filter(Boolean).join(" ");
 
   const generatedSnippet = `import {
   CookieConsentProvider,
@@ -45,7 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       }}
     >
       {children}${hasBackdrop ? "\n      <CookieBannerBackdrop />" : ""}
-      <CookieBanner${radiusClass !== "rounded-lg" ? ` className="${radiusClass}"` : ""} />
+      <CookieBanner${bannerProps ? ` ${bannerProps}` : ""} />
       <CookieSettings />
       <CookieTrigger />
     </CookieConsentProvider>

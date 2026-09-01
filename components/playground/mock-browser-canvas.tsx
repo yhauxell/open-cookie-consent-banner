@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Monitor, Smartphone, RotateCcw, ExternalLink, ShieldCheck, Sparkles, Zap, Lock } from "lucide-react";
+import { Monitor, Smartphone, RotateCcw, ShieldCheck, Sparkles, Zap, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useCookieConsent } from "@/components/cookie-consent";
 
 interface MockBrowserCanvasProps {
   children?: React.ReactNode;
@@ -14,8 +15,10 @@ interface MockBrowserCanvasProps {
 export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasProps) {
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
   const [reloadKey, setReloadKey] = useState(0);
+  const { isBannerVisible, resetConsent } = useCookieConsent();
 
   const handleReload = () => {
+    resetConsent();
     setReloadKey((prev) => prev + 1);
   };
 
@@ -32,25 +35,39 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
           </Badge>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-muted/60 p-1 rounded-lg border border-border">
-          <Button
-            size="sm"
-            variant={viewMode === "desktop" ? "secondary" : "ghost"}
-            className="h-7 px-2.5 text-xs gap-1.5"
-            onClick={() => setViewMode("desktop")}
-          >
-            <Monitor className="h-3.5 w-3.5" />
-            Desktop
-          </Button>
-          <Button
-            size="sm"
-            variant={viewMode === "mobile" ? "secondary" : "ghost"}
-            className="h-7 px-2.5 text-xs gap-1.5"
-            onClick={() => setViewMode("mobile")}
-          >
-            <Smartphone className="h-3.5 w-3.5" />
-            Mobile
-          </Button>
+        <div className="flex items-center gap-2">
+          {!isBannerVisible && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={resetConsent}
+              className="h-7 px-2.5 text-xs gap-1.5 border-primary/40 text-primary hover:bg-primary/10"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Re-open Banner
+            </Button>
+          )}
+
+          <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-lg border border-border">
+            <Button
+              size="sm"
+              variant={viewMode === "desktop" ? "secondary" : "ghost"}
+              className="h-7 px-2.5 text-xs gap-1.5"
+              onClick={() => setViewMode("desktop")}
+            >
+              <Monitor className="h-3.5 w-3.5" />
+              Desktop
+            </Button>
+            <Button
+              size="sm"
+              variant={viewMode === "mobile" ? "secondary" : "ghost"}
+              className="h-7 px-2.5 text-xs gap-1.5"
+              onClick={() => setViewMode("mobile")}
+            >
+              <Smartphone className="h-3.5 w-3.5" />
+              Mobile
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -77,7 +94,7 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
           <button
             onClick={handleReload}
             className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
-            title="Reload preview"
+            title="Reload preview & reset consent"
           >
             <RotateCcw className="h-3.5 w-3.5" />
           </button>
@@ -85,6 +102,22 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
 
         {/* Mock Site Body */}
         <div key={reloadKey} className={cn("relative min-h-[460px] max-h-[560px] overflow-y-auto bg-background p-6", themeClass)}>
+          {/* Re-open Banner overlay pill if dismissed */}
+          {!isBannerVisible && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-card/95 backdrop-blur border border-primary/40 shadow-md px-3 py-1.5 rounded-full flex items-center gap-2.5 text-xs animate-in fade-in zoom-in-95">
+              <span className="text-muted-foreground font-medium text-[11px]">Consent submitted (Banner Hidden)</span>
+              <Button
+                size="sm"
+                variant="default"
+                className="h-6 text-[10px] px-2.5 gap-1 rounded-full"
+                onClick={resetConsent}
+              >
+                <RotateCcw className="h-2.5 w-2.5" />
+                Re-open Banner
+              </Button>
+            </div>
+          )}
+
           {/* Mock Navbar */}
           <nav className="flex items-center justify-between pb-6 mb-6 border-b border-border/40">
             <div className="flex items-center gap-2">
@@ -151,3 +184,4 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
     </div>
   );
 }
+
