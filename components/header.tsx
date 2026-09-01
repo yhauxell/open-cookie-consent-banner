@@ -12,8 +12,8 @@ import { ThemeToggle } from "./theme-toggle";
 const githubUrl = "https://github.com/yhauxell/open-cookie-consent-banner";
 
 const navLinks = [
+  { href: "/playground", label: "Playground" },
   { href: "/docs", label: "Docs" },
-  { href: "/demo", label: "Playground" },
   { href: githubUrl, label: "GitHub", external: true },
 ];
 
@@ -22,7 +22,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-xl items-center justify-between px-4 mx-auto">
         <Link href="/" className="flex items-center space-x-2 flex-row">
           <span className="font-bold text-lg">

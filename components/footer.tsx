@@ -19,16 +19,16 @@ export function Footer() {
           </div>
           <nav className="flex items-center space-x-6 text-sm text-muted-foreground">
             <Link
+              href="/playground"
+              className="hover:text-foreground transition-colors"
+            >
+              Playground
+            </Link>
+            <Link
               href="/docs"
               className="hover:text-foreground transition-colors"
             >
               Docs
-            </Link>
-            <Link
-              href="/demo"
-              className="hover:text-foreground transition-colors"
-            >
-              Demo
             </Link>
             <a
               href={githubUrl}
