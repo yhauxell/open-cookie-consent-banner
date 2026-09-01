@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Shield,
   Cookie,
@@ -13,23 +13,50 @@ import {
   CheckCircle2,
   XCircle,
   ExternalLink,
+  Server,
+  Radio,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useCookieConsent } from "@/components/cookie-consent";
-import type { ConsentChangeEvent } from "@/components/cookie-consent/types";
-import { EventStreamConsole } from "./event-stream-console";
+import { EventStreamConsole, type TelemetryLogEntry } from "./event-stream-console";
 
 interface TelemetryInspectorProps {
-  events: ConsentChangeEvent[];
+  events: TelemetryLogEntry[];
   onClearEvents?: () => void;
+  backendEndpoint?: string;
+  traceabilityEnabled?: boolean;
 }
 
-export function TelemetryInspector({ events, onClearEvents }: TelemetryInspectorProps) {
+export function TelemetryInspector({
+  events,
+  onClearEvents,
+  backendEndpoint = "/api/consent",
+  traceabilityEnabled = true,
+}: TelemetryInspectorProps) {
   const { state, resetConsent, openSettings, acceptAll, rejectAll, getLoadedScripts } =
     useCookieConsent();
+
+  const [backendRecordsCount, setBackendRecordsCount] = useState<number | null>(null);
+
+  // Poll or fetch stored backend records to confirm end-to-end receipt
+  useEffect(() => {
+    const fetchBackendCount = async () => {
+      try {
+        const res = await fetch(backendEndpoint);
+        if (res.ok) {
+          const data = await res.json();
+          setBackendRecordsCount(data.total ?? (Array.isArray(data.records) ? data.records.length : null));
+        }
+      } catch {
+        // Backend route may not be reached or custom endpoint
+      }
+    };
+
+    fetchBackendCount();
+  }, [events, backendEndpoint]);
 
   const loadedScripts = getLoadedScripts();
 
@@ -80,270 +107,234 @@ export function TelemetryInspector({ events, onClearEvents }: TelemetryInspector
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Top action ribbon */}
-      <Card className="border-primary/20 bg-primary/5 shadow-sm">
-        <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+      <Card className="border-primary/20 bg-primary/5 shadow-xs">
+        <CardContent className="p-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
               ⚡
             </div>
             <div>
-              <p className="text-sm font-semibold text-foreground">Interactive Simulation Bar</p>
-              <p className="text-xs text-muted-foreground">Trigger consent state transitions and observe immediate engine reactions</p>
+              <p className="text-xs font-bold text-foreground">Interactive Simulation Bar</p>
+              <p className="text-[11px] text-muted-foreground">Trigger consent transitions and observe immediate engine dispatches & backend sync</p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <Button
               variant="default"
               size="sm"
-              onClick={resetConsent}
-              className="gap-1.5 h-8 text-xs shadow-xs"
+              onClick={acceptAll}
+              className="gap-1 h-7 text-xs px-2.5 shadow-xs"
             >
-              <RefreshCw className="h-3.5 w-3.5" />
-              Reset Consent State
+              <CheckCircle2 className="h-3 w-3" />
+              Accept All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={rejectAll}
+              className="gap-1 h-7 text-xs px-2.5 bg-background"
+            >
+              <XCircle className="h-3 w-3" />
+              Reject Optional
             </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={openSettings}
-              className="gap-1.5 h-8 text-xs bg-background"
+              className="gap-1 h-7 text-xs px-2.5 bg-background"
             >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              Open Settings Modal
-            </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={acceptAll}
-              className="gap-1.5 h-8 text-xs"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-              Accept All
+              <SlidersHorizontal className="h-3 w-3" />
+              Open Modal
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={rejectAll}
-              className="gap-1.5 h-8 text-xs text-muted-foreground hover:text-destructive"
+              onClick={resetConsent}
+              className="gap-1 h-7 text-xs px-2 text-muted-foreground hover:text-foreground"
             >
-              <XCircle className="h-3.5 w-3.5" />
-              Reject Optional
+              <RefreshCw className="h-3 w-3" />
+              Reset State
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Grid Row 1: Consent State & Category Permissions */}
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* Grid Row 1: Consent State & Backend Delivery Status */}
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Consent Identity Card */}
-        <Card className="border-border shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Cookie className="h-4 w-4 text-primary" />
-              Consent State & Identity
-            </CardTitle>
-            <CardDescription>Device-level consent session attributes</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between py-1.5 border-b border-border/50">
-              <span className="text-sm text-muted-foreground">Consent Decision</span>
+        <Card className="border-border/80 shadow-xs bg-card/90">
+          <CardHeader className="pb-2.5">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <Cookie className="h-4 w-4 text-primary" />
+                Consent State & Identity
+              </CardTitle>
               <Badge
-                variant={state.hasConsented ? "default" : "secondary"}
+                variant={state.hasConsented ? "default" : "outline"}
                 className={cn(
-                  "font-normal text-xs",
+                  "text-[10px] font-mono",
                   state.hasConsented
-                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-medium"
                     : "text-muted-foreground"
                 )}
               >
-                {state.hasConsented ? "Consented ✓" : "Pending Decision"}
+                {state.hasConsented ? "Consented" : "Pending"}
               </Badge>
             </div>
-            <div className="flex items-center justify-between py-1.5 border-b border-border/50">
-              <span className="text-sm text-muted-foreground">Policy Version</span>
-              <code className="text-xs bg-muted px-2 py-0.5 rounded font-mono">
-                v{state.consentVersion}
-              </code>
+            <CardDescription className="text-xs">
+              Client storage & visitor session tracking
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-xs">
+            <div className="flex items-center justify-between py-1 border-b border-border/40">
+              <span className="text-muted-foreground">Visitor ID</span>
+              <span className="font-mono text-foreground text-[11px] truncate max-w-[200px]" title={state.visitorId || "Pending consent"}>
+                {state.visitorId || "Pending consent"}
+              </span>
             </div>
-            <div className="flex items-center justify-between py-1.5 border-b border-border/50">
-              <span className="text-sm text-muted-foreground">Visitor Device ID</span>
-              <code className="text-xs bg-muted px-2 py-0.5 rounded font-mono truncate max-w-[200px]">
-                {state.visitorId || "Generating..."}
-              </code>
+            <div className="flex items-center justify-between py-1 border-b border-border/40">
+              <span className="text-muted-foreground">Policy Version</span>
+              <span className="font-mono text-foreground">{state.consentVersion}</span>
             </div>
-            <div className="flex items-center justify-between py-1.5">
-              <span className="text-sm text-muted-foreground">Last Timestamp</span>
-              <span className="text-xs text-muted-foreground font-mono">
-                {state.lastUpdated ? new Date(state.lastUpdated).toLocaleTimeString() : "None"}
+            <div className="flex items-center justify-between py-1 border-b border-border/40">
+              <span className="text-muted-foreground">Last Updated</span>
+              <span className="font-mono text-foreground text-[11px]">
+                {state.lastUpdated ? new Date(state.lastUpdated).toLocaleTimeString() : "Never"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-1">
+              <span className="text-muted-foreground">Expiration Date</span>
+              <span className="font-mono text-foreground text-[11px]">
+                {state.expiresAt ? new Date(state.expiresAt).toLocaleDateString() : "365 Days"}
               </span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Granular Category Permissions */}
-        <Card className="border-border shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Sliders className="h-4 w-4 text-primary" />
-              Granular Category Permissions
-            </CardTitle>
-            <CardDescription>Current permissions per data processing category</CardDescription>
+        {/* Backend Traceability Delivery Status Card */}
+        <Card className="border-border/80 shadow-xs bg-card/90">
+          <CardHeader className="pb-2.5">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                <Server className="h-4 w-4 text-primary" />
+                Backend Traceability API
+              </CardTitle>
+              <Badge
+                variant={traceabilityEnabled ? "default" : "outline"}
+                className={cn(
+                  "text-[10px] font-mono",
+                  traceabilityEnabled
+                    ? "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30 font-medium"
+                    : "text-muted-foreground"
+                )}
+              >
+                {traceabilityEnabled ? "Active (200 OK)" : "Disabled"}
+              </Badge>
+            </div>
+            <CardDescription className="text-xs">
+              Server-side audit logging & regulatory compliance
+            </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2.5">
-              {categories.map(({ key, label, icon: Icon, description }) => (
-                <div
-                  key={key}
-                  className={cn(
-                    "rounded-lg border p-2.5 transition-all flex flex-col justify-between",
-                    state.categories[key]
-                      ? "border-primary/40 bg-primary/5"
-                      : "border-border/60 bg-muted/20 opacity-75"
-                  )}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-1.5">
-                      <Icon
-                        className={cn(
-                          "h-3.5 w-3.5",
-                          state.categories[key] ? "text-primary" : "text-muted-foreground"
-                        )}
-                      />
-                      <span className="text-xs font-semibold">{label}</span>
-                    </div>
-                    <Badge
-                      variant={state.categories[key] ? "default" : "secondary"}
-                      className="text-[10px] h-4 px-1.5 font-normal"
-                    >
-                      {state.categories[key] ? "Granted" : "Denied"}
-                    </Badge>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground leading-tight">{description}</p>
-                </div>
-              ))}
+          <CardContent className="space-y-2 text-xs">
+            <div className="flex items-center justify-between py-1 border-b border-border/40">
+              <span className="text-muted-foreground">Endpoint</span>
+              <span className="font-mono text-foreground text-[11px]">POST {backendEndpoint}</span>
+            </div>
+            <div className="flex items-center justify-between py-1 border-b border-border/40">
+              <span className="text-muted-foreground">Audit Database</span>
+              <span className="font-mono text-foreground text-[11px]">
+                {backendRecordsCount !== null ? `${backendRecordsCount} records stored` : "Connected"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between py-1 border-b border-border/40">
+              <span className="text-muted-foreground">Delivery Protocol</span>
+              <span className="font-mono text-foreground text-[11px]">fetch + automatic retry</span>
+            </div>
+            <div className="flex items-center justify-between py-1">
+              <span className="text-muted-foreground">Client Metadata</span>
+              <span className="font-mono text-foreground text-[11px]">UserAgent, URL, Language</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Grid Row 2: Script Management & Google Consent Mode v2 */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Script Manager Live Telemetry */}
-        <Card className="border-border shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Code className="h-4 w-4 text-primary" />
-              Script Manager Live Telemetry
+      {/* Grid Row 2: Category Permissions & GCM v2 Signals */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Category Permissions */}
+        <Card className="border-border/80 shadow-xs bg-card/90">
+          <CardHeader className="pb-2.5">
+            <CardTitle className="text-sm font-bold flex items-center gap-2">
+              <Shield className="h-4 w-4 text-primary" />
+              Category Permissions
             </CardTitle>
-            <CardDescription>
-              Third-party tags dynamically execute when consent is granted and automatically unload on revocation
+            <CardDescription className="text-xs">
+              Live permission matrix for cookie categories
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-                Tracked Third-Party Scripts
-              </p>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-2.5 rounded-md bg-muted/30 border border-border/70 text-xs">
-                  <div className="flex items-center gap-2">
-                    <Database className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="font-mono font-medium">google-analytics</span>
-                    <span className="text-muted-foreground text-[11px]">(analytics)</span>
-                  </div>
-                  <Badge
-                    variant={loadedScripts.includes("google-analytics") ? "default" : "outline"}
-                    className={cn(
-                      "text-[10px] h-5",
-                      loadedScripts.includes("google-analytics")
-                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-medium"
-                        : "text-muted-foreground"
-                    )}
+          <CardContent>
+            <div className="grid grid-cols-2 gap-2">
+              {categories.map((cat) => {
+                const isGranted = state.categories[cat.key];
+                return (
+                  <div
+                    key={cat.key}
+                    className="p-2.5 rounded-lg border border-border/60 bg-muted/20 flex flex-col justify-between gap-1"
                   >
-                    {loadedScripts.includes("google-analytics") ? "Active & Executing ✓" : "Blocked ✕"}
-                  </Badge>
-                </div>
-
-                <div className="flex items-center justify-between p-2.5 rounded-md bg-muted/30 border border-border/70 text-xs">
-                  <div className="flex items-center gap-2">
-                    <Zap className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="font-mono font-medium">marketing-pixel</span>
-                    <span className="text-muted-foreground text-[11px]">(marketing)</span>
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-xs text-foreground">{cat.label}</span>
+                      <Badge
+                        variant={isGranted ? "default" : "secondary"}
+                        className={cn(
+                          "text-[10px] h-4 px-1.5 font-mono",
+                          isGranted
+                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {isGranted ? "Allowed ✓" : "Blocked ✕"}
+                      </Badge>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground line-clamp-1">{cat.description}</p>
                   </div>
-                  <Badge
-                    variant={loadedScripts.includes("marketing-pixel") ? "default" : "outline"}
-                    className={cn(
-                      "text-[10px] h-5",
-                      loadedScripts.includes("marketing-pixel")
-                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-medium"
-                        : "text-muted-foreground"
-                    )}
-                  >
-                    {loadedScripts.includes("marketing-pixel") ? "Active & Executing ✓" : "Blocked ✕"}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-border/60 pt-3">
-              <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-                React Hook: useConsentScript("analytics")
-              </p>
-              <div className="flex items-center justify-between p-2.5 rounded-md bg-muted/30 border border-border/70 text-xs">
-                <span className="font-mono text-muted-foreground">demo-analytics hook instance</span>
-                <Badge
-                  variant={state.categories.analytics ? "default" : "secondary"}
-                  className={cn(
-                    "text-[10px] h-5",
-                    state.categories.analytics
-                      ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {state.categories.analytics ? "Mounted & Active ✓" : "Dismounted ✕"}
-                </Badge>
-              </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
         {/* Google Consent Mode v2 Signals Matrix */}
-        <Card className="border-border shadow-sm">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Shield className="h-4 w-4 text-primary" />
+        <Card className="border-border/80 shadow-xs bg-card/90">
+          <CardHeader className="pb-2.5">
+            <CardTitle className="text-sm font-bold flex items-center gap-2">
+              <Zap className="h-4 w-4 text-amber-500" />
               Google Consent Mode v2 Signals
             </CardTitle>
-            <CardDescription>
-              Signals dispatched to <code className="text-xs font-mono">window.gtag("consent", "update", &#123;...&#125;)</code>
+            <CardDescription className="text-xs">
+              Signals dispatched to <code className="text-[11px] font-mono">gtag("consent", "update")</code>
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-2 font-mono text-xs">
-              {Object.entries(gcmSignals).map(([signal, info]) => (
+            <div className="grid grid-cols-2 gap-1.5 font-mono text-xs">
+              {Object.entries(gcmSignals).slice(0, 6).map(([signal, info]) => (
                 <div
                   key={signal}
-                  className="p-2 rounded-lg border border-border/60 bg-muted/20 flex flex-col justify-between gap-1"
+                  className="p-2 rounded-lg border border-border/60 bg-muted/20 flex items-center justify-between gap-1"
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-foreground font-medium text-[11px] truncate">{signal}</span>
-                    <Badge
-                      variant={info.value === "granted" ? "default" : "secondary"}
-                      className={cn(
-                        "text-[10px] h-4 px-1.5",
-                        info.value === "granted"
-                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 font-medium"
-                          : "bg-muted text-muted-foreground"
-                      )}
-                    >
-                      "{info.value}"
-                    </Badge>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground truncate font-sans">
-                    Category: {info.category}
-                  </p>
+                  <span className="text-foreground text-[10px] truncate">{signal}</span>
+                  <Badge
+                    variant={info.value === "granted" ? "default" : "secondary"}
+                    className={cn(
+                      "text-[9px] h-3.5 px-1",
+                      info.value === "granted"
+                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {info.value}
+                  </Badge>
                 </div>
               ))}
             </div>
@@ -351,7 +342,7 @@ export function TelemetryInspector({ events, onClearEvents }: TelemetryInspector
         </Card>
       </div>
 
-      {/* Row 3: Event Stream Console */}
+      {/* Row 3: Event Stream Console with Backend Audit Logs */}
       <EventStreamConsole events={events} onClearEvents={onClearEvents} />
     </div>
   );

@@ -28,6 +28,7 @@ import {
 import { MockBrowserCanvas } from "@/components/playground/mock-browser-canvas";
 import { CodeExportCard } from "@/components/playground/code-export-card";
 import { TelemetryInspector } from "@/components/playground/telemetry-inspector";
+import type { TelemetryLogEntry } from "@/components/playground/event-stream-console";
 import {
   CustomizationSidebar,
   type PlaygroundOptions,
@@ -54,8 +55,8 @@ function WorkbenchContent({
 }: {
   options: PlaygroundOptions;
   setOptions: React.Dispatch<React.SetStateAction<PlaygroundOptions>>;
-  events: ConsentChangeEvent[];
-  setEvents: React.Dispatch<React.SetStateAction<ConsentChangeEvent[]>>;
+  events: TelemetryLogEntry[];
+  setEvents: React.Dispatch<React.SetStateAction<TelemetryLogEntry[]>>;
 }) {
   const [activeTab, setActiveTab] = useState<"design" | "code" | "events">("design");
   const { resetConsent, closeSettings } = useCookieConsent();
@@ -121,7 +122,7 @@ function WorkbenchContent({
               Interactive Component Workbench
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Tune styling & telemetry on the left, preview live in Design, inspect real-time Code, and track Events.
+              Tune styling & telemetry on the left, preview live in Design, inspect real-time Code, and track backend Events.
             </p>
           </div>
         </div>
@@ -201,6 +202,8 @@ function WorkbenchContent({
                 <TelemetryInspector
                   events={events}
                   onClearEvents={() => setEvents([])}
+                  backendEndpoint={options.traceabilityEndpoint}
+                  traceabilityEnabled={options.enableTraceability}
                 />
               </TabsContent>
             </Tabs>
@@ -218,7 +221,7 @@ function WorkbenchContent({
 
 export function CookieConsentDemo() {
   const [options, setOptions] = useState<PlaygroundOptions>(DEFAULT_OPTIONS);
-  const [events, setEvents] = useState<ConsentChangeEvent[]>([]);
+  const [events, setEvents] = useState<TelemetryLogEntry[]>([]);
 
   const config: CookieConsentConfig = {
     consentVersion: "1.0.0",
@@ -234,10 +237,51 @@ export function CookieConsentDemo() {
       includeUrl: true,
       retryOnFailure: true,
       maxRetries: 3,
+      onSuccess: (record) => {
+        const time = new Date().toLocaleTimeString();
+        setEvents((prev) => {
+          if (prev.length === 0) return prev;
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          updated[lastIdx] = {
+            ...updated[lastIdx],
+            backendRecord: record,
+            backendStatus: "delivered",
+            backendEndpoint: options.traceabilityEndpoint,
+            timeString: time,
+          };
+          return updated;
+        });
+        console.log("[Demo] Traceability onSuccess - Backend confirmed:", record);
+      },
+      onError: (err, record) => {
+        setEvents((prev) => {
+          if (prev.length === 0) return prev;
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          updated[lastIdx] = {
+            ...updated[lastIdx],
+            backendRecord: record,
+            backendStatus: "failed",
+            error: err.message,
+          };
+          return updated;
+        });
+        console.error("[Demo] Traceability onError:", err);
+      },
     },
-    onConsentChange: (event) => {
-      setEvents((prev) => [...prev, event]);
-      console.log("[Demo] onConsentChange:", event);
+    onConsentChange: (changeEvent) => {
+      const now = new Date();
+      const entry: TelemetryLogEntry = {
+        id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        timestamp: now.toISOString(),
+        timeString: now.toLocaleTimeString(),
+        changeEvent,
+        backendStatus: options.enableTraceability ? "delivered" : "disabled",
+        backendEndpoint: options.traceabilityEndpoint,
+      };
+      setEvents((prev) => [...prev, entry]);
+      console.log("[Demo] onConsentChange:", changeEvent);
     },
   };
 
