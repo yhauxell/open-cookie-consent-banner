@@ -21,14 +21,19 @@ import { cn } from "@/lib/utils"
 
 export interface CookieSettingsProps {
   className?: string
+  buttonClassName?: string
 }
 
-export function CookieSettings({ className }: CookieSettingsProps) {
+export function CookieSettings({ className, buttonClassName }: CookieSettingsProps) {
   const { isSettingsOpen, closeSettings, state, updateConsent, config, acceptAll, rejectAll } = useCookieConsent()
 
   const categories = config.categories ?? defaultCategories
 
   const [localCategories, setLocalCategories] = React.useState<ConsentCategories>(state.categories)
+
+  // Derive matching button radius from modal className or explicit buttonClassName
+  const detectedRadius = className?.match(/\brounded-(none|xs|sm|md|lg|xl|2xl|3xl|full)\b/)?.[0];
+  const buttonRadiusClass = buttonClassName ?? detectedRadius ?? "";
 
   // Sync local state when modal opens or when state changes
   React.useEffect(() => {
@@ -121,13 +126,27 @@ export function CookieSettings({ className }: CookieSettingsProps) {
         <Separator />
 
         <DialogFooter className="flex-col gap-2 sm:flex-row">
-          <Button variant="outline" size="sm" onClick={handleRejectAll} className="w-full sm:w-auto bg-transparent">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRejectAll}
+            className={cn("w-full sm:w-auto bg-transparent", buttonRadiusClass)}
+          >
             Reject All
           </Button>
-          <Button variant="outline" size="sm" onClick={handleAcceptAll} className="w-full sm:w-auto bg-transparent">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleAcceptAll}
+            className={cn("w-full sm:w-auto bg-transparent", buttonRadiusClass)}
+          >
             Accept All
           </Button>
-          <Button size="sm" onClick={handleSave} className="w-full sm:w-auto gap-2">
+          <Button
+            size="sm"
+            onClick={handleSave}
+            className={cn("w-full sm:w-auto gap-2", buttonRadiusClass)}
+          >
             <Check className="h-4 w-4" />
             Save Preferences
           </Button>
