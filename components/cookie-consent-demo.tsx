@@ -1,4 +1,6 @@
 "use client";
+
+import React, { useState } from "react";
 import {
   ConsentScript,
   CookieBanner,
@@ -8,353 +10,250 @@ import {
   CookieTrigger,
   useConsentScript,
   useCookieConsent,
+  type BannerPosition,
+  type BannerSize,
   type ConsentChangeEvent,
   type CookieConsentConfig,
 } from "@/components/cookie-consent";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import {
-  AlertCircle,
-  Code,
-  Cookie,
-  Database,
-  RefreshCw,
-  Shield,
-  Zap,
+  Eye,
+  Code2,
+  Activity,
+  Sparkles,
+  Terminal,
 } from "lucide-react";
-import { useState } from "react";
+import { MockBrowserCanvas } from "@/components/playground/mock-browser-canvas";
+import { CodeExportCard } from "@/components/playground/code-export-card";
+import { TelemetryInspector } from "@/components/playground/telemetry-inspector";
+import type { TelemetryLogEntry } from "@/components/playground/event-stream-console";
+import {
+  CustomizationSidebar,
+  DEFAULT_PLAYGROUND_CATEGORIES,
+  type PlaygroundOptions,
+} from "@/components/playground/customization-sidebar";
 
-const config: CookieConsentConfig = {
-  consentVersion: "1.0.0",
+const DEFAULT_OPTIONS: PlaygroundOptions = {
+  position: "bottom",
+  size: "default",
+  radiusClass: "rounded-lg",
+  hasBackdrop: false,
+  forceVisible: true,
+  bannerTitle: "Cookie Preferences",
+  bannerDescription: "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+  bannerAcceptText: "Accept All",
+  bannerRejectText: "Reject All",
+  bannerCustomizeText: "Customize",
+  bannerLearnMoreText: "Learn more",
+  modalTitle: "Cookie Settings",
+  modalDescription: "Manage your cookie preferences below.",
+  categories: DEFAULT_PLAYGROUND_CATEGORIES,
+  enableTraceability: true,
+  traceabilityEndpoint: "/api/consent",
+  enableGcm: true,
   expirationDays: 365,
   privacyPolicyUrl: "/privacy",
-  position: "bottom",
-  traceability: {
-    enabled: true,
-    endpoint: "/api/consent",
-    includeUserAgent: true,
-    includeUrl: true,
-    retryOnFailure: true,
-    maxRetries: 3,
-    onSuccess: (record) => {
-      console.log("[Demo] Consent tracked successfully:", record.consentId);
-    },
-    onError: (error, record) => {
-      console.error("[Demo] Failed to track consent:", error, record);
-    },
-  },
-  onConsentChange: (event) => {
-    console.log("[Demo] Consent changed:", {
-      action: event.action,
-      granted: event.grantedCategories,
-      revoked: event.revokedCategories,
-    });
-
-    // Example: React to specific category changes
-    if (event.revokedCategories.includes("analytics")) {
-      console.log("[Demo] Analytics was revoked - scripts will be unloaded");
-    }
-    if (event.grantedCategories.includes("analytics")) {
-      console.log("[Demo] Analytics was granted - scripts will be loaded");
-    }
-  },
 };
 
-function DemoContent() {
-  const { state, resetConsent, openSettings, getLoadedScripts } =
-    useCookieConsent();
-  const [_consentEvents, _setConsentEvents] = useState<ConsentChangeEvent[]>(
-    []
-  );
+function WorkbenchContent({
+  options,
+  setOptions,
+  events,
+  setEvents,
+}: {
+  options: PlaygroundOptions;
+  setOptions: React.Dispatch<React.SetStateAction<PlaygroundOptions>>;
+  events: TelemetryLogEntry[];
+  setEvents: React.Dispatch<React.SetStateAction<TelemetryLogEntry[]>>;
+}) {
+  const [sidebarTab, setSidebarTab] = useState<"styling" | "content" | "telemetry">("styling");
+  const [activeTab, setActiveTab] = useState<"design" | "code" | "events">("design");
+  const { resetConsent, closeSettings } = useCookieConsent();
 
-  const analyticsScript = useConsentScript("analytics", "demo-analytics", {
-    content: `console.log("[Demo] Analytics script loaded via useConsentScript hook");`,
+  const handleSidebarTabChange = (tab: "styling" | "content" | "telemetry") => {
+    setSidebarTab(tab);
+    if (tab === "telemetry") {
+      setActiveTab("events");
+    } else if (activeTab === "events") {
+      setActiveTab("design");
+    }
+  };
+
+  const handleFullReset = () => {
+    // 1. Reset all customization, content & telemetry options to defaults
+    setOptions(DEFAULT_OPTIONS);
+    // 2. Clear all telemetry events from stream
+    setEvents([]);
+    // 3. Close settings modal if open
+    closeSettings();
+    // 4. Reset consent state & storage
+    resetConsent();
+    // 5. Keep user in their current view: if in telemetry, stay in telemetry & events; otherwise design
+    if (sidebarTab === "telemetry") {
+      setActiveTab("events");
+    } else {
+      setActiveTab("design");
+    }
+  };
+
+  // Sample third-party script hooks for real-time telemetry testing
+  useConsentScript("analytics", "demo-analytics", {
+    content: `console.log("[Demo] Analytics script active");`,
     onRevoke: () => {
-      console.log("[Demo] Analytics script revoked - cleaning up...");
+      console.log("[Demo] Analytics script cleaned up");
     },
   });
 
-  const categories = [
-    { key: "necessary" as const, label: "Necessary", icon: Shield },
-    { key: "analytics" as const, label: "Analytics", icon: Database },
-    { key: "marketing" as const, label: "Marketing", icon: Zap },
-    { key: "preferences" as const, label: "Preferences", icon: Cookie },
-  ];
-
-  const loadedScripts = getLoadedScripts();
-
   return (
-    <div className="bg-background">
+    <div className="bg-background min-h-screen relative isolate overflow-hidden">
+      {/* Subtle background grid pattern with top radial mask */}
+      <div className="absolute inset-0 -z-10 h-full w-full bg-grid-pattern mask-radial-top opacity-50 pointer-events-none" />
+      {/* Top ambient spotlight glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-[600px] h-[300px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent blur-3xl pointer-events-none" />
+
+      {/* Declarative Scripts for Live Capabilities Showcase */}
       <ConsentScript
         id="google-analytics"
         category="analytics"
-        onLoad={() => console.log("[Demo] GA loaded")}
-        onRevoke={() => console.log("[Demo] GA revoked and cleaned up")}
+        onLoad={() => console.log("[Demo Script] Google Analytics initialized")}
+        onRevoke={() => console.log("[Demo Script] Google Analytics revoked and cleaned up")}
       >
-        {`console.log("[Demo Script] Analytics initialized");`}
+        {`console.log("[Demo Script] GA active");`}
       </ConsentScript>
 
       <ConsentScript
         id="marketing-pixel"
         category="marketing"
-        onLoad={() => console.log("[Demo] Marketing pixel loaded")}
-        onRevoke={() => console.log("[Demo] Marketing pixel revoked")}
+        onLoad={() => console.log("[Demo Script] Marketing pixel initialized")}
+        onRevoke={() => console.log("[Demo Script] Marketing pixel revoked and cleaned up")}
       >
-        {`console.log("[Demo Script] Marketing pixel initialized");`}
+        {`console.log("[Demo Script] Meta Pixel active");`}
       </ConsentScript>
 
-      <div className="container max-w-4xl mx-auto py-12 px-4">
-        <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Cookie className="h-6 w-6 text-primary" />
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        {/* Studio Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/40">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Badge variant="outline" className="text-xs px-2.5 py-0.5 gap-1.5 border-primary/30 text-primary">
+                <Sparkles className="h-3.5 w-3.5" />
+                OpenConsent Studio
+              </Badge>
             </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              Interactive Component Workbench
+            </h1>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              {sidebarTab === "telemetry"
+                ? "Live Telemetry Cockpit: Inspect real-time audit logs, GCM v2 signals, and verified backend transmission receipts."
+                : "Tune styling, banner copy & categories on the left, and preview live in Design or inspect code on the right."}
+            </p>
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-foreground mb-3">
-            Open Cookie Consent Banner
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
-            A full-featured, GDPR-compliant cookie consent solution with
-            traceability support. Compatible with shadcn/ui registry.
-          </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Consent Status</CardTitle>
-              <CardDescription>
-                Current consent state and preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Has Consented
+        {/* 2-Column Full-Width Studio Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr] gap-6 items-start">
+          {/* LEFT COLUMN: Customization Sidebar (Styling, Content, Telemetry Tabs) */}
+          <aside className="w-full lg:sticky lg:top-20">
+            <CustomizationSidebar
+              options={options}
+              setOptions={setOptions}
+              onReset={handleFullReset}
+              sidebarTab={sidebarTab}
+              onSidebarTabChange={handleSidebarTabChange}
+            />
+          </aside>
+
+          {/* RIGHT COLUMN: Stage */}
+          <main className="min-w-0 space-y-4">
+            {sidebarTab === "telemetry" ? (
+              /* Dedicated Focused Telemetry & Events View */
+              <div className="space-y-4 animate-in fade-in-50 duration-200">
+                <div className="flex items-center justify-between pb-2 border-b border-border/40">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="default" className="text-xs px-2.5 py-0.5 gap-1.5 font-mono">
+                      <Terminal className="h-3.5 w-3.5" />
+                      Live Telemetry & Events Cockpit
+                    </Badge>
+                    {events.length > 0 && (
+                      <Badge variant="secondary" className="h-5 px-2 text-xs font-mono">
+                        {events.length} {events.length === 1 ? "Event Logged" : "Events Logged"}
+                      </Badge>
+                    )}
+                  </div>
+                  <span className="text-xs text-muted-foreground hidden sm:inline font-mono text-[11px]">
+                    POST {options.traceabilityEndpoint}
                   </span>
-                  <Badge variant={state.hasConsented ? "default" : "secondary"}>
-                    {state.hasConsented ? "Yes" : "No"}
-                  </Badge>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Version</span>
-                  <code className="text-sm bg-muted px-2 py-0.5 rounded">
-                    {state.consentVersion}
-                  </code>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">
-                    Visitor ID
-                  </span>
-                  <code className="text-xs bg-muted px-2 py-0.5 rounded truncate max-w-32">
-                    {state.visitorId.slice(0, 8)}...
-                  </code>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Categories</CardTitle>
-              <CardDescription>Active cookie categories</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                {categories.map(({ key, label, icon: Icon }) => (
-                  <div
-                    key={key}
-                    className={`flex items-center gap-2 rounded-md border p-2 transition-colors ${
-                      state.categories[key]
-                        ? "border-primary/30 bg-primary/5"
-                        : "border-border bg-muted/30"
-                    }`}
-                  >
-                    <Icon
-                      className={`h-4 w-4 ${
-                        state.categories[key]
-                          ? "text-primary"
-                          : "text-muted-foreground"
-                      }`}
-                    />
-                    <span className="text-sm">{label}</span>
-                  </div>
-                ))}
+                <TelemetryInspector
+                  events={events}
+                  onClearEvents={() => setEvents([])}
+                  backendEndpoint={options.traceabilityEndpoint}
+                  traceabilityEnabled={options.enableTraceability}
+                />
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Code className="h-5 w-5" />
-              Script Management
-            </CardTitle>
-            <CardDescription>
-              Third-party scripts are loaded/unloaded based on consent
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium mb-2">Loaded Scripts</p>
-                {loadedScripts.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {loadedScripts.map((id) => (
-                      <Badge
-                        key={id}
-                        variant="outline"
-                        className="font-mono text-xs"
-                      >
-                        {id}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    No scripts loaded - grant consent to load scripts
-                  </p>
-                )}
-              </div>
-
-              <div className="border-t pt-4">
-                <p className="text-sm font-medium mb-2">
-                  Hook Example: useConsentScript
-                </p>
-                <div className="bg-muted rounded-md p-3 text-sm font-mono">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      demo-analytics
-                    </span>
-                    <div className="flex gap-2">
-                      <Badge
-                        variant={
-                          analyticsScript.hasConsent ? "default" : "secondary"
-                        }
-                        className={cn(
-                          "text-xs",
-                          analyticsScript.hasConsent
-                            ? "bg-green-500/10 text-green-500"
-                            : "bg-red-500/10 text-red-500"
-                        )}
-                      >
-                        {analyticsScript.hasConsent
-                          ? "Consent ✓"
-                          : "No Consent"}
-                      </Badge>
-                      <Badge
-                        variant={
-                          analyticsScript.isLoaded ? "default" : "outline"
-                        }
-                        className={cn(
-                          "text-xs",
-                          analyticsScript.isLoading
-                            ? "bg-yellow-500/10 text-yellow-500"
-                            : analyticsScript.isLoaded
-                            ? "bg-green-500/10 text-green-500"
-                            : "bg-red-500/10 text-red-500"
-                        )}
-                      >
-                        {analyticsScript.isLoading
-                          ? "Loading..."
-                          : analyticsScript.isLoaded
-                          ? "Loaded"
-                          : "Not Loaded"}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-t pt-4">
-                <p className="text-sm text-muted-foreground">
-                  Open browser console to see script load/unload events. Try
-                  accepting then rejecting cookies to see scripts being cleaned
-                  up.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-lg">Actions</CardTitle>
-            <CardDescription>
-              Test the cookie consent functionality
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              <Button
-                variant="outline"
-                onClick={resetConsent}
-                className="gap-2 bg-transparent"
+            ) : (
+              /* Standard Workbench (Design / Code / Events) */
+              <Tabs
+                value={activeTab}
+                onValueChange={(val) => setActiveTab(val as "design" | "code" | "events")}
+                className="w-full"
               >
-                <RefreshCw className="h-4 w-4" />
-                Reset Consent
-              </Button>
-              <CookieTrigger variant="full" />
-            </div>
-          </CardContent>
-        </Card>
+                <div className="flex items-center justify-between pb-3">
+                  <TabsList className="h-9 p-0.5 bg-muted/80 border border-border/70 rounded-lg gap-0.5">
+                    <TabsTrigger
+                      value="design"
+                      className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                    >
+                      <Eye className="h-3.5 w-3.5 text-primary" />
+                      <span>Design</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="code"
+                      className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                    >
+                      <Code2 className="h-3.5 w-3.5 text-primary" />
+                      <span>Code</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Features</CardTitle>
-            <CardDescription>What this component provides</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="grid gap-2 sm:grid-cols-2 text-sm text-muted-foreground">
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                GDPR compliant consent management
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Granular category control
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Traceability with API endpoint
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Device and global consent modes
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Persistent localStorage storage
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Retry logic for failed API calls
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Consent-aware script loading
-              </li>
-              <li className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Automatic script cleanup on revoke
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
+                {/* TAB 1: DESIGN (Mock Viewport Canvas with embedded banner) */}
+                <TabsContent value="design" className="mt-0 focus-visible:outline-none space-y-4">
+                  <MockBrowserCanvas>
+                    {options.hasBackdrop && (
+                      <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                    )}
+                    <CookieBanner
+                      isEmbedded
+                      forceVisible={options.forceVisible}
+                      position={options.position}
+                      size={options.size}
+                      title={options.bannerTitle}
+                      description={options.bannerDescription}
+                      acceptAllText={options.bannerAcceptText}
+                      rejectAllText={options.bannerRejectText}
+                      customizeText={options.bannerCustomizeText}
+                      learnMoreText={options.bannerLearnMoreText}
+                      className={cn(options.radiusClass, "shadow-2xl")}
+                    />
+                  </MockBrowserCanvas>
+                </TabsContent>
 
-        {/* Cookie settings link */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
+                {/* TAB 2: CODE (Dynamic Live Generated Snippet & CLI) */}
+                <TabsContent value="code" className="mt-0 focus-visible:outline-none">
+                  <CodeExportCard options={options} />
+                </TabsContent>
+              </Tabs>
+            )}
+          </main>
+        </div>
+
+        {/* Footer trigger demo */}
+        <div className="text-center pt-6 border-t border-border/40">
           <CookieTrigger variant="text" />
         </div>
       </div>
@@ -363,12 +262,85 @@ function DemoContent() {
 }
 
 export function CookieConsentDemo() {
+  const [options, setOptions] = useState<PlaygroundOptions>(DEFAULT_OPTIONS);
+  const [events, setEvents] = useState<TelemetryLogEntry[]>([]);
+
+  const config: CookieConsentConfig = {
+    consentVersion: "1.0.0",
+    expirationDays: options.expirationDays,
+    privacyPolicyUrl: options.privacyPolicyUrl,
+    position: options.position,
+    size: options.size,
+    categories: options.categories,
+    googleConsentMode: { enabled: options.enableGcm },
+    traceability: {
+      enabled: options.enableTraceability,
+      endpoint: options.traceabilityEndpoint,
+      includeUserAgent: true,
+      includeUrl: true,
+      retryOnFailure: true,
+      maxRetries: 3,
+      onSuccess: (record) => {
+        const time = new Date().toLocaleTimeString();
+        setEvents((prev) => {
+          if (prev.length === 0) return prev;
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          updated[lastIdx] = {
+            ...updated[lastIdx],
+            backendRecord: record,
+            backendStatus: "delivered",
+            backendEndpoint: options.traceabilityEndpoint,
+            timeString: time,
+          };
+          return updated;
+        });
+        console.log("[Demo] Traceability onSuccess - Backend confirmed:", record);
+      },
+      onError: (err, record) => {
+        setEvents((prev) => {
+          if (prev.length === 0) return prev;
+          const updated = [...prev];
+          const lastIdx = updated.length - 1;
+          updated[lastIdx] = {
+            ...updated[lastIdx],
+            backendRecord: record,
+            backendStatus: "failed",
+            error: err.message,
+          };
+          return updated;
+        });
+        console.error("[Demo] Traceability onError:", err);
+      },
+    },
+    onConsentChange: (changeEvent) => {
+      const now = new Date();
+      const entry: TelemetryLogEntry = {
+        id: `evt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        timestamp: now.toISOString(),
+        timeString: now.toLocaleTimeString(),
+        changeEvent,
+        backendStatus: options.enableTraceability ? "delivered" : "disabled",
+        backendEndpoint: options.traceabilityEndpoint,
+      };
+      setEvents((prev) => [...prev, entry]);
+      console.log("[Demo] onConsentChange:", changeEvent);
+    },
+  };
+
   return (
     <CookieConsentProvider config={config}>
-      <DemoContent />
-      <CookieBannerBackdrop />
-      <CookieBanner />
-      <CookieSettings />
+      <WorkbenchContent
+        options={options}
+        setOptions={setOptions}
+        events={events}
+        setEvents={setEvents}
+      />
+      <CookieSettings
+        className={options.radiusClass}
+        title={options.modalTitle}
+        description={options.modalDescription}
+      />
     </CookieConsentProvider>
   );
 }

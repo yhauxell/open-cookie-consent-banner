@@ -16,6 +16,7 @@ export { useConsentGate, useConsentValue } from "./use-cookie-consent";
 // Types
 export type {
   BannerPosition,
+  BannerSize,
   CategoryConfig,
   ConsentAction,
   ConsentCategories,

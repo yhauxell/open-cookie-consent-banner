@@ -38,7 +38,7 @@ This will:
 
 - `/r/cookie-consent.json` - Registry item for the cookie-consent component
 - `/registry` - Registry UI page with component preview
-- `/demo` - Full demo page
+- `/playground` - Interactive playground & workbench page
 
 ## MCP Support
 

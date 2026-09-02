@@ -1,5 +1,6 @@
 import { CopyButton } from "@/components/copy-button";
 import { Logo } from "@/components/logo";
+import { SpotlightBackground } from "@/components/spotlight-background";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -139,52 +140,60 @@ export default function HomePage() {
 
   return (
     <div className="bg-background">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-        <div className="container max-w-screen-xl mx-auto px-4 py-24 md:py-32 lg:py-40">
-          <div className="flex flex-col items-center text-center space-y-8">
-            <Badge variant="secondary" className="px-4 py-1.5 text-sm">
-              <Zap className="h-3.5 w-3.5 mr-1.5" />
+      {/* Hero Section with Grid Pattern & Ambient Ray */}
+      <section className="relative isolate overflow-hidden border-b border-border/40">
+        {/* Dynamic GPU-accelerated mouse follow spotlight */}
+        <SpotlightBackground size={750} showGrid={true} />
+
+        {/* Subtle grid pattern with radial top mask */}
+        <div className="absolute inset-0 -z-10 h-full w-full bg-grid-pattern mask-radial-top opacity-60 pointer-events-none" />
+        
+        {/* Top ambient spotlight glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-[600px] h-[350px] bg-gradient-to-b from-primary/10 via-primary/5 to-transparent blur-3xl pointer-events-none" />
+
+        <div className="container relative z-10 max-w-screen-xl mx-auto px-4 py-24 md:py-32 lg:py-36">
+          <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
+            <Badge variant="secondary" className="px-4 py-1.5 text-xs sm:text-sm border border-border/80 shadow-xs bg-muted/60 backdrop-blur-xs">
+              <Zap className="h-3.5 w-3.5 mr-1.5 text-amber-500" />
               shadcn/ui Registry Compatible
             </Badge>
 
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl max-w-4xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               Open Consent
               <br />
-              <span className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent animate-gradient-shift">
+              <span className="bg-gradient-to-r from-amber-400 via-pink-500 to-violet-600 bg-clip-text text-transparent animate-gradient-shift">
                 Free forever. Zero lock-in.
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl text-pretty leading-relaxed">
               Consent management, open and simple. GDPR-compliant cookie consent
               with Google Consent Mode v2 built-in. Install via shadcn/ui in
               seconds.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <Button asChild size="lg" className="gap-2">
+            <div className="flex flex-col sm:flex-row gap-4 mt-2">
+              <Button asChild size="lg" className="gap-2 shadow-xs">
                 <Link href="/docs">
                   <BookOpen className="h-4 w-4" />
                   Get Started
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="gap-2">
-                <Link href="/demo">
-                  <Play className="h-4 w-4" />
-                  View Demo
+              <Button asChild variant="outline" size="lg" className="gap-2 bg-background/80 backdrop-blur-xs border-border/80">
+                <Link href="/playground">
+                  <Play className="h-4 w-4 text-primary" />
+                  Live Playground
                 </Link>
               </Button>
             </div>
 
-            {/* Install Command */}
-            <div className="w-full max-w-2xl mt-8">
+            {/* Install Command Box with Precision Sheen */}
+            <div className="w-full max-w-2xl mt-6">
               <div className="glow-border">
-                <div className="glow-border-inner bg-zinc-950 text-zinc-50 rounded-lg p-4 font-mono text-sm flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 overflow-x-auto">
+                <div className="glow-border-inner bg-zinc-950 text-zinc-50 rounded-lg p-3.5 sm:p-4 font-mono text-xs sm:text-sm flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 overflow-x-auto select-all">
                     <Terminal className="h-4 w-4 text-zinc-500 shrink-0" />
-                    <code className="whitespace-nowrap">
+                    <code className="whitespace-nowrap font-mono">
                       npx shadcn@latest add {registryUrl}
                     </code>
                   </div>
@@ -199,30 +208,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Grid */}
-      <section className="border-t bg-muted/30">
-        <div className="container max-w-screen-xl mx-auto px-4 py-24">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+      {/* Features Grid with Dot Pattern & Sheen Cards */}
+      <section className="relative isolate overflow-hidden py-24 bg-muted/20 border-b border-border/40">
+        <SpotlightBackground size={650} showGrid={false} />
+        {/* Subtle dot matrix pattern */}
+        <div className="absolute inset-0 -z-10 h-full w-full bg-dot-pattern mask-radial-faded opacity-50 pointer-events-none" />
+
+        <div className="container relative z-10 max-w-screen-xl mx-auto px-4">
+          <div className="text-center mb-16 space-y-3">
+            <Badge variant="outline" className="text-xs uppercase tracking-wider text-muted-foreground border-primary/20 bg-background/60">
+              Architecture
+            </Badge>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
               Everything you need
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Built for developers who care about privacy compliance and user
-              experience.
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto text-pretty">
+              Built for developers who care about privacy compliance, zero vendor lock-in, and great user experience.
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="group relative bg-background rounded-xl border p-6 hover:border-foreground/20 transition-colors"
+                className="card-sheen card-highlight group relative bg-card/80 backdrop-blur-xs rounded-xl border border-border/80 p-6 transition-all"
               >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="p-2.5 rounded-lg bg-muted group-hover:bg-foreground/5 transition-colors">
-                    <feature.icon className="h-5 w-5 text-foreground" />
+                <div className="flex items-center gap-3.5 mb-3.5">
+                  <div className="p-2.5 rounded-lg bg-muted/80 border border-border/60 group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors">
+                    <feature.icon className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
                   </div>
-                  <h3 className="font-semibold">{feature.title}</h3>
+                  <h3 className="font-semibold text-base text-foreground">{feature.title}</h3>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {feature.description}
@@ -233,15 +248,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Code Preview Section */}
-      <section className="border-t">
-        <div className="container max-w-screen-xl mx-auto px-4 py-24">
+      {/* Code Preview Section with IDE Window */}
+      <section className="relative overflow-hidden py-24 border-b border-border/40">
+        <div className="container max-w-screen-xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
+              <Badge variant="outline" className="text-xs uppercase tracking-wider text-muted-foreground border-primary/20">
+                DX First
+              </Badge>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Simple to integrate
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground leading-relaxed">
                 Wrap your app with the provider, add the banner component, and
                 you&apos;re done. No complex configuration needed.
               </p>
@@ -252,15 +270,15 @@ export default function HomePage() {
                   "Automatic localStorage persistence",
                   "TypeScript support out of the box",
                 ].map((item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <div className="p-1 rounded-full bg-green-500/10">
-                      <Check className="h-4 w-4 text-green-600" />
+                  <li key={item} className="flex items-center gap-3 text-sm">
+                    <div className="p-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                      <Check className="h-3.5 w-3.5" />
                     </div>
                     <span className="text-muted-foreground">{item}</span>
                   </li>
                 ))}
               </ul>
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-4 pt-2">
                 <Button asChild>
                   <Link href="/docs#installation">
                     Installation Guide
@@ -271,17 +289,22 @@ export default function HomePage() {
             </div>
 
             <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-zinc-200 to-zinc-100 dark:from-zinc-800 dark:to-zinc-900 rounded-xl blur-xl opacity-50" />
-              <div className="relative bg-zinc-950 rounded-xl overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                    <div className="w-3 h-3 rounded-full bg-zinc-700" />
-                    <div className="w-3 h-3 rounded-full bg-zinc-700" />
+              <div className="absolute -inset-4 bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-blue-500/10 rounded-2xl blur-xl opacity-60" />
+              <div className="card-sheen relative bg-zinc-950 rounded-xl border border-zinc-800 shadow-2xl overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800/80 bg-zinc-900/60">
+                  <div className="flex items-center gap-2">
+                    <div className="flex gap-1.5">
+                      <div className="w-3 h-3 rounded-full bg-red-500/70" />
+                      <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+                      <div className="w-3 h-3 rounded-full bg-green-500/70" />
+                    </div>
+                    <span className="text-xs font-mono text-zinc-400 ml-2">app/layout.tsx</span>
                   </div>
-                  <span className="text-xs text-zinc-500 ml-2">layout.tsx</span>
+                  <Badge variant="outline" className="text-[10px] font-mono text-zinc-400 border-zinc-700">
+                    Next.js 16
+                  </Badge>
                 </div>
-                <pre className="p-4 text-sm text-zinc-300 overflow-x-auto">
+                <pre className="p-4 text-xs sm:text-sm font-mono text-zinc-300 overflow-x-auto leading-relaxed">
                   <code>{codeExample}</code>
                 </pre>
               </div>
@@ -291,27 +314,26 @@ export default function HomePage() {
       </section>
 
       {/* Dependencies Section */}
-      <section className="border-t bg-muted/30">
-        <div className="container max-w-screen-xl mx-auto px-4 py-24">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-4">
+      <section className="py-20 bg-muted/20 border-b border-border/40">
+        <div className="container max-w-screen-xl mx-auto px-4">
+          <div className="text-center mb-10 space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
               Built on shadcn/ui
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Uses the components you already have. No additional dependencies
-              required.
+            <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
+              Uses the components you already have. Zero proprietary runtime lock-in.
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-3">
-            {["button", "dialog", "switch", "card", "label", "accordion"].map(
+          <div className="flex flex-wrap justify-center gap-2.5 max-w-2xl mx-auto">
+            {["button", "dialog", "switch", "card", "label", "accordion", "tabs", "badge"].map(
               (dep) => (
                 <Badge
                   key={dep}
                   variant="secondary"
-                  className="px-4 py-2 text-sm"
+                  className="px-3.5 py-1.5 text-xs font-mono border border-border/60 bg-card/80"
                 >
-                  {dep}
+                  components/ui/{dep}
                 </Badge>
               )
             )}
@@ -319,33 +341,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="border-t bg-muted/30">
-        <div className="container max-w-screen-xl mx-auto px-4 py-24">
-          <div className="relative overflow-hidden rounded-2xl border bg-background p-8 md:p-12 lg:p-16">
-            <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
-            <div className="absolute inset-0 pointer-events-none">
-              {/* subtle gradient accent */}
-              <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-gradient-to-br from-yellow-400/10 via-pink-500/10 to-purple-600/10 blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-purple-600/10 via-pink-500/10 to-yellow-400/10 blur-3xl" />
-            </div>
-            <div className="relative flex flex-col items-center text-center space-y-6">
-              <Logo className="h-12 w-12 text-muted-foreground" />
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl max-w-2xl">
+      {/* CTA Section with Ambient Glow & Precision Border */}
+      <section className="py-24">
+        <div className="container max-w-screen-xl mx-auto px-4">
+          <div className="card-sheen relative isolate overflow-hidden rounded-2xl border border-border/80 bg-card p-8 md:p-14 lg:p-16 text-center shadow-lg">
+            <SpotlightBackground size={550} showGrid={true} />
+            {/* Grid Pattern inside CTA */}
+            <div className="absolute inset-0 -z-10 h-full w-full bg-grid-pattern mask-radial-faded opacity-40 pointer-events-none" />
+            
+            {/* Dual Ambient Glow Orbs */}
+            <div className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full bg-violet-600/10 blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col items-center space-y-6 max-w-2xl mx-auto">
+              <div className="h-12 w-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                <Logo className="h-7 w-7 text-primary" />
+              </div>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
                 Ready to add cookie consent to your app?
               </h2>
-              <p className="text-muted-foreground max-w-xl">
-                Get started in seconds with the shadcn CLI. Full documentation
-                available.
+              <p className="text-base text-muted-foreground leading-relaxed">
+                Get started in seconds with the shadcn CLI. Full documentation and customization guide available.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="gap-2">
+              <div className="flex flex-col sm:flex-row gap-3.5 pt-2">
+                <Button asChild size="lg" className="gap-2 shadow-xs">
                   <Link href="/docs">
                     <BookOpen className="h-4 w-4" />
                     Read the Docs
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="gap-2">
+                <Button asChild variant="outline" size="lg" className="gap-2 bg-background/80 border-border/80">
                   <a href={githubUrl} target="_blank" rel="noopener noreferrer">
                     <svg
                       role="img"

@@ -196,7 +196,7 @@ supabase db push
 const fileStructureCode = `cookie-consent-banner/
 ├── app/                    # Next.js app directory
 │   ├── (registry)/         # Registry UI page
-│   ├── demo/               # Demo page
+│   ├── playground/         # Interactive playground & studio
 │   ├── docs/               # Documentation page
 │   └── r/                  # Registry API routes
 ├── components/
@@ -331,14 +331,14 @@ export default function DocsPage() {
               {/* Quick Links */}
               <div className="grid gap-4 md:grid-cols-3 mb-12">
                 <Card className="group cursor-pointer transition-colors hover:border-foreground/20">
-                  <Link href="/demo">
+                  <Link href="/playground">
                     <CardHeader className="pb-2">
                       <Play className="h-8 w-8 mb-2 text-muted-foreground group-hover:text-foreground transition-colors" />
-                      <CardTitle className="text-lg">Try Demo</CardTitle>
+                      <CardTitle className="text-lg">Playground</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground">
-                        Interactive demo of the cookie consent banner
+                        Interactive configurator & compliance workbench
                       </p>
                     </CardContent>
                   </Link>

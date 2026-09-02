@@ -8,6 +8,8 @@ export type ConsentScope = "device" | "global"
 
 export type BannerPosition = "bottom" | "top" | "bottom-left" | "bottom-right"
 
+export type BannerSize = "sm" | "default" | "lg"
+
 export interface ConsentCategories {
   necessary: boolean
   analytics: boolean
@@ -142,6 +144,7 @@ export interface CookieConsentConfig {
   expirationDays?: number
   privacyPolicyUrl?: string
   position?: BannerPosition
+  size?: BannerSize
   categories?: CategoryConfig[]
   traceability?: TraceabilityConfig
   consentScope?: ConsentScopeConfig

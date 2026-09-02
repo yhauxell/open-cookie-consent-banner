@@ -12,7 +12,7 @@
 
 A full-featured, GDPR-compliant cookie consent solution with Google Consent Mode v2 built-in, distributed via [shadcn/ui](https://ui.shadcn.com) registry.
 
-**[openconsent.dev](https://openconsent.dev)** • [Documentation](./docs/README.md) • [Demo](./app/demo) • [Install](#-installation)
+**[openconsent.dev](https://openconsent.dev)** • [Documentation](./docs/README.md) • [Playground](./app/playground) • [Install](#-installation)
 
 **📦 Install via Registry** • [Features](#-features) • [Usage](#-usage) • [Documentation](#-documentation) • [Contributing](#-contributing)
 
@@ -201,7 +201,7 @@ The registry will be available at:
 
 - `http://localhost:3000/registry` - Registry UI page
 - `http://localhost:3000/r/cookie-consent.json` - Registry JSON endpoint
-- `http://localhost:3000/demo` - Component demo
+- `http://localhost:3000/playground` - Component playground & workbench
 
 ### Deploying the Registry
 

@@ -187,4 +187,57 @@
     border-radius: calc(0.5rem - 1px);
     z-index: 1;
   }
+
+  /* Vercel-inspired precision patterns with OpenConsent identity */
+  .bg-grid-pattern {
+    background-image: 
+      linear-gradient(to right, rgba(128, 128, 128, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(128, 128, 128, 0.08) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+
+  .bg-dot-pattern {
+    background-image: radial-gradient(rgba(128, 128, 128, 0.18) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .mask-radial-faded {
+    mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 50%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, #000 50%, transparent 100%);
+  }
+
+  .mask-radial-top {
+    mask-image: radial-gradient(ellipse 85% 60% at 50% 0%, #000 65%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 85% 60% at 50% 0%, #000 65%, transparent 100%);
+  }
+
+  /* Card top sheen and subtle ambient corner highlights */
+  .card-sheen {
+    position: relative;
+  }
+
+  .card-sheen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .card-highlight {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .card-highlight:hover {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--border);
+  }
+
+  .dark .card-highlight:hover {
+    box-shadow: 0 14px 40px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
 }

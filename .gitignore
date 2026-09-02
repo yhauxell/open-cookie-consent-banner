@@ -8,6 +8,10 @@ coverage
 # Build artifacts
 *.tsbuildinfo
 
+# OS & Package manager cache
+.DS_Store
+.pnpm-store/
+
 # Internal maintainer docs (kept in Notion)
 STRATEGY.md
 docs/internal/
