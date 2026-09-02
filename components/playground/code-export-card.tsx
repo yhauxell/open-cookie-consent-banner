@@ -30,6 +30,25 @@ export function CodeExportCard({ options }: CodeExportCardProps) {
   if (options.position !== "bottom") bannerPropsList.push(`position="${options.position}"`);
   if (options.size !== "default") bannerPropsList.push(`size="${options.size}"`);
   if (options.radiusClass !== "rounded-lg") bannerPropsList.push(`className="${options.radiusClass}"`);
+  if (options.bannerTitle && options.bannerTitle !== "Cookie Preferences") {
+    bannerPropsList.push(`title="${options.bannerTitle}"`);
+  }
+  if (
+    options.bannerDescription &&
+    options.bannerDescription !==
+      "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies."
+  ) {
+    bannerPropsList.push(`description="${options.bannerDescription}"`);
+  }
+  if (options.bannerAcceptText && options.bannerAcceptText !== "Accept All") {
+    bannerPropsList.push(`acceptAllText="${options.bannerAcceptText}"`);
+  }
+  if (options.bannerRejectText && options.bannerRejectText !== "Reject All") {
+    bannerPropsList.push(`rejectAllText="${options.bannerRejectText}"`);
+  }
+  if (options.bannerCustomizeText && options.bannerCustomizeText !== "Customize") {
+    bannerPropsList.push(`customizeText="${options.bannerCustomizeText}"`);
+  }
 
   const bannerPropsStr = bannerPropsList.length > 0 ? ` ${bannerPropsList.join(" ")}` : "";
 
@@ -162,7 +181,7 @@ ${configFormatted}
               Tailored Code Integration
             </CardTitle>
             <CardDescription className="text-xs">
-              Dynamically generated config reflecting styling, modal content ({options.modalTitle}), and {options.categories.length} categories
+              Dynamically generated config reflecting banner copy ({options.bannerTitle}), modal content ({options.modalTitle}), and {options.categories.length} categories
             </CardDescription>
           </div>
           <Button
@@ -238,6 +257,11 @@ ${configFormatted}
             <Badge variant="secondary" className="font-mono text-[11px] text-purple-600 dark:text-purple-400">
               categories: {options.categories.length}
             </Badge>
+            {options.bannerTitle !== "Cookie Preferences" && (
+              <Badge variant="secondary" className="font-mono text-[11px]">
+                bannerTitle="{options.bannerTitle}"
+              </Badge>
+            )}
             {options.modalTitle !== "Cookie Settings" && (
               <Badge variant="secondary" className="font-mono text-[11px]">
                 modalTitle="{options.modalTitle}"

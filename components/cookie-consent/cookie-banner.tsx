@@ -13,6 +13,12 @@ export interface CookieBannerProps {
   buttonClassName?: string;
   isEmbedded?: boolean;
   forceVisible?: boolean;
+  title?: string;
+  description?: string;
+  acceptAllText?: string;
+  rejectAllText?: string;
+  customizeText?: string;
+  learnMoreText?: string;
 }
 
 export function CookieBanner({
@@ -22,6 +28,12 @@ export function CookieBanner({
   buttonClassName,
   isEmbedded = false,
   forceVisible = false,
+  title = "Cookie Preferences",
+  description = "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+  acceptAllText = "Accept All",
+  rejectAllText = "Reject All",
+  customizeText = "Customize",
+  learnMoreText = "Learn more",
 }: CookieBannerProps) {
   const { isBannerVisible, acceptAll, rejectAll, openSettings, config } =
     useCookieConsent();
@@ -107,13 +119,12 @@ export function CookieBanner({
                     <Cookie className={cn("text-muted-foreground", sizeStyles.icon)} />
                   </div>
                   <h3 className={cn("text-foreground", sizeStyles.title)}>
-                    Cookie Preferences
+                    {title}
                   </h3>
                 </div>
 
                 <p className={cn("text-muted-foreground", sizeStyles.description)}>
-                  We use cookies to enhance your experience. By continuing to
-                  visit this site you agree to our use of cookies.{" "}
+                  {description}{" "}
                   {config.privacyPolicyUrl && (
                     <a
                       href={config.privacyPolicyUrl}
@@ -121,7 +132,7 @@ export function CookieBanner({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Learn more
+                      {learnMoreText}
                     </a>
                   )}
                 </p>
@@ -135,7 +146,7 @@ export function CookieBanner({
                       className={cn("gap-1.5 bg-transparent w-full", sizeStyles.button, buttonRadiusClass)}
                     >
                       <Settings className={cn("shrink-0", sizeStyles.icon)} />
-                      Customize
+                      {customizeText}
                     </Button>
                     <Button
                       variant="outline"
@@ -143,7 +154,7 @@ export function CookieBanner({
                       onClick={rejectAll}
                       className={cn("bg-transparent w-full", sizeStyles.button, buttonRadiusClass)}
                     >
-                      Reject All
+                      {rejectAllText}
                     </Button>
                   </div>
                   <Button
@@ -151,7 +162,7 @@ export function CookieBanner({
                     onClick={acceptAll}
                     className={cn("w-full font-medium", sizeStyles.button, buttonRadiusClass)}
                   >
-                    Accept All
+                    {acceptAllText}
                   </Button>
                 </div>
               </div>
@@ -165,11 +176,10 @@ export function CookieBanner({
                     </div>
                     <div className="space-y-1">
                       <h3 className={cn("text-foreground", sizeStyles.title)}>
-                        Cookie Preferences
+                        {title}
                       </h3>
                       <p className={cn("max-w-xl text-muted-foreground", sizeStyles.description)}>
-                        We use cookies to enhance your experience. By continuing
-                        to visit this site you agree to our use of cookies.{" "}
+                        {description}{" "}
                         {config.privacyPolicyUrl && (
                           <a
                             href={config.privacyPolicyUrl}
@@ -177,39 +187,38 @@ export function CookieBanner({
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            Learn more
+                            {learnMoreText}
                           </a>
                         )}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col @sm:flex-row @sm:items-center gap-2 shrink-0 pt-1 @3xl:pt-0">
-                    <div className="grid grid-cols-2 gap-2 @sm:flex @sm:items-center">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={openSettings}
-                        className={cn("gap-1.5 bg-transparent w-full @sm:w-auto", sizeStyles.button, buttonRadiusClass)}
-                      >
-                        <Settings className={cn("shrink-0", sizeStyles.icon)} />
-                        Customize
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={rejectAll}
-                        className={cn("bg-transparent w-full @sm:w-auto", sizeStyles.button, buttonRadiusClass)}
-                      >
-                        Reject All
-                      </Button>
-                    </div>
+                  {/* Button cluster with container-aware responsive wrap */}
+                  <div className="grid grid-cols-2 gap-2 @sm:flex @sm:items-center @sm:flex-wrap @sm:justify-end shrink-0 pt-1 @3xl:pt-0">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={openSettings}
+                      className={cn("gap-1.5 bg-transparent col-span-1 @sm:w-auto", sizeStyles.button, buttonRadiusClass)}
+                    >
+                      <Settings className={cn("shrink-0", sizeStyles.icon)} />
+                      {customizeText}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={rejectAll}
+                      className={cn("bg-transparent col-span-1 @sm:w-auto", sizeStyles.button, buttonRadiusClass)}
+                    >
+                      {rejectAllText}
+                    </Button>
                     <Button
                       size="sm"
                       onClick={acceptAll}
-                      className={cn("w-full @sm:w-auto font-medium", sizeStyles.button, buttonRadiusClass)}
+                      className={cn("font-medium col-span-2 @sm:w-auto", sizeStyles.button, buttonRadiusClass)}
                     >
-                      Accept All
+                      {acceptAllText}
                     </Button>
                   </div>
                 </div>

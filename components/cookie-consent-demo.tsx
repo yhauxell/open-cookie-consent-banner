@@ -41,6 +41,12 @@ const DEFAULT_OPTIONS: PlaygroundOptions = {
   radiusClass: "rounded-lg",
   hasBackdrop: false,
   forceVisible: true,
+  bannerTitle: "Cookie Preferences",
+  bannerDescription: "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+  bannerAcceptText: "Accept All",
+  bannerRejectText: "Reject All",
+  bannerCustomizeText: "Customize",
+  bannerLearnMoreText: "Learn more",
   modalTitle: "Cookie Settings",
   modalDescription: "Manage your cookie preferences below.",
   categories: DEFAULT_PLAYGROUND_CATEGORIES,
@@ -126,7 +132,7 @@ function WorkbenchContent({
               Interactive Component Workbench
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Tune styling, modal copy & categories on the left, preview live in Design, inspect real-time Code, and track backend Events.
+              Tune styling, banner copy & categories on the left, preview live in Design, inspect real-time Code, and track backend Events.
             </p>
           </div>
         </div>
@@ -191,6 +197,12 @@ function WorkbenchContent({
                     forceVisible={options.forceVisible}
                     position={options.position}
                     size={options.size}
+                    title={options.bannerTitle}
+                    description={options.bannerDescription}
+                    acceptAllText={options.bannerAcceptText}
+                    rejectAllText={options.bannerRejectText}
+                    customizeText={options.bannerCustomizeText}
+                    learnMoreText={options.bannerLearnMoreText}
                     className={cn(options.radiusClass, "shadow-2xl")}
                   />
                 </MockBrowserCanvas>

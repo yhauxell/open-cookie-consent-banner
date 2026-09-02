@@ -22,6 +22,7 @@ import {
   Trash2,
   Lock,
   ExternalLink,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -64,6 +65,14 @@ export interface PlaygroundOptions {
   radiusClass: string;
   hasBackdrop: boolean;
   forceVisible: boolean;
+
+  // Banner Copy
+  bannerTitle: string;
+  bannerDescription: string;
+  bannerAcceptText: string;
+  bannerRejectText: string;
+  bannerCustomizeText: string;
+  bannerLearnMoreText: string;
 
   // Content & Modal
   modalTitle: string;
@@ -117,6 +126,7 @@ export function CustomizationSidebar({
   onReset,
 }: CustomizationSidebarProps) {
   const [sidebarTab, setSidebarTab] = useState<"styling" | "content" | "telemetry">("styling");
+  const [contentSubTab, setContentSubTab] = useState<"banner" | "modal" | "categories">("banner");
   const [newCatKey, setNewCatKey] = useState("");
   const [newCatTitle, setNewCatTitle] = useState("");
   const [newCatDesc, setNewCatDesc] = useState("");
@@ -127,27 +137,6 @@ export function CustomizationSidebar({
   const handleResetAll = () => {
     setSidebarTab("styling");
     onReset();
-  };
-
-  // Category handlers
-  const handleCategoryToggle = (key: string, enabled: boolean) => {
-    if (key === "necessary") return; // cannot disable necessary
-
-    if (enabled) {
-      // Find from default or create
-      const defaultMatch = DEFAULT_PLAYGROUND_CATEGORIES.find((c) => c.key === key);
-      if (defaultMatch) {
-        setOptions((prev) => ({
-          ...prev,
-          categories: [...prev.categories, defaultMatch],
-        }));
-      }
-    } else {
-      setOptions((prev) => ({
-        ...prev,
-        categories: prev.categories.filter((c) => c.key !== key),
-      }));
-    }
   };
 
   const handleUpdateCategory = (index: number, field: "title" | "description", value: string) => {
@@ -203,6 +192,12 @@ export function CustomizationSidebar({
       categories: DEFAULT_PLAYGROUND_CATEGORIES,
       modalTitle: "Cookie Settings",
       modalDescription: "Manage your cookie preferences below.",
+      bannerTitle: "Cookie Preferences",
+      bannerDescription: "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+      bannerAcceptText: "Accept All",
+      bannerRejectText: "Reject All",
+      bannerCustomizeText: "Customize",
+      bannerLearnMoreText: "Learn more",
     }));
   };
 
@@ -406,189 +401,308 @@ export function CustomizationSidebar({
           </div>
         )}
 
-        {/* CONTENT & CATEGORIES TAB */}
+        {/* CONTENT TAB */}
         {sidebarTab === "content" && (
-          <div className="space-y-5">
-            {/* Modal Header Copy */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <FileText className="h-3.5 w-3.5 text-primary" />
-                  Modal Header Copy
-                </Label>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={openSettings}
-                  className="h-6 text-[11px] px-2 gap-1 border-primary/40 text-primary"
+          <div className="space-y-4">
+            {/* Sub-tabs: Banner / Modal / Categories */}
+            <div className="flex items-center justify-between pb-1 border-b border-border/40">
+              <div className="flex items-center gap-1 bg-muted/70 p-0.5 rounded-md text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => setContentSubTab("banner")}
+                  className={cn(
+                    "px-2.5 py-1 rounded font-medium transition-all",
+                    contentSubTab === "banner" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                  )}
                 >
-                  <ExternalLink className="h-2.5 w-2.5" />
-                  Preview Modal
-                </Button>
+                  Banner
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentSubTab("modal")}
+                  className={cn(
+                    "px-2.5 py-1 rounded font-medium transition-all",
+                    contentSubTab === "modal" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Modal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setContentSubTab("categories")}
+                  className={cn(
+                    "px-2.5 py-1 rounded font-medium transition-all",
+                    contentSubTab === "categories" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  Categories ({options.categories.length})
+                </button>
               </div>
 
-              <div className="space-y-2 bg-muted/20 p-2.5 rounded-lg border border-border/70">
-                <div className="space-y-1">
-                  <Label htmlFor="modal-title" className="text-[11px] text-muted-foreground">
-                    Dialog Title
-                  </Label>
-                  <input
-                    id="modal-title"
-                    type="text"
-                    value={options.modalTitle}
-                    onChange={(e) => setOptions((prev) => ({ ...prev, modalTitle: e.target.value }))}
-                    className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                    placeholder="Cookie Settings"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
-                    Dialog Description
-                  </Label>
-                  <textarea
-                    id="modal-desc"
-                    rows={2}
-                    value={options.modalDescription}
-                    onChange={(e) => setOptions((prev) => ({ ...prev, modalDescription: e.target.value }))}
-                    className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                    placeholder="Manage your cookie preferences below."
-                  />
-                </div>
-              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={handleResetCategories}
+                className="h-6 text-[10px] px-1.5 text-muted-foreground hover:text-foreground"
+                title="Reset copy to defaults"
+              >
+                Reset Copy
+              </Button>
             </div>
 
-            {/* Cookie Categories Management */}
-            <div className="space-y-3 pt-2 border-t border-border/40">
-              <div className="flex items-center justify-between">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <Shield className="h-3.5 w-3.5 text-primary" />
-                  Categories ({options.categories.length})
-                </Label>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={handleResetCategories}
-                  className="h-6 text-[10px] px-1.5 text-muted-foreground hover:text-foreground"
-                  title="Reset to default 4 categories"
-                >
-                  Reset Defaults
-                </Button>
-              </div>
+            {/* SUBTAB 1: BANNER COPY */}
+            {contentSubTab === "banner" && (
+              <div className="space-y-3 animate-in fade-in-50 duration-150">
+                <div className="space-y-1">
+                  <Label htmlFor="banner-title" className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                    Banner Title
+                  </Label>
+                  <input
+                    id="banner-title"
+                    type="text"
+                    value={options.bannerTitle}
+                    onChange={(e) => setOptions((prev) => ({ ...prev, bannerTitle: e.target.value }))}
+                    className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    placeholder="Cookie Preferences"
+                  />
+                </div>
 
-              {/* Active Category Cards */}
-              <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
-                {options.categories.map((category, index) => {
-                  const isNecessary = category.key === "necessary";
-                  return (
-                    <div
-                      key={category.key}
-                      className={cn(
-                        "p-2.5 rounded-lg border text-xs space-y-2 transition-colors",
-                        isNecessary ? "bg-muted/40 border-border/90" : "bg-card border-border/70"
-                      )}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1.5">
-                          {isNecessary && <Lock className="h-3 w-3 text-muted-foreground shrink-0" />}
-                          <span className="font-mono text-[10px] text-muted-foreground uppercase">
-                            {category.key}
-                          </span>
-                          {category.required && (
-                            <Badge variant="secondary" className="text-[9px] h-3.5 px-1 font-mono">
-                              Required
-                            </Badge>
+                <div className="space-y-1">
+                  <Label htmlFor="banner-desc" className="text-xs font-semibold text-foreground">
+                    Banner Message
+                  </Label>
+                  <textarea
+                    id="banner-desc"
+                    rows={3}
+                    value={options.bannerDescription}
+                    onChange={(e) => setOptions((prev) => ({ ...prev, bannerDescription: e.target.value }))}
+                    className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    placeholder="We use cookies to enhance your experience..."
+                  />
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-border/40">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Button & Link Labels
+                  </Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted-foreground block">Primary (Accept)</span>
+                      <input
+                        type="text"
+                        value={options.bannerAcceptText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, bannerAcceptText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs text-foreground"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted-foreground block">Secondary (Reject)</span>
+                      <input
+                        type="text"
+                        value={options.bannerRejectText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, bannerRejectText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs text-foreground"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted-foreground block">Customize Button</span>
+                      <input
+                        type="text"
+                        value={options.bannerCustomizeText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, bannerCustomizeText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs text-foreground"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] text-muted-foreground block">Policy Link Text</span>
+                      <input
+                        type="text"
+                        value={options.bannerLearnMoreText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, bannerLearnMoreText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs text-foreground"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUBTAB 2: MODAL COPY */}
+            {contentSubTab === "modal" && (
+              <div className="space-y-3 animate-in fade-in-50 duration-150">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <FileText className="h-3.5 w-3.5 text-primary" />
+                    Dialog Header
+                  </Label>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={openSettings}
+                    className="h-6 text-[11px] px-2 gap-1 border-primary/40 text-primary"
+                  >
+                    <ExternalLink className="h-2.5 w-2.5" />
+                    Preview Modal
+                  </Button>
+                </div>
+
+                <div className="space-y-2 bg-muted/20 p-2.5 rounded-lg border border-border/70">
+                  <div className="space-y-1">
+                    <Label htmlFor="modal-title" className="text-[11px] text-muted-foreground">
+                      Dialog Title
+                    </Label>
+                    <input
+                      id="modal-title"
+                      type="text"
+                      value={options.modalTitle}
+                      onChange={(e) => setOptions((prev) => ({ ...prev, modalTitle: e.target.value }))}
+                      className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                      placeholder="Cookie Settings"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                      Dialog Description
+                    </Label>
+                    <textarea
+                      id="modal-desc"
+                      rows={2}
+                      value={options.modalDescription}
+                      onChange={(e) => setOptions((prev) => ({ ...prev, modalDescription: e.target.value }))}
+                      className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                      placeholder="Manage your cookie preferences below."
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SUBTAB 3: CATEGORIES */}
+            {contentSubTab === "categories" && (
+              <div className="space-y-3 animate-in fade-in-50 duration-150">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                    <Shield className="h-3.5 w-3.5 text-primary" />
+                    Cookie Categories ({options.categories.length})
+                  </Label>
+                </div>
+
+                {/* Active Category Cards */}
+                <div className="space-y-2 max-h-[260px] overflow-y-auto pr-1">
+                  {options.categories.map((category, index) => {
+                    const isNecessary = category.key === "necessary";
+                    return (
+                      <div
+                        key={category.key}
+                        className={cn(
+                          "p-2.5 rounded-lg border text-xs space-y-2 transition-colors",
+                          isNecessary ? "bg-muted/40 border-border/90" : "bg-card border-border/70"
+                        )}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5">
+                            {isNecessary && <Lock className="h-3 w-3 text-muted-foreground shrink-0" />}
+                            <span className="font-mono text-[10px] text-muted-foreground uppercase">
+                              {category.key}
+                            </span>
+                            {category.required && (
+                              <Badge variant="secondary" className="text-[9px] h-3.5 px-1 font-mono">
+                                Required
+                              </Badge>
+                            )}
+                          </div>
+
+                          {!isNecessary && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleRemoveCategory(category.key)}
+                              className="h-5 w-5 p-0 text-muted-foreground hover:text-destructive"
+                              title="Remove category"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
                           )}
                         </div>
 
-                        {!isNecessary && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => handleRemoveCategory(category.key)}
-                            className="h-5 w-5 p-0 text-muted-foreground hover:text-destructive"
-                            title="Remove category"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        )}
+                        <div className="space-y-1.5">
+                          <input
+                            type="text"
+                            value={category.title}
+                            onChange={(e) => handleUpdateCategory(index, "title", e.target.value)}
+                            className="w-full bg-background/80 border border-border/60 px-2 py-1 rounded text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="Category Title"
+                          />
+                          <input
+                            type="text"
+                            value={category.description}
+                            onChange={(e) => handleUpdateCategory(index, "description", e.target.value)}
+                            className="w-full bg-background/80 border border-border/60 px-2 py-1 rounded text-[11px] text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="Category Description"
+                          />
+                        </div>
                       </div>
+                    );
+                  })}
+                </div>
 
-                      <div className="space-y-1.5">
-                        <input
-                          type="text"
-                          value={category.title}
-                          onChange={(e) => handleUpdateCategory(index, "title", e.target.value)}
-                          className="w-full bg-background/80 border border-border/60 px-2 py-1 rounded text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                          placeholder="Category Title"
-                        />
-                        <input
-                          type="text"
-                          value={category.description}
-                          onChange={(e) => handleUpdateCategory(index, "description", e.target.value)}
-                          className="w-full bg-background/80 border border-border/60 px-2 py-1 rounded text-[11px] text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                          placeholder="Category Description"
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Add Custom Category Button / Form */}
-              {!isAddingCategory ? (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setIsAddingCategory(true)}
-                  className="w-full h-8 text-xs gap-1.5 border-dashed border-border hover:border-primary"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  Add Custom Category
-                </Button>
-              ) : (
-                <form onSubmit={handleAddCustomCategory} className="p-2.5 rounded-lg border border-primary/30 bg-primary/5 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-foreground">New Category</span>
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setIsAddingCategory(false)}
-                      className="h-5 px-1.5 text-[10px]"
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                  <input
-                    type="text"
-                    value={newCatKey}
-                    onChange={(e) => setNewCatKey(e.target.value)}
-                    placeholder="Key (e.g. personalization)"
-                    className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs font-mono"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={newCatTitle}
-                    onChange={(e) => setNewCatTitle(e.target.value)}
-                    placeholder="Title (e.g. Personalization)"
-                    className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs"
-                    required
-                  />
-                  <input
-                    type="text"
-                    value={newCatDesc}
-                    onChange={(e) => setNewCatDesc(e.target.value)}
-                    placeholder="Description..."
-                    className="w-full bg-background border border-border/80 px-2 py-1 rounded text-[11px]"
-                  />
-                  <Button type="submit" size="sm" className="w-full h-7 text-xs">
-                    Save Category
+                {/* Add Custom Category Button / Form */}
+                {!isAddingCategory ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setIsAddingCategory(true)}
+                    className="w-full h-7 text-xs gap-1.5 border-dashed border-border hover:border-primary"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Add Custom Category
                   </Button>
-                </form>
-              )}
-            </div>
+                ) : (
+                  <form onSubmit={handleAddCustomCategory} className="p-2.5 rounded-lg border border-primary/30 bg-primary/5 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-foreground">New Category</span>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setIsAddingCategory(false)}
+                        className="h-5 px-1.5 text-[10px]"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                    <input
+                      type="text"
+                      value={newCatKey}
+                      onChange={(e) => setNewCatKey(e.target.value)}
+                      placeholder="Key (e.g. personalization)"
+                      className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs font-mono"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={newCatTitle}
+                      onChange={(e) => setNewCatTitle(e.target.value)}
+                      placeholder="Title (e.g. Personalization)"
+                      className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs"
+                      required
+                    />
+                    <input
+                      type="text"
+                      value={newCatDesc}
+                      onChange={(e) => setNewCatDesc(e.target.value)}
+                      placeholder="Description..."
+                      className="w-full bg-background border border-border/80 px-2 py-1 rounded text-[11px]"
+                    />
+                    <Button type="submit" size="sm" className="w-full h-7 text-xs">
+                      Save Category
+                    </Button>
+                  </form>
+                )}
+              </div>
+            )}
           </div>
         )}
 
