@@ -22,9 +22,16 @@ import { cn } from "@/lib/utils"
 export interface CookieSettingsProps {
   className?: string
   buttonClassName?: string
+  title?: string
+  description?: string
 }
 
-export function CookieSettings({ className, buttonClassName }: CookieSettingsProps) {
+export function CookieSettings({
+  className,
+  buttonClassName,
+  title = "Cookie Settings",
+  description = "Manage your cookie preferences below.",
+}: CookieSettingsProps) {
   const { isSettingsOpen, closeSettings, state, updateConsent, config, acceptAll, rejectAll } = useCookieConsent()
 
   const categories = config.categories ?? defaultCategories
@@ -79,8 +86,8 @@ export function CookieSettings({ className, buttonClassName }: CookieSettingsPro
               <Shield className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <DialogTitle>Cookie Settings</DialogTitle>
-              <DialogDescription>Manage your cookie preferences below.</DialogDescription>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>{description}</DialogDescription>
             </div>
           </div>
         </DialogHeader>

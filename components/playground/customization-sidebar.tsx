@@ -17,6 +17,11 @@ import {
   Database,
   Calendar,
   Link as LinkIcon,
+  FileText,
+  Plus,
+  Trash2,
+  Lock,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -26,7 +31,31 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { useCookieConsent } from "@/components/cookie-consent";
-import type { BannerPosition, BannerSize } from "@/components/cookie-consent/types";
+import type { BannerPosition, BannerSize, CategoryConfig, ConsentCategory } from "@/components/cookie-consent/types";
+
+export const DEFAULT_PLAYGROUND_CATEGORIES: CategoryConfig[] = [
+  {
+    key: "necessary",
+    title: "Necessary",
+    description: "Essential cookies required for the website to function properly. These cannot be disabled.",
+    required: true,
+  },
+  {
+    key: "analytics",
+    title: "Analytics",
+    description: "Cookies that help us understand how visitors interact with our website.",
+  },
+  {
+    key: "marketing",
+    title: "Marketing",
+    description: "Cookies used for advertising and tracking across websites.",
+  },
+  {
+    key: "preferences",
+    title: "Preferences",
+    description: "Cookies that remember your settings and preferences.",
+  },
+];
 
 export interface PlaygroundOptions {
   // Styling
@@ -35,6 +64,11 @@ export interface PlaygroundOptions {
   radiusClass: string;
   hasBackdrop: boolean;
   forceVisible: boolean;
+
+  // Content & Modal
+  modalTitle: string;
+  modalDescription: string;
+  categories: CategoryConfig[];
 
   // Telemetry Configuration
   enableTraceability: boolean;
@@ -82,7 +116,12 @@ export function CustomizationSidebar({
   setOptions,
   onReset,
 }: CustomizationSidebarProps) {
-  const [sidebarTab, setSidebarTab] = useState<"styling" | "telemetry">("styling");
+  const [sidebarTab, setSidebarTab] = useState<"styling" | "content" | "telemetry">("styling");
+  const [newCatKey, setNewCatKey] = useState("");
+  const [newCatTitle, setNewCatTitle] = useState("");
+  const [newCatDesc, setNewCatDesc] = useState("");
+  const [isAddingCategory, setIsAddingCategory] = useState(false);
+
   const { state, acceptAll, rejectAll, openSettings } = useCookieConsent();
 
   const handleResetAll = () => {
@@ -90,29 +129,113 @@ export function CustomizationSidebar({
     onReset();
   };
 
+  // Category handlers
+  const handleCategoryToggle = (key: string, enabled: boolean) => {
+    if (key === "necessary") return; // cannot disable necessary
+
+    if (enabled) {
+      // Find from default or create
+      const defaultMatch = DEFAULT_PLAYGROUND_CATEGORIES.find((c) => c.key === key);
+      if (defaultMatch) {
+        setOptions((prev) => ({
+          ...prev,
+          categories: [...prev.categories, defaultMatch],
+        }));
+      }
+    } else {
+      setOptions((prev) => ({
+        ...prev,
+        categories: prev.categories.filter((c) => c.key !== key),
+      }));
+    }
+  };
+
+  const handleUpdateCategory = (index: number, field: "title" | "description", value: string) => {
+    setOptions((prev) => {
+      const updated = [...prev.categories];
+      updated[index] = {
+        ...updated[index],
+        [field]: value,
+      };
+      return { ...prev, categories: updated };
+    });
+  };
+
+  const handleRemoveCategory = (key: string) => {
+    if (key === "necessary") return;
+    setOptions((prev) => ({
+      ...prev,
+      categories: prev.categories.filter((c) => c.key !== key),
+    }));
+  };
+
+  const handleAddCustomCategory = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCatKey.trim() || !newCatTitle.trim()) return;
+
+    const formattedKey = newCatKey.toLowerCase().trim().replace(/[^a-z0-9_]/g, "_") as ConsentCategory;
+
+    // Avoid duplicates
+    if (options.categories.some((c) => c.key === formattedKey)) {
+      return;
+    }
+
+    const newCategory: CategoryConfig = {
+      key: formattedKey,
+      title: newCatTitle.trim(),
+      description: newCatDesc.trim() || "Custom cookie category description.",
+    };
+
+    setOptions((prev) => ({
+      ...prev,
+      categories: [...prev.categories, newCategory],
+    }));
+
+    setNewCatKey("");
+    setNewCatTitle("");
+    setNewCatDesc("");
+    setIsAddingCategory(false);
+  };
+
+  const handleResetCategories = () => {
+    setOptions((prev) => ({
+      ...prev,
+      categories: DEFAULT_PLAYGROUND_CATEGORIES,
+      modalTitle: "Cookie Settings",
+      modalDescription: "Manage your cookie preferences below.",
+    }));
+  };
+
   return (
     <Card className="border-border/80 shadow-md bg-card/90 backdrop-blur-xs">
-      <CardHeader className="p-3.5 pb-2 border-b border-border/40">
+      <CardHeader className="p-3 pb-2 border-b border-border/40">
         <div className="flex items-center justify-between">
           <Tabs
             value={sidebarTab}
-            onValueChange={(val) => setSidebarTab(val as "styling" | "telemetry")}
+            onValueChange={(val) => setSidebarTab(val as "styling" | "content" | "telemetry")}
             className="w-full"
           >
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between gap-1">
               <TabsList className="h-8 p-0.5 bg-muted/80 border border-border/70 rounded-lg">
                 <TabsTrigger
                   value="styling"
-                  className="text-xs px-2.5 h-7 gap-1.5 data-[state=active]:bg-background"
+                  className="text-xs px-2 h-7 gap-1 data-[state=active]:bg-background"
                 >
-                  <Sliders className="h-3.5 w-3.5 text-primary" />
+                  <Sliders className="h-3 w-3 text-primary" />
                   Styling
                 </TabsTrigger>
                 <TabsTrigger
-                  value="telemetry"
-                  className="text-xs px-2.5 h-7 gap-1.5 data-[state=active]:bg-background"
+                  value="content"
+                  className="text-xs px-2 h-7 gap-1 data-[state=active]:bg-background"
                 >
-                  <Activity className="h-3.5 w-3.5 text-primary" />
+                  <FileText className="h-3 w-3 text-primary" />
+                  Content
+                </TabsTrigger>
+                <TabsTrigger
+                  value="telemetry"
+                  className="text-xs px-2 h-7 gap-1 data-[state=active]:bg-background"
+                >
+                  <Activity className="h-3 w-3 text-primary" />
                   Telemetry
                 </TabsTrigger>
               </TabsList>
@@ -125,7 +248,7 @@ export function CustomizationSidebar({
                 title="Reset all customizations, modal, telemetry, and view back to design"
               >
                 <RotateCcw className="h-3 w-3" />
-                Reset All
+                Reset
               </Button>
             </div>
           </Tabs>
@@ -133,7 +256,7 @@ export function CustomizationSidebar({
       </CardHeader>
 
       <CardContent className="p-4">
-        {sidebarTab === "styling" ? (
+        {sidebarTab === "styling" && (
           <div className="space-y-5">
             {/* Control 1: Position */}
             <div className="space-y-2">
@@ -281,8 +404,196 @@ export function CustomizationSidebar({
               </div>
             </div>
           </div>
-        ) : (
-          /* TELEMETRY SIDEBAR TAB */
+        )}
+
+        {/* CONTENT & CATEGORIES TAB */}
+        {sidebarTab === "content" && (
+          <div className="space-y-5">
+            {/* Modal Header Copy */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <FileText className="h-3.5 w-3.5 text-primary" />
+                  Modal Header Copy
+                </Label>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={openSettings}
+                  className="h-6 text-[11px] px-2 gap-1 border-primary/40 text-primary"
+                >
+                  <ExternalLink className="h-2.5 w-2.5" />
+                  Preview Modal
+                </Button>
+              </div>
+
+              <div className="space-y-2 bg-muted/20 p-2.5 rounded-lg border border-border/70">
+                <div className="space-y-1">
+                  <Label htmlFor="modal-title" className="text-[11px] text-muted-foreground">
+                    Dialog Title
+                  </Label>
+                  <input
+                    id="modal-title"
+                    type="text"
+                    value={options.modalTitle}
+                    onChange={(e) => setOptions((prev) => ({ ...prev, modalTitle: e.target.value }))}
+                    className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                    placeholder="Cookie Settings"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                    Dialog Description
+                  </Label>
+                  <textarea
+                    id="modal-desc"
+                    rows={2}
+                    value={options.modalDescription}
+                    onChange={(e) => setOptions((prev) => ({ ...prev, modalDescription: e.target.value }))}
+                    className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                    placeholder="Manage your cookie preferences below."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Cookie Categories Management */}
+            <div className="space-y-3 pt-2 border-t border-border/40">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                  <Shield className="h-3.5 w-3.5 text-primary" />
+                  Categories ({options.categories.length})
+                </Label>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={handleResetCategories}
+                  className="h-6 text-[10px] px-1.5 text-muted-foreground hover:text-foreground"
+                  title="Reset to default 4 categories"
+                >
+                  Reset Defaults
+                </Button>
+              </div>
+
+              {/* Active Category Cards */}
+              <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+                {options.categories.map((category, index) => {
+                  const isNecessary = category.key === "necessary";
+                  return (
+                    <div
+                      key={category.key}
+                      className={cn(
+                        "p-2.5 rounded-lg border text-xs space-y-2 transition-colors",
+                        isNecessary ? "bg-muted/40 border-border/90" : "bg-card border-border/70"
+                      )}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1.5">
+                          {isNecessary && <Lock className="h-3 w-3 text-muted-foreground shrink-0" />}
+                          <span className="font-mono text-[10px] text-muted-foreground uppercase">
+                            {category.key}
+                          </span>
+                          {category.required && (
+                            <Badge variant="secondary" className="text-[9px] h-3.5 px-1 font-mono">
+                              Required
+                            </Badge>
+                          )}
+                        </div>
+
+                        {!isNecessary && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleRemoveCategory(category.key)}
+                            className="h-5 w-5 p-0 text-muted-foreground hover:text-destructive"
+                            title="Remove category"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        )}
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <input
+                          type="text"
+                          value={category.title}
+                          onChange={(e) => handleUpdateCategory(index, "title", e.target.value)}
+                          className="w-full bg-background/80 border border-border/60 px-2 py-1 rounded text-xs font-semibold text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          placeholder="Category Title"
+                        />
+                        <input
+                          type="text"
+                          value={category.description}
+                          onChange={(e) => handleUpdateCategory(index, "description", e.target.value)}
+                          className="w-full bg-background/80 border border-border/60 px-2 py-1 rounded text-[11px] text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                          placeholder="Category Description"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Add Custom Category Button / Form */}
+              {!isAddingCategory ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsAddingCategory(true)}
+                  className="w-full h-8 text-xs gap-1.5 border-dashed border-border hover:border-primary"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Custom Category
+                </Button>
+              ) : (
+                <form onSubmit={handleAddCustomCategory} className="p-2.5 rounded-lg border border-primary/30 bg-primary/5 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-foreground">New Category</span>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setIsAddingCategory(false)}
+                      className="h-5 px-1.5 text-[10px]"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                  <input
+                    type="text"
+                    value={newCatKey}
+                    onChange={(e) => setNewCatKey(e.target.value)}
+                    placeholder="Key (e.g. personalization)"
+                    className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs font-mono"
+                    required
+                  />
+                  <input
+                    type="text"
+                    value={newCatTitle}
+                    onChange={(e) => setNewCatTitle(e.target.value)}
+                    placeholder="Title (e.g. Personalization)"
+                    className="w-full bg-background border border-border/80 px-2 py-1 rounded text-xs"
+                    required
+                  />
+                  <input
+                    type="text"
+                    value={newCatDesc}
+                    onChange={(e) => setNewCatDesc(e.target.value)}
+                    placeholder="Description..."
+                    className="w-full bg-background border border-border/80 px-2 py-1 rounded text-[11px]"
+                  />
+                  <Button type="submit" size="sm" className="w-full h-7 text-xs">
+                    Save Category
+                  </Button>
+                </form>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* TELEMETRY SIDEBAR TAB */}
+        {sidebarTab === "telemetry" && (
           <div className="space-y-5">
             {/* Live Engine State Identity Ribbon */}
             <div className="p-3 rounded-lg border border-border/80 bg-muted/30 space-y-2">

@@ -31,6 +31,7 @@ import { TelemetryInspector } from "@/components/playground/telemetry-inspector"
 import type { TelemetryLogEntry } from "@/components/playground/event-stream-console";
 import {
   CustomizationSidebar,
+  DEFAULT_PLAYGROUND_CATEGORIES,
   type PlaygroundOptions,
 } from "@/components/playground/customization-sidebar";
 
@@ -40,6 +41,9 @@ const DEFAULT_OPTIONS: PlaygroundOptions = {
   radiusClass: "rounded-lg",
   hasBackdrop: false,
   forceVisible: true,
+  modalTitle: "Cookie Settings",
+  modalDescription: "Manage your cookie preferences below.",
+  categories: DEFAULT_PLAYGROUND_CATEGORIES,
   enableTraceability: true,
   traceabilityEndpoint: "/api/consent",
   enableGcm: true,
@@ -62,7 +66,7 @@ function WorkbenchContent({
   const { resetConsent, closeSettings } = useCookieConsent();
 
   const handleFullReset = () => {
-    // 1. Reset all customization & telemetry options to defaults
+    // 1. Reset all customization, content & telemetry options to defaults
     setOptions(DEFAULT_OPTIONS);
     // 2. Clear all telemetry events from stream
     setEvents([]);
@@ -122,14 +126,14 @@ function WorkbenchContent({
               Interactive Component Workbench
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Tune styling & telemetry on the left, preview live in Design, inspect real-time Code, and track backend Events.
+              Tune styling, modal copy & categories on the left, preview live in Design, inspect real-time Code, and track backend Events.
             </p>
           </div>
         </div>
 
         {/* 2-Column Full-Width Studio Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr] gap-6 items-start">
-          {/* LEFT COLUMN: Customization Sidebar (Styling + Telemetry Tabs) */}
+          {/* LEFT COLUMN: Customization Sidebar (Styling, Content, Telemetry Tabs) */}
           <aside className="w-full lg:sticky lg:top-20">
             <CustomizationSidebar
               options={options}
@@ -229,6 +233,7 @@ export function CookieConsentDemo() {
     privacyPolicyUrl: options.privacyPolicyUrl,
     position: options.position,
     size: options.size,
+    categories: options.categories,
     googleConsentMode: { enabled: options.enableGcm },
     traceability: {
       enabled: options.enableTraceability,
@@ -293,7 +298,11 @@ export function CookieConsentDemo() {
         events={events}
         setEvents={setEvents}
       />
-      <CookieSettings className={options.radiusClass} />
+      <CookieSettings
+        className={options.radiusClass}
+        title={options.modalTitle}
+        description={options.modalDescription}
+      />
     </CookieConsentProvider>
   );
 }

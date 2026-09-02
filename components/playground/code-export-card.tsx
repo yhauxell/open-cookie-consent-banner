@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeBlock } from "@/components/code-block";
 import type { PlaygroundOptions } from "./customization-sidebar";
+import { DEFAULT_PLAYGROUND_CATEGORIES } from "./customization-sidebar";
 
 interface CodeExportCardProps {
   options: PlaygroundOptions;
@@ -32,6 +33,21 @@ export function CodeExportCard({ options }: CodeExportCardProps) {
 
   const bannerPropsStr = bannerPropsList.length > 0 ? ` ${bannerPropsList.join(" ")}` : "";
 
+  // Check if categories were customized
+  const isCategoriesCustomized =
+    JSON.stringify(options.categories) !== JSON.stringify(DEFAULT_PLAYGROUND_CATEGORIES);
+
+  const formattedCategoriesCode = isCategoriesCustomized
+    ? `categories: [\n${options.categories
+        .map(
+          (c) =>
+            `              {\n                key: "${c.key}",\n                title: "${c.title}",\n                description: "${c.description}",${
+              c.required ? "\n                required: true," : ""
+            }\n              }`
+        )
+        .join(",\n")}\n            ]`
+    : "";
+
   // Dynamic config lines
   const configEntries: string[] = [
     `consentVersion: "1.0.0"`,
@@ -39,13 +55,25 @@ export function CodeExportCard({ options }: CodeExportCardProps) {
     options.position !== "bottom" ? `position: "${options.position}"` : "",
     options.size !== "default" ? `size: "${options.size}"` : "",
     options.expirationDays !== 365 ? `expirationDays: ${options.expirationDays}` : "",
-    options.enableGcm ? `googleConsentMode: {\n              enabled: true,\n              autoDetect: true,\n            }` : "",
+    options.enableGcm ? `googleConsentMode: {\n              enabled: true,\n            }` : "",
     options.enableTraceability
       ? `traceability: {\n              enabled: true,\n              endpoint: "${options.traceabilityEndpoint}",\n            }`
       : "",
+    formattedCategoriesCode,
   ].filter(Boolean);
 
   const configFormatted = configEntries.map((line) => `            ${line},`).join("\n");
+
+  // Dynamic CookieSettings props
+  const settingsPropsList: string[] = [];
+  if (options.radiusClass !== "rounded-lg") settingsPropsList.push(`className="${options.radiusClass}"`);
+  if (options.modalTitle && options.modalTitle !== "Cookie Settings") {
+    settingsPropsList.push(`title="${options.modalTitle}"`);
+  }
+  if (options.modalDescription && options.modalDescription !== "Manage your cookie preferences below.") {
+    settingsPropsList.push(`description="${options.modalDescription}"`);
+  }
+  const settingsPropsStr = settingsPropsList.length > 0 ? ` ${settingsPropsList.join(" ")}` : "";
 
   const generatedLayoutSnippet = `import {
   CookieConsentProvider,
@@ -69,7 +97,7 @@ ${configFormatted}
         >
           {children}
           ${options.hasBackdrop ? "<CookieBannerBackdrop />\n          " : ""}<CookieBanner${bannerPropsStr} />
-          <CookieSettings className="${options.radiusClass}" />
+          <CookieSettings${settingsPropsStr} />
         </CookieConsentProvider>
       </body>
     </html>
@@ -86,7 +114,7 @@ ${configFormatted}
 
   {/* Cookie Banner & Settings portaled components */}${options.hasBackdrop ? "\n  <CookieBannerBackdrop />" : ""}
   <CookieBanner${bannerPropsStr} />
-  <CookieSettings className="${options.radiusClass}" />
+  <CookieSettings${settingsPropsStr} />
   <CookieTrigger variant="text" />
 </CookieConsentProvider>`;
 
@@ -134,7 +162,7 @@ ${configFormatted}
               Tailored Code Integration
             </CardTitle>
             <CardDescription className="text-xs">
-              Dynamically generated config reflecting your styling ({options.position}, {options.size}) and telemetry choices
+              Dynamically generated config reflecting styling, modal content ({options.modalTitle}), and {options.categories.length} categories
             </CardDescription>
           </div>
           <Button
@@ -207,6 +235,14 @@ ${configFormatted}
             <Badge variant="secondary" className="font-mono text-[11px]">
               radius="{options.radiusClass}"
             </Badge>
+            <Badge variant="secondary" className="font-mono text-[11px] text-purple-600 dark:text-purple-400">
+              categories: {options.categories.length}
+            </Badge>
+            {options.modalTitle !== "Cookie Settings" && (
+              <Badge variant="secondary" className="font-mono text-[11px]">
+                modalTitle="{options.modalTitle}"
+              </Badge>
+            )}
             {options.hasBackdrop && (
               <Badge variant="secondary" className="font-mono text-[11px] text-amber-600 dark:text-amber-400">
                 backdrop=true
