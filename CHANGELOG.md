@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.0](https://github.com/yhauxell/open-cookie-consent-banner/compare/v0.2.0...v0.3.0) (2026-09-02)
+
+
+### Features
+
+* **cookie-consent:** add size density, button radius inheritance, and container query responsive reflow ([1fc448f](https://github.com/yhauxell/open-cookie-consent-banner/commit/1fc448f17f4603ab37ba2ab10665141e2d628cb4))
+* **playground:** add banner copy customization with real-time preview and export ([c775f76](https://github.com/yhauxell/open-cookie-consent-banner/commit/c775f76f624d9610308d26f452c5ac77039415c4))
+* **playground:** add interactive playground and capabilities showcase in /demo ([#8](https://github.com/yhauxell/open-cookie-consent-banner/issues/8)) ([82ca898](https://github.com/yhauxell/open-cookie-consent-banner/commit/82ca898be965381ef16a803fc6a86c6e3a9540de))
+* **playground:** add modal content editing and dynamic category management in workbench ([651c73c](https://github.com/yhauxell/open-cookie-consent-banner/commit/651c73cae9bcfb902e3804161b0ce145628b8aec))
+* **playground:** display verified backend transmission receipts, metadata, and audit records in event logs ([66d8674](https://github.com/yhauxell/open-cookie-consent-banner/commit/66d867425f4ec58aaa87682d467744dff4fc538b))
+* **playground:** focus right stage exclusively on Events when Telemetry is selected ([3fc2d86](https://github.com/yhauxell/open-cookie-consent-banner/commit/3fc2d86f6eb2644ab2f1fce438f6dd08fd1cdeaa))
+* **playground:** integrate Telemetry config sidebar and Design/Code/Events studio tabs ([c686b57](https://github.com/yhauxell/open-cookie-consent-banner/commit/c686b57940b6e654bf17a85b610abdde0558af9d))
+* **playground:** interactive workbench with styling, content, categories & telemetry cockpit ([1f0c5a2](https://github.com/yhauxell/open-cookie-consent-banner/commit/1f0c5a29621ec366874b62d4a4cfd94ce0938727))
+* **playground:** rebuild studio workbench with 3-tab layout, live telemetry cockpit, and persistent recovery ([9e9831a](https://github.com/yhauxell/open-cookie-consent-banner/commit/9e9831a3c9e5795f956904fe11ea7057531576b2))
+* **playground:** redesign into v0-style 2-column layout with left sidebar and Design/Code tabs ([9534a35](https://github.com/yhauxell/open-cookie-consent-banner/commit/9534a35f47b67b152e5dc39b2f5e302cb0f80f9f))
+
+
+### Bug Fixes
+
+* **playground:** preserve active tab and stay in telemetry when resetting ([72ca623](https://github.com/yhauxell/open-cookie-consent-banner/commit/72ca6237e2bec8879cbd4219ac8c782854608841))
+* **playground:** reset button clears modal, telemetry, styling, events, and returns view to design ([873627d](https://github.com/yhauxell/open-cookie-consent-banner/commit/873627d18747b12084db92c1f350c3a3eef91ee4))
+
 ## [0.2.0](https://github.com/yhauxell/open-cookie-consent-banner/compare/v0.1.0...v0.2.0) (2026-08-29)
 
 
