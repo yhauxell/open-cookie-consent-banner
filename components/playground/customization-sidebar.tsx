@@ -91,6 +91,8 @@ interface CustomizationSidebarProps {
   options: PlaygroundOptions;
   setOptions: React.Dispatch<React.SetStateAction<PlaygroundOptions>>;
   onReset: () => void;
+  sidebarTab?: "styling" | "content" | "telemetry";
+  onSidebarTabChange?: (tab: "styling" | "content" | "telemetry") => void;
 }
 
 const POSITION_OPTIONS: { value: BannerPosition; label: string; desc: string }[] = [
@@ -124,8 +126,19 @@ export function CustomizationSidebar({
   options,
   setOptions,
   onReset,
+  sidebarTab: controlledSidebarTab,
+  onSidebarTabChange,
 }: CustomizationSidebarProps) {
-  const [sidebarTab, setSidebarTab] = useState<"styling" | "content" | "telemetry">("styling");
+  const [internalSidebarTab, setInternalSidebarTab] = useState<"styling" | "content" | "telemetry">("styling");
+  const sidebarTab = controlledSidebarTab ?? internalSidebarTab;
+  const setSidebarTab = (tab: "styling" | "content" | "telemetry") => {
+    if (onSidebarTabChange) {
+      onSidebarTabChange(tab);
+    } else {
+      setInternalSidebarTab(tab);
+    }
+  };
+
   const [contentSubTab, setContentSubTab] = useState<"banner" | "modal" | "categories">("banner");
   const [newCatKey, setNewCatKey] = useState("");
   const [newCatTitle, setNewCatTitle] = useState("");

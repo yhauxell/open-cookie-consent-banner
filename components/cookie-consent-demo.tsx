@@ -68,11 +68,22 @@ function WorkbenchContent({
   events: TelemetryLogEntry[];
   setEvents: React.Dispatch<React.SetStateAction<TelemetryLogEntry[]>>;
 }) {
+  const [sidebarTab, setSidebarTab] = useState<"styling" | "content" | "telemetry">("styling");
   const [activeTab, setActiveTab] = useState<"design" | "code" | "events">("design");
   const { resetConsent, closeSettings } = useCookieConsent();
 
+  const handleSidebarTabChange = (tab: "styling" | "content" | "telemetry") => {
+    setSidebarTab(tab);
+    if (tab === "telemetry") {
+      setActiveTab("events");
+    } else if (activeTab === "events") {
+      setActiveTab("design");
+    }
+  };
+
   const handleFullReset = () => {
     // 1. Reset all customization, content & telemetry options to defaults
+    setSidebarTab("styling");
     setOptions(DEFAULT_OPTIONS);
     // 2. Clear all telemetry events from stream
     setEvents([]);
@@ -132,7 +143,9 @@ function WorkbenchContent({
               Interactive Component Workbench
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Tune styling, banner copy & categories on the left, preview live in Design, inspect real-time Code, and track backend Events.
+              {sidebarTab === "telemetry"
+                ? "Live Telemetry Cockpit: Inspect real-time audit logs, GCM v2 signals, and verified backend transmission receipts."
+                : "Tune styling, banner copy & categories on the left, and preview live in Design or inspect code on the right."}
             </p>
           </div>
         </div>
@@ -145,84 +158,94 @@ function WorkbenchContent({
               options={options}
               setOptions={setOptions}
               onReset={handleFullReset}
+              sidebarTab={sidebarTab}
+              onSidebarTabChange={handleSidebarTabChange}
             />
           </aside>
 
-          {/* RIGHT COLUMN: Stage (Design / Code / Events) */}
+          {/* RIGHT COLUMN: Stage */}
           <main className="min-w-0 space-y-4">
-            <Tabs
-              value={activeTab}
-              onValueChange={(val) => setActiveTab(val as "design" | "code" | "events")}
-              className="w-full"
-            >
-              <div className="flex items-center justify-between pb-3">
-                <TabsList className="h-9 p-0.5 bg-muted/80 border border-border/70 rounded-lg gap-0.5">
-                  <TabsTrigger
-                    value="design"
-                    className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
-                  >
-                    <Eye className="h-3.5 w-3.5 text-primary" />
-                    <span>Design</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="code"
-                    className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
-                  >
-                    <Code2 className="h-3.5 w-3.5 text-primary" />
-                    <span>Code</span>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="events"
-                    className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
-                  >
-                    <Terminal className="h-3.5 w-3.5 text-primary" />
-                    <span>Events</span>
+            {sidebarTab === "telemetry" ? (
+              /* Dedicated Focused Telemetry & Events View */
+              <div className="space-y-4 animate-in fade-in-50 duration-200">
+                <div className="flex items-center justify-between pb-2 border-b border-border/40">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="default" className="text-xs px-2.5 py-0.5 gap-1.5 font-mono">
+                      <Terminal className="h-3.5 w-3.5" />
+                      Live Telemetry & Events Cockpit
+                    </Badge>
                     {events.length > 0 && (
-                      <Badge variant="secondary" className="h-4 px-1.5 text-[10px] ml-0.5">
-                        {events.length}
+                      <Badge variant="secondary" className="h-5 px-2 text-xs font-mono">
+                        {events.length} {events.length === 1 ? "Event Logged" : "Events Logged"}
                       </Badge>
                     )}
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground hidden sm:inline font-mono text-[11px]">
+                    POST {options.traceabilityEndpoint}
+                  </span>
+                </div>
 
-              {/* TAB 1: DESIGN (Mock Viewport Canvas with embedded banner) */}
-              <TabsContent value="design" className="mt-0 focus-visible:outline-none space-y-4">
-                <MockBrowserCanvas>
-                  {options.hasBackdrop && (
-                    <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
-                  )}
-                  <CookieBanner
-                    isEmbedded
-                    forceVisible={options.forceVisible}
-                    position={options.position}
-                    size={options.size}
-                    title={options.bannerTitle}
-                    description={options.bannerDescription}
-                    acceptAllText={options.bannerAcceptText}
-                    rejectAllText={options.bannerRejectText}
-                    customizeText={options.bannerCustomizeText}
-                    learnMoreText={options.bannerLearnMoreText}
-                    className={cn(options.radiusClass, "shadow-2xl")}
-                  />
-                </MockBrowserCanvas>
-              </TabsContent>
-
-              {/* TAB 2: CODE (Dynamic Live Generated Snippet & CLI) */}
-              <TabsContent value="code" className="mt-0 focus-visible:outline-none">
-                <CodeExportCard options={options} />
-              </TabsContent>
-
-              {/* TAB 3: EVENTS (Compliance Matrix & Live Event Stream Console) */}
-              <TabsContent value="events" className="mt-0 focus-visible:outline-none">
                 <TelemetryInspector
                   events={events}
                   onClearEvents={() => setEvents([])}
                   backendEndpoint={options.traceabilityEndpoint}
                   traceabilityEnabled={options.enableTraceability}
                 />
-              </TabsContent>
-            </Tabs>
+              </div>
+            ) : (
+              /* Standard Workbench (Design / Code / Events) */
+              <Tabs
+                value={activeTab}
+                onValueChange={(val) => setActiveTab(val as "design" | "code" | "events")}
+                className="w-full"
+              >
+                <div className="flex items-center justify-between pb-3">
+                  <TabsList className="h-9 p-0.5 bg-muted/80 border border-border/70 rounded-lg gap-0.5">
+                    <TabsTrigger
+                      value="design"
+                      className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                    >
+                      <Eye className="h-3.5 w-3.5 text-primary" />
+                      <span>Design</span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="code"
+                      className="gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md data-[state=active]:bg-background data-[state=active]:shadow-xs transition-all"
+                    >
+                      <Code2 className="h-3.5 w-3.5 text-primary" />
+                      <span>Code</span>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {/* TAB 1: DESIGN (Mock Viewport Canvas with embedded banner) */}
+                <TabsContent value="design" className="mt-0 focus-visible:outline-none space-y-4">
+                  <MockBrowserCanvas>
+                    {options.hasBackdrop && (
+                      <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                    )}
+                    <CookieBanner
+                      isEmbedded
+                      forceVisible={options.forceVisible}
+                      position={options.position}
+                      size={options.size}
+                      title={options.bannerTitle}
+                      description={options.bannerDescription}
+                      acceptAllText={options.bannerAcceptText}
+                      rejectAllText={options.bannerRejectText}
+                      customizeText={options.bannerCustomizeText}
+                      learnMoreText={options.bannerLearnMoreText}
+                      className={cn(options.radiusClass, "shadow-2xl")}
+                    />
+                  </MockBrowserCanvas>
+                </TabsContent>
+
+                {/* TAB 2: CODE (Dynamic Live Generated Snippet & CLI) */}
+                <TabsContent value="code" className="mt-0 focus-visible:outline-none">
+                  <CodeExportCard options={options} />
+                </TabsContent>
+              </Tabs>
+            )}
           </main>
         </div>
 
