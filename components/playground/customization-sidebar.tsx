@@ -148,7 +148,6 @@ export function CustomizationSidebar({
   const { state, acceptAll, rejectAll, openSettings } = useCookieConsent();
 
   const handleResetAll = () => {
-    setSidebarTab("styling");
     onReset();
   };
 

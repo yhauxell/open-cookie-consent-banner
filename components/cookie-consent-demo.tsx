@@ -83,16 +83,19 @@ function WorkbenchContent({
 
   const handleFullReset = () => {
     // 1. Reset all customization, content & telemetry options to defaults
-    setSidebarTab("styling");
     setOptions(DEFAULT_OPTIONS);
     // 2. Clear all telemetry events from stream
     setEvents([]);
-    // 3. Switch main stage tab back to "design"
-    setActiveTab("design");
-    // 4. Close settings modal if open
+    // 3. Close settings modal if open
     closeSettings();
-    // 5. Reset consent state & storage
+    // 4. Reset consent state & storage
     resetConsent();
+    // 5. Keep user in their current view: if in telemetry, stay in telemetry & events; otherwise design
+    if (sidebarTab === "telemetry") {
+      setActiveTab("events");
+    } else {
+      setActiveTab("design");
+    }
   };
 
   // Sample third-party script hooks for real-time telemetry testing
