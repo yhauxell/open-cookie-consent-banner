@@ -156,7 +156,16 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
           )}
 
           {/* Mock Site Body */}
-          <div key={reloadKey} className={cn("min-h-[500px] max-h-[620px] overflow-y-auto bg-background p-6", themeClass)}>
+          <div
+            key={reloadKey}
+            className={cn(
+              "overflow-y-auto bg-background p-6 transition-all duration-300",
+              viewMode === "mobile"
+                ? "min-h-[680px] max-h-[780px]"
+                : "min-h-[640px] lg:min-h-[720px] xl:min-h-[780px] max-h-[780px] xl:max-h-[860px]",
+              themeClass
+            )}
+          >
             {/* Mock Navbar */}
             <nav className="flex items-center justify-between pb-4 mb-4 border-b border-border/40">
               <div className="flex items-center gap-2">
@@ -212,6 +221,35 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
                 </div>
                 <h3 className="font-semibold text-xs text-foreground">GCM v2 Ready</h3>
                 <p className="text-[10px] text-muted-foreground leading-tight">Auto-detects Google scripts for EU traffic.</p>
+              </div>
+            </div>
+
+            {/* Mock Secondary Section: Live Performance & Trust Stats */}
+            <div className="pt-6 mt-4 border-t border-border/40 max-w-2xl mx-auto space-y-3">
+              <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+                <span className="font-semibold text-foreground">Edge Telemetry Network</span>
+                <span className="text-[11px] text-emerald-500 font-mono flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                  Systems Nominal
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
+                  <div className="text-sm sm:text-base font-bold text-foreground">99.99%</div>
+                  <div className="text-[10px] text-muted-foreground">Uptime SLA</div>
+                </div>
+                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
+                  <div className="text-sm sm:text-base font-bold text-foreground">&lt; 0.8ms</div>
+                  <div className="text-[10px] text-muted-foreground">Sync Latency</div>
+                </div>
+                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
+                  <div className="text-sm sm:text-base font-bold text-foreground">100%</div>
+                  <div className="text-[10px] text-muted-foreground">GCM v2 Ready</div>
+                </div>
+                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
+                  <div className="text-sm sm:text-base font-bold text-foreground">Zero</div>
+                  <div className="text-[10px] text-muted-foreground">Vendor Lock-in</div>
+                </div>
               </div>
             </div>
           </div>
