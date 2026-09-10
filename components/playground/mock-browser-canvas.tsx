@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Monitor, Tablet, Smartphone, RotateCcw, ShieldCheck, Sparkles, Zap, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,9 @@ import { cn } from "@/lib/utils";
 import { useCookieConsent } from "@/components/cookie-consent";
 
 interface MockBrowserCanvasProps {
-  children?: React.ReactNode;
+  children?:
+    | React.ReactNode
+    | ((props: { viewMode: "desktop" | "tablet" | "mobile"; isMobile: boolean }) => React.ReactNode);
   themeClass?: string;
 }
 
@@ -21,6 +23,31 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
     resetConsent();
     setReloadKey((prev) => prev + 1);
   };
+
+  const isMobile = viewMode === "mobile";
+
+  const renderChildWithMobile = (child: React.ReactNode): React.ReactNode => {
+    if (React.isValidElement(child)) {
+      const childProps = child.props as Record<string, unknown>;
+      if (child.type === React.Fragment) {
+        return React.cloneElement(
+          child,
+          undefined,
+          React.Children.map((childProps as { children?: React.ReactNode }).children, renderChildWithMobile)
+        );
+      }
+      return React.cloneElement(child, {
+        ...childProps,
+        isMobile: childProps.isMobile !== undefined ? childProps.isMobile : isMobile,
+      } as React.Attributes);
+    }
+    return child;
+  };
+
+  const renderedChildren =
+    typeof children === "function"
+      ? children({ viewMode, isMobile })
+      : React.Children.map(children, renderChildWithMobile);
 
   return (
     <div className="space-y-3">
@@ -110,8 +137,8 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
           </button>
         </div>
 
-        {/* Mock Site Body */}
-        <div key={reloadKey} className={cn("relative min-h-[500px] max-h-[620px] overflow-y-auto bg-background p-6", themeClass)}>
+        {/* Mock Viewport Container */}
+        <div className="relative overflow-hidden">
           {/* Re-open Banner overlay pill if dismissed */}
           {!isBannerVisible && (
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 bg-card/95 backdrop-blur border border-primary/40 shadow-md px-3 py-1.5 rounded-full flex items-center gap-2 text-xs animate-in fade-in zoom-in-95">
@@ -128,66 +155,69 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
             </div>
           )}
 
-          {/* Mock Navbar */}
-          <nav className="flex items-center justify-between pb-4 mb-4 border-b border-border/40">
-            <div className="flex items-center gap-2">
-              <div className="h-6 w-6 rounded bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs">
-                ⚡
+          {/* Mock Site Body */}
+          <div key={reloadKey} className={cn("min-h-[500px] max-h-[620px] overflow-y-auto bg-background p-6", themeClass)}>
+            {/* Mock Navbar */}
+            <nav className="flex items-center justify-between pb-4 mb-4 border-b border-border/40">
+              <div className="flex items-center gap-2">
+                <div className="h-6 w-6 rounded bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs">
+                  ⚡
+                </div>
+                <span className="font-semibold text-xs">Acme Inc</span>
               </div>
-              <span className="font-semibold text-xs">Acme Inc</span>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="hover:text-foreground cursor-pointer">Product</span>
-              <span className="hover:text-foreground cursor-pointer hidden sm:inline">Pricing</span>
-              <Button size="sm" variant="outline" className="h-6 text-[11px] px-2">Sign In</Button>
-            </div>
-          </nav>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="hover:text-foreground cursor-pointer">Product</span>
+                <span className="hover:text-foreground cursor-pointer hidden sm:inline">Pricing</span>
+                <Button size="sm" variant="outline" className="h-6 text-[11px] px-2">Sign In</Button>
+              </div>
+            </nav>
 
-          {/* Mock Hero Content */}
-          <div className="space-y-3 text-center max-w-lg mx-auto py-4">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium border border-primary/20">
-              <Sparkles className="h-3 w-3" />
-              v2.0 with Google Consent Mode
+            {/* Mock Hero Content */}
+            <div className="space-y-3 text-center max-w-lg mx-auto py-4">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium border border-primary/20">
+                <Sparkles className="h-3 w-3" />
+                v2.0 with Google Consent Mode
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                Modern Privacy & Cloud Architecture
+              </h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Scale your edge functions and privacy telemetry seamlessly with zero proprietary lock-in.
+              </p>
+              <div className="flex items-center justify-center gap-2 pt-1">
+                <Button size="sm" className="h-7 text-xs px-3">Get Started Free</Button>
+                <Button size="sm" variant="outline" className="h-7 text-xs px-3">Live Demo</Button>
+              </div>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-              Modern Privacy & Cloud Architecture
-            </h2>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Scale your edge functions and privacy telemetry seamlessly with zero proprietary lock-in.
-            </p>
-            <div className="flex items-center justify-center gap-2 pt-1">
-              <Button size="sm" className="h-7 text-xs px-3">Get Started Free</Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs px-3">Live Demo</Button>
-            </div>
-          </div>
 
-          {/* Mock Feature Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 max-w-2xl mx-auto">
-            <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
-              <div className="h-6 w-6 rounded bg-blue-500/10 text-blue-500 flex items-center justify-center mb-1">
-                <Zap className="h-3.5 w-3.5" />
+            {/* Mock Feature Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 max-w-2xl mx-auto">
+              <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
+                <div className="h-6 w-6 rounded bg-blue-500/10 text-blue-500 flex items-center justify-center mb-1">
+                  <Zap className="h-3.5 w-3.5" />
+                </div>
+                <h3 className="font-semibold text-xs text-foreground">Sub-ms Latency</h3>
+                <p className="text-[10px] text-muted-foreground leading-tight">Instant script blocking and activation.</p>
               </div>
-              <h3 className="font-semibold text-xs text-foreground">Sub-ms Latency</h3>
-              <p className="text-[10px] text-muted-foreground leading-tight">Instant script blocking and activation.</p>
-            </div>
-            <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
-              <div className="h-6 w-6 rounded bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-1">
-                <ShieldCheck className="h-3.5 w-3.5" />
+              <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
+                <div className="h-6 w-6 rounded bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-1">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                </div>
+                <h3 className="font-semibold text-xs text-foreground">GDPR & CCPA</h3>
+                <p className="text-[10px] text-muted-foreground leading-tight">Granular consent categories and audit trail.</p>
               </div>
-              <h3 className="font-semibold text-xs text-foreground">GDPR & CCPA</h3>
-              <p className="text-[10px] text-muted-foreground leading-tight">Granular consent categories and audit trail.</p>
-            </div>
-            <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
-              <div className="h-6 w-6 rounded bg-purple-500/10 text-purple-500 flex items-center justify-center mb-1">
-                <Sparkles className="h-3.5 w-3.5" />
+              <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
+                <div className="h-6 w-6 rounded bg-purple-500/10 text-purple-500 flex items-center justify-center mb-1">
+                  <Sparkles className="h-3.5 w-3.5" />
+                </div>
+                <h3 className="font-semibold text-xs text-foreground">GCM v2 Ready</h3>
+                <p className="text-[10px] text-muted-foreground leading-tight">Auto-detects Google scripts for EU traffic.</p>
               </div>
-              <h3 className="font-semibold text-xs text-foreground">GCM v2 Ready</h3>
-              <p className="text-[10px] text-muted-foreground leading-tight">Auto-detects Google scripts for EU traffic.</p>
             </div>
           </div>
 
           {/* Children: any backdrop or banner overlay */}
-          {children}
+          {renderedChildren}
         </div>
       </div>
     </div>

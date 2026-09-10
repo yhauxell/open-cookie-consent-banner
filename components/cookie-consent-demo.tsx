@@ -224,22 +224,27 @@ function WorkbenchContent({
                 {/* TAB 1: DESIGN (Mock Viewport Canvas with embedded banner) */}
                 <TabsContent value="design" className="mt-0 focus-visible:outline-none space-y-4">
                   <MockBrowserCanvas>
-                    {options.hasBackdrop && (
-                      <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                    {({ isMobile }) => (
+                      <>
+                        {options.hasBackdrop && (
+                          <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                        )}
+                        <CookieBanner
+                          isEmbedded
+                          isMobile={isMobile}
+                          forceVisible={options.forceVisible}
+                          position={options.position}
+                          size={options.size}
+                          title={options.bannerTitle}
+                          description={options.bannerDescription}
+                          acceptAllText={options.bannerAcceptText}
+                          rejectAllText={options.bannerRejectText}
+                          customizeText={options.bannerCustomizeText}
+                          learnMoreText={options.bannerLearnMoreText}
+                          className={cn(options.radiusClass, "shadow-2xl")}
+                        />
+                      </>
                     )}
-                    <CookieBanner
-                      isEmbedded
-                      forceVisible={options.forceVisible}
-                      position={options.position}
-                      size={options.size}
-                      title={options.bannerTitle}
-                      description={options.bannerDescription}
-                      acceptAllText={options.bannerAcceptText}
-                      rejectAllText={options.bannerRejectText}
-                      customizeText={options.bannerCustomizeText}
-                      learnMoreText={options.bannerLearnMoreText}
-                      className={cn(options.radiusClass, "shadow-2xl")}
-                    />
                   </MockBrowserCanvas>
                 </TabsContent>
 
