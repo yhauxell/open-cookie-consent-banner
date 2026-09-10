@@ -194,10 +194,22 @@ export function CodeBlock({
 
       {/* Code Content */}
       <div className="overflow-x-auto">
-        <pre className="p-4 text-xs sm:text-sm leading-relaxed font-mono font-normal">
-          <code className="font-mono">
+        <pre
+          className="p-4 text-xs sm:text-sm leading-relaxed font-mono font-normal"
+          style={{
+            fontFamily:
+              'var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          }}
+        >
+          <code
+            className="font-mono"
+            style={{
+              fontFamily:
+                'var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            }}
+          >
             {lines.map((line, i) => (
-              <div key={i} className="flex">
+              <div key={i} className="flex font-mono">
                 {showLineNumbers && (
                   <span className="select-none pr-4 text-zinc-600 text-right w-8 shrink-0 font-mono">
                     {i + 1}
