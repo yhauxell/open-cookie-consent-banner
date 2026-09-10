@@ -159,15 +159,12 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
           <div
             key={reloadKey}
             className={cn(
-              "overflow-y-auto bg-background p-6 transition-all duration-300",
-              viewMode === "mobile"
-                ? "min-h-[680px] max-h-[780px]"
-                : "min-h-[640px] lg:min-h-[720px] xl:min-h-[780px] max-h-[780px] xl:max-h-[860px]",
+              "h-[clamp(420px,calc(100dvh-330px),620px)] overflow-hidden bg-background p-4 sm:p-6 flex flex-col justify-between select-none transition-all duration-300",
               themeClass
             )}
           >
             {/* Mock Navbar */}
-            <nav className="flex items-center justify-between pb-4 mb-4 border-b border-border/40">
+            <nav className="flex items-center justify-between pb-3 border-b border-border/40 shrink-0">
               <div className="flex items-center gap-2">
                 <div className="h-6 w-6 rounded bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs">
                   ⚡
@@ -181,74 +178,51 @@ export function MockBrowserCanvas({ children, themeClass }: MockBrowserCanvasPro
               </div>
             </nav>
 
-            {/* Mock Hero Content */}
-            <div className="space-y-3 text-center max-w-lg mx-auto py-4">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-medium border border-primary/20">
+            {/* Mock Hero Content (acquires middle vertical space) */}
+            <div className="my-auto py-2 text-center max-w-md mx-auto space-y-2 sm:space-y-3 flex flex-col items-center justify-center">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] sm:text-[11px] font-medium border border-primary/20">
                 <Sparkles className="h-3 w-3" />
                 v2.0 with Google Consent Mode
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-foreground leading-tight">
                 Modern Privacy & Cloud Architecture
               </h2>
-              <p className="text-xs text-muted-foreground leading-relaxed">
+              <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed max-w-sm">
                 Scale your edge functions and privacy telemetry seamlessly with zero proprietary lock-in.
               </p>
-              <div className="flex items-center justify-center gap-2 pt-1">
+              <div className="flex items-center justify-center gap-2 pt-0.5">
                 <Button size="sm" className="h-7 text-xs px-3">Get Started Free</Button>
                 <Button size="sm" variant="outline" className="h-7 text-xs px-3">Live Demo</Button>
               </div>
             </div>
 
-            {/* Mock Feature Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-4 max-w-2xl mx-auto">
-              <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
-                <div className="h-6 w-6 rounded bg-blue-500/10 text-blue-500 flex items-center justify-center mb-1">
-                  <Zap className="h-3.5 w-3.5" />
+            {/* Mock Feature Cards (sits at bottom) */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 max-w-2xl mx-auto w-full shrink-0">
+              <div className="p-2 sm:p-2.5 rounded-lg border border-border/60 bg-muted/20 flex sm:flex-col items-center sm:items-start gap-2 sm:gap-1">
+                <div className="h-5 w-5 rounded bg-blue-500/10 text-blue-500 flex items-center justify-center shrink-0">
+                  <Zap className="h-3 w-3" />
                 </div>
-                <h3 className="font-semibold text-xs text-foreground">Sub-ms Latency</h3>
-                <p className="text-[10px] text-muted-foreground leading-tight">Instant script blocking and activation.</p>
+                <div>
+                  <h3 className="font-semibold text-[11px] text-foreground">Sub-ms Latency</h3>
+                  <p className="text-[9px] sm:text-[10px] text-muted-foreground leading-tight">Instant script blocking and activation.</p>
+                </div>
               </div>
-              <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
-                <div className="h-6 w-6 rounded bg-emerald-500/10 text-emerald-500 flex items-center justify-center mb-1">
-                  <ShieldCheck className="h-3.5 w-3.5" />
+              <div className="p-2 sm:p-2.5 rounded-lg border border-border/60 bg-muted/20 flex sm:flex-col items-center sm:items-start gap-2 sm:gap-1">
+                <div className="h-5 w-5 rounded bg-emerald-500/10 text-emerald-500 flex items-center justify-center shrink-0">
+                  <ShieldCheck className="h-3 w-3" />
                 </div>
-                <h3 className="font-semibold text-xs text-foreground">GDPR & CCPA</h3>
-                <p className="text-[10px] text-muted-foreground leading-tight">Granular consent categories and audit trail.</p>
+                <div>
+                  <h3 className="font-semibold text-[11px] text-foreground">GDPR & CCPA</h3>
+                  <p className="text-[9px] sm:text-[10px] text-muted-foreground leading-tight">Granular consent categories & audit trail.</p>
+                </div>
               </div>
-              <div className="p-3 rounded-lg border border-border/60 bg-muted/20 space-y-1">
-                <div className="h-6 w-6 rounded bg-purple-500/10 text-purple-500 flex items-center justify-center mb-1">
-                  <Sparkles className="h-3.5 w-3.5" />
+              <div className="p-2 sm:p-2.5 rounded-lg border border-border/60 bg-muted/20 flex sm:flex-col items-center sm:items-start gap-2 sm:gap-1">
+                <div className="h-5 w-5 rounded bg-purple-500/10 text-purple-500 flex items-center justify-center shrink-0">
+                  <Sparkles className="h-3 w-3" />
                 </div>
-                <h3 className="font-semibold text-xs text-foreground">GCM v2 Ready</h3>
-                <p className="text-[10px] text-muted-foreground leading-tight">Auto-detects Google scripts for EU traffic.</p>
-              </div>
-            </div>
-
-            {/* Mock Secondary Section: Live Performance & Trust Stats */}
-            <div className="pt-6 mt-4 border-t border-border/40 max-w-2xl mx-auto space-y-3">
-              <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
-                <span className="font-semibold text-foreground">Edge Telemetry Network</span>
-                <span className="text-[11px] text-emerald-500 font-mono flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                  Systems Nominal
-                </span>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
-                  <div className="text-sm sm:text-base font-bold text-foreground">99.99%</div>
-                  <div className="text-[10px] text-muted-foreground">Uptime SLA</div>
-                </div>
-                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
-                  <div className="text-sm sm:text-base font-bold text-foreground">&lt; 0.8ms</div>
-                  <div className="text-[10px] text-muted-foreground">Sync Latency</div>
-                </div>
-                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
-                  <div className="text-sm sm:text-base font-bold text-foreground">100%</div>
-                  <div className="text-[10px] text-muted-foreground">GCM v2 Ready</div>
-                </div>
-                <div className="p-2.5 rounded-lg border border-border/50 bg-muted/10">
-                  <div className="text-sm sm:text-base font-bold text-foreground">Zero</div>
-                  <div className="text-[10px] text-muted-foreground">Vendor Lock-in</div>
+                <div>
+                  <h3 className="font-semibold text-[11px] text-foreground">GCM v2 Ready</h3>
+                  <p className="text-[9px] sm:text-[10px] text-muted-foreground leading-tight">Auto-detects Google scripts for EU traffic.</p>
                 </div>
               </div>
             </div>

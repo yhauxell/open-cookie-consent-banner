@@ -193,7 +193,7 @@ export function CodeBlock({
       </div>
 
       {/* Code Content */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto max-h-[clamp(320px,calc(100dvh-380px),560px)] overflow-y-auto">
         <pre
           className="p-4 text-xs sm:text-sm leading-relaxed font-mono font-normal"
           style={{
