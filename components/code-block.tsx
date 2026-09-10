@@ -194,16 +194,16 @@ export function CodeBlock({
 
       {/* Code Content */}
       <div className="overflow-x-auto">
-        <pre className="p-4 text-sm leading-relaxed">
-          <code>
+        <pre className="p-4 text-xs sm:text-sm leading-relaxed font-mono font-normal">
+          <code className="font-mono">
             {lines.map((line, i) => (
               <div key={i} className="flex">
                 {showLineNumbers && (
-                  <span className="select-none pr-4 text-zinc-600 text-right w-8 shrink-0">
+                  <span className="select-none pr-4 text-zinc-600 text-right w-8 shrink-0 font-mono">
                     {i + 1}
                   </span>
                 )}
-                <span className="flex-1">{highlightLine(line)}</span>
+                <span className="flex-1 font-mono">{highlightLine(line)}</span>
               </div>
             ))}
           </code>
