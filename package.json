@@ -40,7 +40,8 @@
   },
   "scripts": {
     "build": "tsx scripts/build-registry.ts && next build",
-    "dev": "tsx scripts/build-registry.ts && next dev",
+    "dev": "tsx scripts/build-registry.ts && next dev --webpack",
+    "dev:turbo": "tsx scripts/build-registry.ts && next dev --turbo",
     "start": "next start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

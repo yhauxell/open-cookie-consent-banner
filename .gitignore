@@ -15,3 +15,4 @@ coverage
 # Internal maintainer docs (kept in Notion)
 STRATEGY.md
 docs/internal/
+.chiignore
