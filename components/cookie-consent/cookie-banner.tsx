@@ -13,6 +13,7 @@ export interface CookieBannerProps {
   buttonClassName?: string;
   isEmbedded?: boolean;
   forceVisible?: boolean;
+  isMobile?: boolean;
   title?: string;
   description?: string;
   acceptAllText?: string;
@@ -28,6 +29,7 @@ export function CookieBanner({
   buttonClassName,
   isEmbedded = false,
   forceVisible = false,
+  isMobile = false,
   title = "Cookie Preferences",
   description = "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
   acceptAllText = "Accept All",
@@ -40,16 +42,20 @@ export function CookieBanner({
 
   const showBanner = forceVisible || isBannerVisible;
 
-  const positionClasses = {
-    bottom: "inset-x-0 bottom-0",
-    top: "inset-x-0 top-0",
-    "bottom-left": "bottom-4 left-4 max-w-md",
-    "bottom-right": "bottom-4 right-4 max-w-md",
-  };
-
   const position = propPosition ?? config.position ?? "bottom";
   const isFloating = position === "bottom-left" || position === "bottom-right";
   const size = propSize ?? config.size ?? "default";
+
+  const positionClasses = {
+    bottom: isMobile ? "inset-x-0 bottom-0 p-3" : "inset-x-0 bottom-0 p-3 sm:p-4",
+    top: isMobile ? "inset-x-0 top-0 p-3" : "inset-x-0 top-0 p-3 sm:p-4",
+    "bottom-left": isMobile
+      ? "inset-x-0 bottom-0 p-3"
+      : "inset-x-0 bottom-0 p-3 sm:p-0 sm:bottom-4 sm:left-4 sm:right-auto sm:w-full sm:max-w-md",
+    "bottom-right": isMobile
+      ? "inset-x-0 bottom-0 p-3"
+      : "inset-x-0 bottom-0 p-3 sm:p-0 sm:bottom-4 sm:right-4 sm:left-auto sm:w-full sm:max-w-md",
+  };
 
   // Prevent rounded-full from collapsing floating cards into distorted ovals
   const safeCardClassName = isFloating && className?.includes("rounded-full")
@@ -94,20 +100,20 @@ export function CookieBanner({
     <AnimatePresence>
       {showBanner && (
         <motion.div
+          key={position}
           initial={{ y: position.includes("top") ? -100 : 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: position.includes("top") ? -100 : 100, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
           className={cn(
             isEmbedded ? "absolute z-30" : "fixed z-50",
-            "p-3 sm:p-4",
             positionClasses[position]
           )}
         >
           <div
             className={cn(
-              "@container bg-card border border-border rounded-lg shadow-lg overflow-hidden",
-              !isFloating ? "mx-auto max-w-5xl" : "w-full",
+              "bg-card border border-border rounded-lg shadow-lg overflow-hidden",
+              !isFloating ? "@container mx-auto max-w-5xl" : "w-full mx-auto max-w-md",
               safeCardClassName
             )}
           >
