@@ -132,17 +132,17 @@ function WorkbenchContent({
         {`console.log("[Demo Script] Meta Pixel active");`}
       </ConsentScript>
 
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-3 lg:py-4 space-y-3 lg:space-y-4">
         {/* Studio Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/40">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2 sm:pb-3 border-b border-border/40">
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-0.5">
               <Badge variant="outline" className="text-xs px-2.5 py-0.5 gap-1.5 border-primary/30 text-primary">
                 <Sparkles className="h-3.5 w-3.5" />
                 OpenConsent Studio
               </Badge>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+            <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">
               Interactive Component Workbench
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
@@ -154,7 +154,7 @@ function WorkbenchContent({
         </div>
 
         {/* 2-Column Full-Width Studio Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr] gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[360px_1fr] gap-4 xl:gap-6 items-start">
           {/* LEFT COLUMN: Customization Sidebar (Styling, Content, Telemetry Tabs) */}
           <aside className="w-full lg:sticky lg:top-20">
             <CustomizationSidebar
@@ -224,22 +224,27 @@ function WorkbenchContent({
                 {/* TAB 1: DESIGN (Mock Viewport Canvas with embedded banner) */}
                 <TabsContent value="design" className="mt-0 focus-visible:outline-none space-y-4">
                   <MockBrowserCanvas>
-                    {options.hasBackdrop && (
-                      <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                    {({ isMobile }) => (
+                      <>
+                        {options.hasBackdrop && (
+                          <CookieBannerBackdrop isEmbedded forceVisible={options.forceVisible} />
+                        )}
+                        <CookieBanner
+                          isEmbedded
+                          isMobile={isMobile}
+                          forceVisible={options.forceVisible}
+                          position={options.position}
+                          size={options.size}
+                          title={options.bannerTitle}
+                          description={options.bannerDescription}
+                          acceptAllText={options.bannerAcceptText}
+                          rejectAllText={options.bannerRejectText}
+                          customizeText={options.bannerCustomizeText}
+                          learnMoreText={options.bannerLearnMoreText}
+                          className={cn(options.radiusClass, "shadow-2xl")}
+                        />
+                      </>
                     )}
-                    <CookieBanner
-                      isEmbedded
-                      forceVisible={options.forceVisible}
-                      position={options.position}
-                      size={options.size}
-                      title={options.bannerTitle}
-                      description={options.bannerDescription}
-                      acceptAllText={options.bannerAcceptText}
-                      rejectAllText={options.bannerRejectText}
-                      customizeText={options.bannerCustomizeText}
-                      learnMoreText={options.bannerLearnMoreText}
-                      className={cn(options.radiusClass, "shadow-2xl")}
-                    />
                   </MockBrowserCanvas>
                 </TabsContent>
 
@@ -253,7 +258,7 @@ function WorkbenchContent({
         </div>
 
         {/* Footer trigger demo */}
-        <div className="text-center pt-6 border-t border-border/40">
+        <div className="text-center pt-3 border-t border-border/40">
           <CookieTrigger variant="text" />
         </div>
       </div>

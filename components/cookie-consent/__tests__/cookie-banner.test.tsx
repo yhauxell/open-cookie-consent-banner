@@ -107,5 +107,61 @@ describe("CookieBanner", () => {
       expect(screen.getByRole("button", { name: /accept all/i })).toHaveClass("rounded-full")
     })
   })
+
+  it("applies correct position and width classes for bottom-right floating banner", async () => {
+    const { container } = renderWithConsent(<CookieBanner position="bottom-right" isEmbedded />)
+
+    await waitFor(() => {
+      expect(screen.getByText("Cookie Preferences")).toBeInTheDocument()
+    })
+
+    const wrapper = container.querySelector(".inset-x-0.bottom-0")
+    expect(wrapper).toBeInTheDocument()
+    expect(wrapper).toHaveClass("inset-x-0", "bottom-0", "sm:bottom-4", "sm:right-4", "sm:max-w-md", "absolute")
+  })
+
+  it("applies correct position and width classes for bottom-left floating banner", async () => {
+    const { container } = renderWithConsent(<CookieBanner position="bottom-left" isEmbedded />)
+
+    await waitFor(() => {
+      expect(screen.getByText("Cookie Preferences")).toBeInTheDocument()
+    })
+
+    const wrapper = container.querySelector(".inset-x-0.bottom-0")
+    expect(wrapper).toBeInTheDocument()
+    expect(wrapper).toHaveClass("inset-x-0", "bottom-0", "sm:bottom-4", "sm:left-4", "sm:max-w-md", "absolute")
+  })
+
+  it("centers floating banner at bottom when isMobile is true for bottom-left", async () => {
+    const { container } = renderWithConsent(
+      <CookieBanner position="bottom-left" isEmbedded isMobile />
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText("Cookie Preferences")).toBeInTheDocument()
+    })
+
+    const wrapper = container.querySelector(".inset-x-0.bottom-0")
+    expect(wrapper).toBeInTheDocument()
+    expect(wrapper).toHaveClass("inset-x-0", "bottom-0", "p-3")
+    expect(wrapper).not.toHaveClass("sm:left-4")
+    expect(wrapper).not.toHaveClass("sm:bottom-4")
+  })
+
+  it("centers floating banner at bottom when isMobile is true for bottom-right", async () => {
+    const { container } = renderWithConsent(
+      <CookieBanner position="bottom-right" isEmbedded isMobile />
+    )
+
+    await waitFor(() => {
+      expect(screen.getByText("Cookie Preferences")).toBeInTheDocument()
+    })
+
+    const wrapper = container.querySelector(".inset-x-0.bottom-0")
+    expect(wrapper).toBeInTheDocument()
+    expect(wrapper).toHaveClass("inset-x-0", "bottom-0", "p-3")
+    expect(wrapper).not.toHaveClass("sm:right-4")
+    expect(wrapper).not.toHaveClass("sm:bottom-4")
+  })
 })
 

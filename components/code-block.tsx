@@ -193,17 +193,29 @@ export function CodeBlock({
       </div>
 
       {/* Code Content */}
-      <div className="overflow-x-auto">
-        <pre className="p-4 text-sm leading-relaxed">
-          <code>
+      <div className="overflow-x-auto max-h-[clamp(320px,calc(100dvh-380px),560px)] overflow-y-auto">
+        <pre
+          className="p-4 text-xs sm:text-sm leading-relaxed font-mono font-normal"
+          style={{
+            fontFamily:
+              'var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+          }}
+        >
+          <code
+            className="font-mono"
+            style={{
+              fontFamily:
+                'var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            }}
+          >
             {lines.map((line, i) => (
-              <div key={i} className="flex">
+              <div key={i} className="flex font-mono">
                 {showLineNumbers && (
-                  <span className="select-none pr-4 text-zinc-600 text-right w-8 shrink-0">
+                  <span className="select-none pr-4 text-zinc-600 text-right w-8 shrink-0 font-mono">
                     {i + 1}
                   </span>
                 )}
-                <span className="flex-1">{highlightLine(line)}</span>
+                <span className="flex-1 font-mono">{highlightLine(line)}</span>
               </div>
             ))}
           </code>

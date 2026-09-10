@@ -262,7 +262,7 @@ export function CustomizationSidebar({
         </div>
       </CardHeader>
 
-      <CardContent className="p-4">
+      <CardContent className="p-3.5 overflow-y-auto max-h-[clamp(380px,calc(100dvh-230px),680px)]">
         {sidebarTab === "styling" && (
           <div className="space-y-5">
             {/* Control 1: Position */}

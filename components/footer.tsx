@@ -8,8 +8,8 @@ export function Footer() {
   const registryUrl = `${baseUrl}/r/cookie-consent.json`;
 
   return (
-    <footer className="border-t bg-background">
-      <div className="container max-w-screen-xl mx-auto px-4 py-8">
+    <footer className="border-t bg-background shrink-0">
+      <div className="container max-w-screen-xl mx-auto px-4 py-4 md:py-5">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
             <Logo className="h-5 w-5" />
