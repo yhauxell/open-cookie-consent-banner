@@ -49,6 +49,11 @@ const DEFAULT_OPTIONS: PlaygroundOptions = {
   bannerLearnMoreText: "Learn more",
   modalTitle: "Cookie Settings",
   modalDescription: "Manage your cookie preferences below.",
+  modalAcceptText: "Accept All",
+  modalRejectText: "Reject All",
+  modalSaveText: "Save Preferences",
+  modalReadText: "Read our",
+  modalPrivacyPolicyText: "Privacy Policy",
   categories: DEFAULT_PLAYGROUND_CATEGORIES,
   enableTraceability: true,
   traceabilityEndpoint: "/api/consent",
@@ -235,12 +240,14 @@ function WorkbenchContent({
                           forceVisible={options.forceVisible}
                           position={options.position}
                           size={options.size}
-                          title={options.bannerTitle}
-                          description={options.bannerDescription}
-                          acceptAllText={options.bannerAcceptText}
-                          rejectAllText={options.bannerRejectText}
-                          customizeText={options.bannerCustomizeText}
-                          learnMoreText={options.bannerLearnMoreText}
+                          labels={{
+                            title: options.bannerTitle,
+                            description: options.bannerDescription,
+                            acceptAllText: options.bannerAcceptText,
+                            rejectAllText: options.bannerRejectText,
+                            customizeText: options.bannerCustomizeText,
+                            learnMoreText: options.bannerLearnMoreText,
+                          }}
                           className={cn(options.radiusClass, "shadow-2xl")}
                         />
                       </>
@@ -343,8 +350,15 @@ export function CookieConsentDemo() {
       />
       <CookieSettings
         className={options.radiusClass}
-        title={options.modalTitle}
-        description={options.modalDescription}
+        labels={{
+          title: options.modalTitle,
+          description: options.modalDescription,
+          acceptAllText: options.modalAcceptText,
+          rejectAllText: options.modalRejectText,
+          savePreferencesText: options.modalSaveText,
+          readText: options.modalReadText,
+          privacyPolicyText: options.modalPrivacyPolicyText,
+        }}
       />
     </CookieConsentProvider>
   );

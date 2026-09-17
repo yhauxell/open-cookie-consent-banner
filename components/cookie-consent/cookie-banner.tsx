@@ -6,6 +6,15 @@ import { Cookie, Settings } from "lucide-react";
 import { useCookieConsent } from "./cookie-provider";
 import type { BannerPosition, BannerSize } from "./types";
 
+export interface CookieBannerLabels {
+  title?: string;
+  description?: string;
+  acceptAllText?: string;
+  rejectAllText?: string;
+  customizeText?: string;
+  learnMoreText?: string;
+}
+
 export interface CookieBannerProps {
   className?: string;
   position?: BannerPosition;
@@ -14,12 +23,7 @@ export interface CookieBannerProps {
   isEmbedded?: boolean;
   forceVisible?: boolean;
   isMobile?: boolean;
-  title?: string;
-  description?: string;
-  acceptAllText?: string;
-  rejectAllText?: string;
-  customizeText?: string;
-  learnMoreText?: string;
+  labels?: CookieBannerLabels;
 }
 
 export function CookieBanner({
@@ -30,13 +34,17 @@ export function CookieBanner({
   isEmbedded = false,
   forceVisible = false,
   isMobile = false,
-  title = "Cookie Preferences",
-  description = "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
-  acceptAllText = "Accept All",
-  rejectAllText = "Reject All",
-  customizeText = "Customize",
-  learnMoreText = "Learn more",
+  labels,
 }: CookieBannerProps) {
+  const {
+    title = "Cookie Preferences",
+    description = "We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.",
+    acceptAllText = "Accept All",
+    rejectAllText = "Reject All",
+    customizeText = "Customize",
+    learnMoreText = "Learn more"
+  } = labels ?? {}
+
   const { isBannerVisible, acceptAll, rejectAll, openSettings, config } =
     useCookieConsent();
 

@@ -77,6 +77,11 @@ export interface PlaygroundOptions {
   // Content & Modal
   modalTitle: string;
   modalDescription: string;
+  modalAcceptText: string;
+  modalRejectText: string;
+  modalSaveText: string;
+  modalReadText: string;
+  modalPrivacyPolicyText: string;
   categories: CategoryConfig[];
 
   // Telemetry Configuration
@@ -542,53 +547,135 @@ export function CustomizationSidebar({
 
             {/* SUBTAB 2: MODAL COPY */}
             {contentSubTab === "modal" && (
-              <div className="space-y-3 animate-in fade-in-50 duration-150">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                    <FileText className="h-3.5 w-3.5 text-primary" />
-                    Dialog Header
-                  </Label>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={openSettings}
-                    className="h-6 text-[11px] px-2 gap-1 border-primary/40 text-primary"
-                  >
-                    <ExternalLink className="h-2.5 w-2.5" />
-                    Preview Modal
-                  </Button>
-                </div>
-
-                <div className="space-y-2 bg-muted/20 p-2.5 rounded-lg border border-border/70">
-                  <div className="space-y-1">
-                    <Label htmlFor="modal-title" className="text-[11px] text-muted-foreground">
-                      Dialog Title
+              <>
+                <div className="space-y-3 animate-in fade-in-50 duration-150">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <FileText className="h-3.5 w-3.5 text-primary" />
+                      Dialog Header
                     </Label>
-                    <input
-                      id="modal-title"
-                      type="text"
-                      value={options.modalTitle}
-                      onChange={(e) => setOptions((prev) => ({ ...prev, modalTitle: e.target.value }))}
-                      className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-                      placeholder="Cookie Settings"
-                    />
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={openSettings}
+                      className="h-6 text-[11px] px-2 gap-1 border-primary/40 text-primary"
+                    >
+                      <ExternalLink className="h-2.5 w-2.5" />
+                      Preview Modal
+                    </Button>
                   </div>
 
-                  <div className="space-y-1">
-                    <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
-                      Dialog Description
-                    </Label>
-                    <textarea
-                      id="modal-desc"
-                      rows={2}
-                      value={options.modalDescription}
-                      onChange={(e) => setOptions((prev) => ({ ...prev, modalDescription: e.target.value }))}
-                      className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
-                      placeholder="Manage your cookie preferences below."
-                    />
+                  <div className="space-y-2 bg-muted/20 p-2.5 rounded-lg border border-border/70">
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-title" className="text-[11px] text-muted-foreground">
+                        Dialog Title
+                      </Label>
+                      <input
+                        id="modal-title"
+                        type="text"
+                        value={options.modalTitle}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalTitle: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Cookie Settings"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                        Dialog Description
+                      </Label>
+                      <textarea
+                        id="modal-desc"
+                        rows={2}
+                        value={options.modalDescription}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalDescription: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                        placeholder="Manage your cookie preferences below."
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+                <div className="space-y-3 animate-in fade-in-50 duration-150">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <FileText className="h-3.5 w-3.5 text-primary" />
+                      Dialog Footer
+                    </Label>
+                  </div>
+
+                  <div className="space-y-2 bg-muted/20 p-2.5 rounded-lg border border-border/70">
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-title" className="text-[11px] text-muted-foreground">
+                        Dialog Accept Button
+                      </Label>
+                      <input
+                        id="modal-title"
+                        type="text"
+                        value={options.modalAcceptText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalAcceptText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+                        placeholder="Cookie Settings"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                        Dialog Reject Button
+                      </Label>
+                      <textarea
+                        id="modal-desc"
+                        rows={2}
+                        value={options.modalRejectText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalRejectText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                        placeholder="Manage your cookie preferences below."
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                        Dialog Save Button
+                      </Label>
+                      <textarea
+                        id="modal-desc"
+                        rows={2}
+                        value={options.modalSaveText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalSaveText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                        placeholder="Manage your cookie preferences below."
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                        Dialog Read Text
+                      </Label>
+                      <textarea
+                        id="modal-desc"
+                        rows={2}
+                        value={options.modalReadText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalReadText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                        placeholder="Manage your cookie preferences below."
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label htmlFor="modal-desc" className="text-[11px] text-muted-foreground">
+                        Dialog Privacy Policy Text
+                      </Label>
+                      <textarea
+                        id="modal-desc"
+                        rows={2}
+                        value={options.modalPrivacyPolicyText}
+                        onChange={(e) => setOptions((prev) => ({ ...prev, modalPrivacyPolicyText: e.target.value }))}
+                        className="w-full bg-background border border-border/80 px-2.5 py-1.5 rounded-md text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                        placeholder="Manage your cookie preferences below."
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
             )}
 
             {/* SUBTAB 3: CATEGORIES */}

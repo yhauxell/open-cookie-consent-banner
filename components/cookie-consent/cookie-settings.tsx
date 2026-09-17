@@ -19,19 +19,37 @@ import type { ConsentCategories, ConsentCategory } from "./types"
 import { getDefaultCategories, getAllAcceptedCategories } from "./utils"
 import { cn } from "@/lib/utils"
 
+export interface CookieSettingsLabels {
+  title?: string
+  description?: string
+  acceptAllText?: string
+  rejectAllText?: string
+  savePreferencesText?: string
+  readText?: string
+  privacyPolicyText?: string
+}
+
 export interface CookieSettingsProps {
   className?: string
   buttonClassName?: string
-  title?: string
-  description?: string
+  labels?: CookieSettingsLabels
 }
 
 export function CookieSettings({
   className,
   buttonClassName,
-  title = "Cookie Settings",
-  description = "Manage your cookie preferences below.",
+  labels,
 }: CookieSettingsProps) {
+  const {
+    title = "Cookie Settings",
+    description = "Manage your cookie preferences.",
+    acceptAllText = "Accept All",
+    rejectAllText = "Reject All",
+    savePreferencesText = "Save Preferences",
+    readText = "Read our",
+    privacyPolicyText = "Privacy Policy",
+  } = labels ?? {}
+
   const { isSettingsOpen, closeSettings, state, updateConsent, config, acceptAll, rejectAll } = useCookieConsent()
 
   const categories = config.categories ?? defaultCategories
@@ -139,7 +157,7 @@ export function CookieSettings({
             onClick={handleRejectAll}
             className={cn("w-full sm:w-auto bg-transparent", buttonRadiusClass)}
           >
-            Reject All
+            {rejectAllText}
           </Button>
           <Button
             variant="outline"
@@ -147,7 +165,7 @@ export function CookieSettings({
             onClick={handleAcceptAll}
             className={cn("w-full sm:w-auto bg-transparent", buttonRadiusClass)}
           >
-            Accept All
+            {acceptAllText}
           </Button>
           <Button
             size="sm"
@@ -155,20 +173,20 @@ export function CookieSettings({
             className={cn("w-full sm:w-auto gap-2", buttonRadiusClass)}
           >
             <Check className="h-4 w-4" />
-            Save Preferences
+            {savePreferencesText}
           </Button>
         </DialogFooter>
 
         {config.privacyPolicyUrl && (
           <p className="text-xs text-center text-muted-foreground">
-            Read our{" "}
+            {readText}{" "}
             <a
               href={config.privacyPolicyUrl}
               className="underline underline-offset-4 hover:text-foreground transition-colors"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Privacy Policy
+              {privacyPolicyText}
             </a>
           </p>
         )}

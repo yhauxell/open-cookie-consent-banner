@@ -92,6 +92,21 @@ export function CodeExportCard({ options }: CodeExportCardProps) {
   if (options.modalDescription && options.modalDescription !== "Manage your cookie preferences below.") {
     settingsPropsList.push(`description="${options.modalDescription}"`);
   }
+  if (options.modalAcceptText && options.modalAcceptText !== "Accept All") {
+    settingsPropsList.push(`acceptAllText="${options.modalAcceptText}"`);
+  }
+  if (options.modalRejectText && options.modalRejectText !== "Reject All") {
+    settingsPropsList.push(`rejectAllText="${options.modalRejectText}"`);
+  }
+  if (options.modalSaveText && options.modalSaveText !== "Save Preferences") {
+    settingsPropsList.push(`savePreferencesText="${options.modalSaveText}"`);
+  }
+  if (options.modalReadText && options.modalReadText !== "Read our") {
+    settingsPropsList.push(`readText="${options.modalReadText}"`);
+  }
+  if (options.modalPrivacyPolicyText && options.modalPrivacyPolicyText !== "Privacy Policy") {
+    settingsPropsList.push(`privacyPolicyText="${options.modalPrivacyPolicyText}"`);
+  }
   const settingsPropsStr = settingsPropsList.length > 0 ? ` ${settingsPropsList.join(" ")}` : "";
 
   const generatedLayoutSnippet = `import {
@@ -115,8 +130,8 @@ ${configFormatted}
           }}
         >
           {children}
-          ${options.hasBackdrop ? "<CookieBannerBackdrop />\n          " : ""}<CookieBanner${bannerPropsStr} />
-          <CookieSettings${settingsPropsStr} />
+          ${options.hasBackdrop ? "<CookieBannerBackdrop />\n          " : ""}<CookieBanner labels={{${bannerPropsStr} }} />
+          <CookieSettings labels={{${settingsPropsStr} }} />
         </CookieConsentProvider>
       </body>
     </html>
@@ -132,8 +147,8 @@ ${configFormatted}
   {children}
 
   {/* Cookie Banner & Settings portaled components */}${options.hasBackdrop ? "\n  <CookieBannerBackdrop />" : ""}
-  <CookieBanner${bannerPropsStr} />
-  <CookieSettings${settingsPropsStr} />
+  <CookieBanner labels={{${bannerPropsStr} }} />
+  <CookieSettings labels={{${settingsPropsStr} }} />
   <CookieTrigger variant="text" />
 </CookieConsentProvider>`;
 
